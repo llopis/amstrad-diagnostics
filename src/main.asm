@@ -18,11 +18,12 @@ _mainROMLoop:
 	ld a,d
 	cp #0F
 	jr nz,_mainROMLoop
+	pop de
 	
 	ld hl,TxtDone
 	call PrintString
 	call PrintNewLine
-;    ret
+    ret
 Wait:
 	jr Wait
 
@@ -155,7 +156,7 @@ CRCRom:
 
 ; IN IX = Start address DE = Size
 ; OUT HL = CRC
-; Based on code from from http://map.tni.nl/sources/external/z80bits.html#5.1
+; Based on code from from http //map.tni.nl/sources/external/z80bits.html#5.1
 Crc16:
 	ld hl,#FFFF
 _crc16Read:
