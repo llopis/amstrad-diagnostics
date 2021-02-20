@@ -155,6 +155,7 @@ CRCRom:
 
 ; IN IX = Start address DE = Size
 ; OUT HL = CRC
+; Based on code from from http://map.tni.nl/sources/external/z80bits.html#5.1
 Crc16:
 	ld hl,#FFFF
 _crc16Read:
@@ -176,10 +177,7 @@ _crc16Next:
 	djnz _crc16CrcByte
 	dec de
 	ld a,e
-	or a
-	jr nz,_crc16Read	
-	ld a,d
-	or a
+	or d
 	jr nz,_crc16Read	
 	ret
 
