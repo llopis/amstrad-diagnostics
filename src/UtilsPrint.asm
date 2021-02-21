@@ -50,3 +50,28 @@ _printHexDone:
 	ld a,c
 	ld b,1
 	jr _printHexLow
+
+
+; IN A = number to rpint
+; Modifies BC, D
+PrintNumDec:
+	ld d,100
+	call _PrintNumDecDigit
+	ld d,10
+	call _PrintNumDecDigit
+	ld d,1
+_PrintNumDecDigit:
+	ld c,0
+_PrintNumDecLoop:
+	sub d
+	jr c,_PrintNumDecExit
+	inc c
+	jr _PrintNumDecLoop
+_PrintNumDecExit:
+	add a,d
+	push af
+	ld a,c
+	add a,#30
+	call PrintChar
+	pop af
+	ret
