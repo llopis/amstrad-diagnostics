@@ -1,5 +1,5 @@
 nolist
-;run Start
+run Start
 
-read "Main.asm"
+read "main.asm"
 

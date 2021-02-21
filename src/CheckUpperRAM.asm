@@ -1,7 +1,7 @@
 CheckUpperRAM:
 	ld hl,TxtCheckingUpperRAM
 	call PrintString
-	call PrintNewLine
+	call NewLine
 	
 	call IsUpperRAMPresent
 	jr z,_CheckUpperRAM_None
@@ -34,11 +34,11 @@ _CheckUpperRAM_BankLoop:
 	cp #C8
 	jr nz,_CheckUpperRAM_BankLoop
 
-	call PrintNewLine
+	call NewLine
 	ld hl,TxtRAMTestPassed
 	call PrintString
-	call PrintNewLine
-	call PrintNewLine
+	call NewLine
+	call NewLine
 	ret
 	
 	
@@ -46,28 +46,29 @@ _CheckUpperRAM_Failed:
 	pop bc
 	ld d,a
 	push de
-	call PrintNewLine
+	call NewLine
 	ld hl,TxtRAMTestFailed
 	call PrintString
-	call PrintNewLine
+	call NewLine
 	
 	pop de
 	call PrintFailingBits
+	call NewLine
 	ret
 	
 _CheckUpperRAM_None:
 	ld hl,TxtNoUpperRAM
 	call PrintString
-	call PrintNewLine
-	call PrintNewLine
+	call NewLine
+	call NewLine
 	ret
 	
 
-TxtCheckingUpperRAM: db 'Checking upper RAM...',255
-TxtNoUpperRAM: db 'No upper RAM detected.',255
-TxtYesUpperRAM: db 'Found upper RAM',255
-TxtRAMTestPassed: db 'RAM test passed.',255
-TxtRAMTestFailed: db 'RAM test failed: ',255
+TxtCheckingUpperRAM: db 'CHECKING UPPER RAM...',0
+TxtNoUpperRAM: db 'NO UPPER RAM DETECTED.',0
+TxtYesUpperRAM: db 'FOUND UPPER RAM',0
+TxtRAMTestPassed: db 'RAM TEST PASSED.',0
+TxtRAMTestFailed: db 'RAM TEST FAILED: ',0
 
 RAMBankStart equ #4000
 TestPatternLength equ 4
@@ -129,6 +130,7 @@ _TestRAMBits:
 
 _TestRAMDone:
 	ld a,0
+	; ld a,10   ; Uncomment this to test failing case
 	ret
 
 _TestRAMBad:
@@ -136,8 +138,8 @@ _TestRAMBad:
 	ret
 
 
-TxtBit: db "Bit ",255
-TxtIC: db "IC",255
+TxtBit: db "BIT ",0
+TxtIC: db "IC",0
 
 FirstUpperRAMIC equ 119
 
@@ -175,7 +177,7 @@ _PrintFailingBits_BitLoop:
 
 	ld a,CharRightParen
 	call PrintChar
-	call PrintNewLine
+	call NewLine
 	
 
 _PrintFailingBits_Next:
@@ -183,6 +185,5 @@ _PrintFailingBits_Next:
 	pop de
 	rr d    ; Shift bits right once
 	djnz _PrintFailingBits_BitLoop
-
 	
 	ret

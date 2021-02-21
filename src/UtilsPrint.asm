@@ -1,5 +1,4 @@
-PrintChar     equ #BB5A   
-	
+
 CharCR equ 13
 CharLF equ 10
 CharSpace equ 32
@@ -8,18 +7,12 @@ CharRightParen equ 41
 
 ; IN HL = address of string
 PrintString:
-    ld a,(hl)    ;Print a '255' terminated string
-    cp 255
-    ret z
-    inc hl
-    call PrintChar
+	ld a,(hl)
+	inc hl
+	or a
+	ret z
+	call PrintChar
     jr PrintString
-
-PrintNewLine:
-    ld a,CharCR        ;Carriage return
-    call PrintChar
-    ld a,CharLF        ;Line Feed
-    jp PrintChar
 
 ; IN A = number to rpint
 ; Modifies BC
@@ -75,3 +68,5 @@ _PrintNumDecExit:
 	call PrintChar
 	pop af
 	ret
+
+

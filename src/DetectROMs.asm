@@ -1,7 +1,7 @@
 DetectROMs:
 	ld hl,TxtDetecting
 	call PrintString
-	call PrintNewLine
+	call NewLine
 	
 	call CheckLowerROM
 	
@@ -17,15 +17,15 @@ _detectROMsLoop:
 	jr nz,_detectROMsLoop
 	pop de
 
-	call PrintNewLine
+	call NewLine
 	
 	ret
 	
 
-TxtDetecting: db 'Detecting ROMs...',255
-TxtLowerROM: db 'Lower ROM: ',255
-TxtROM: db 'ROM ',255
-TxtColon: db ': ',255
+TxtDetecting: db 'DETECTING ROMs...',0
+TxtLowerROM: db 'LOWER ROM: ',0
+TxtROM: db 'ROM ',0
+TxtColon: db ': ',0
 
 
 CheckLowerROM:
@@ -46,7 +46,7 @@ CheckLowerROM:
 	call PrintNumHex
 	ld a,CharRightParen
 	call PrintChar
-	call PrintNewLine
+	call NewLine
 	ret
 
 
@@ -102,7 +102,7 @@ _checkUpperROMDoIt:
 	call PrintNumHex
 	ld a,CharRightParen
 	call PrintChar
-	call PrintNewLine
+	call NewLine
 	ret
 
 
@@ -179,19 +179,19 @@ _crc16Next:
 
 ROMCount equ 12
 
-TxtUnknownROM: db 'Unknown ROM',255
-TxtBASIC10EN: db 'BASIC 1.0 EN',255
-TxtBASIC11EN: db 'BASIC 1.1 EN',255
-TxtBASIC11SP: db 'BASIC 1.1 SP',255
-TxtBASIC11FR: db 'BASIC 1.1 FR',255
-TxtAMSDOS: db 'AMSDOS',255
-TxtPARADOS: db 'PARADOS',255
-TxtOS464EN: db 'OS 464 EN',255
-TxtOS464SP: db 'OS 464 SP',255
-TxtOS464FR: db 'OS 464 FR',255
-TxtOS6128EN: db 'OS 6128 EN',255
-TxtOS6128SP: db 'OS 6128 SP',255
-TxtOS6128FR: db 'OS 6128 FR',255
+TxtUnknownROM: db 'UNKNOWN ROM',0
+TxtBASIC10EN: db 'BASIC 1.0 EN',0
+TxtBASIC11EN: db 'BASIC 1.1 EN',0
+TxtBASIC11SP: db 'BASIC 1.1 SP',0
+TxtBASIC11FR: db 'BASIC 1.1 FR',0
+TxtAMSDOS: db 'AMSDOS',0
+TxtPARADOS: db 'PARADOS',0
+TxtOS464EN: db 'OS 464 EN',0
+TxtOS464SP: db 'OS 464 SP',0
+TxtOS464FR: db 'OS 464 FR',0
+TxtOS6128EN: db 'OS 6128 EN',0
+TxtOS6128SP: db 'OS 6128 SP',0
+TxtOS6128FR: db 'OS 6128 FR',0
 
 ROMInfoTable:
 	defw #6098, TxtBASIC10EN
