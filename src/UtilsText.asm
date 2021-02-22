@@ -82,7 +82,7 @@ display_char2:
 
 ;; H = x coord
 ;; L = y coord
-set_txt_coord:
+SetTextCoords:
 	ld (txt_coords),hl
 	ret
 

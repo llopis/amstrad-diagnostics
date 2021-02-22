@@ -3,24 +3,7 @@ MAINBEGIN:
 	DISP MainProgramAddr
 
 Main:
-	call make_scr_table
-	call ClearScreen
-	ld a,4
-	call SetBorderColor 
-
-	call SetTitleColors
-	ld hl,TxtTitle
-	call PrintString
-
-	call SetDefaultColors
-
-	call NewLine
-	call NewLine
-
-	ld hl,TxtLowerRAMOK
-	call PrintString
-	call NewLine
-	call NewLine
+	call DrawInitialScreen
 
 	call CheckUpperRAM
 	call NewLine
@@ -34,6 +17,32 @@ Main:
 Wait:
 	jr Wait
 
+
+DrawInitialScreen:
+	call make_scr_table
+	call ClearScreen
+	ld a,4
+	call SetBorderColor 
+
+	call SetTitleColors
+
+	ld hl,TxtTitle
+	call PrintString
+	ld hl,#0018
+	call SetTextCoords
+	ld hl,TxtFooter
+	call PrintString
+
+	ld hl,#0002
+	call SetTextCoords
+
+	call SetDefaultColors
+	ld hl,TxtLowerRAMOK
+	call PrintString
+	call NewLine
+	call NewLine
+
+	ret
 
 PrintResult:
 	ld hl,ErrorFound
@@ -60,6 +69,7 @@ SetErrorFound:
 
 
 TxtTitle: db '              AMSTRAD DIAGNOSTICS V0.0               ',0
+TxtFooter: db '                  NOEL LLOPIS 2021                   ',0
 TxtLowerRAMOK: db 'LOWER RAM OK.',0
 TxtTestsFailed: db 'TESTS FAILED',0
 TxtSuccess: db '**SUCCESS**',0
