@@ -23,44 +23,44 @@ PrintNumHex:
 	rr a
 	rr a
 	rr a
-_printHexLow:
+.low:
 	and #0f
 	cp #0a
-	jr nc,_printHexAaf
+	jr nc,.af
 	add a,#30
 	push bc
 	call PrintChar
-	jr _printHexDone
-_printHexAaf:
+	jr .done
+.af:
 	add a,#37
 	push bc
 	call PrintChar
-_printHexDone:
+.done:
 	pop bc
 	ld a,b
 	cp 1
 	ret z
 	ld a,c
 	ld b,1
-	jr _printHexLow
+	jr .low
 
 
 ; IN A = number to rpint
 ; Modifies BC, D
 PrintNumDec:
 	ld d,100
-	call _PrintNumDecDigit
+	call .digit
 	ld d,10
-	call _PrintNumDecDigit
+	call .digit
 	ld d,1
-_PrintNumDecDigit:
+.digit:
 	ld c,0
-_PrintNumDecLoop:
+.loop:
 	sub d
-	jr c,_PrintNumDecExit
+	jr c,.exit
 	inc c
-	jr _PrintNumDecLoop
-_PrintNumDecExit:
+	jr .loop
+.exit:
 	add a,d
 	push af
 	ld a,c

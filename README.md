@@ -17,4 +17,4 @@ Right now it does three things:
 
 # Credits
 
-Project created and maintained by Noel Llopis. Some code by other contributors: Brendan Alford, Gérald Vincent, Kevin Thacker, Rhino, KaosOverride.
+Project created and maintained by Noel Llopis. Some code and support by: Brendan Alford, Gérald Vincent, Kevin Thacker, Rhino, KaosOverride, Rafa Pardo.

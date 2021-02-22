@@ -7,14 +7,14 @@ DetectROMs:
 	
 	ld d,0
 	push de
-_detectROMsLoop:
+.loop:
 	call CheckUpperROM
 	pop de	
 	inc d
 	push de
 	ld a,d
 	cp #0F
-	jr nz,_detectROMsLoop
+	jr nz,.loop
 	pop de
 
 	call NewLine
@@ -71,13 +71,13 @@ CheckUpperROM:
 	
 	; Skip any roms of type #80 that are not the 0 ROM
 	cp #80
-	jr nz,_checkUpperROMDoIt
+	jr nz,.doIt
 	ld a,d
 	or a
-	jr z,_checkUpperROMDoIt
+	jr z,.doIt
 	ret
 	
-_checkUpperROMDoIt:
+.doIt:
 	ld hl,TxtROM
 	call PrintString
 	ld a,d
@@ -147,27 +147,27 @@ CRCRom:
 ; Based on code from from http //map.tni.nl/sources/external/z80bits.html#5.1
 Crc16:
 	ld hl,#FFFF
-_crc16Read:
+.read:
 	ld	a,(ix)
 	inc	ix
 	xor	h
 	ld	h,a
 	ld	b,8
-_crc16CrcByte:
+.byte:
 	add	hl,hl
-	jr	nc,_crc16Next
+	jr	nc,.next
 	ld	a,h
 	xor	#10
 	ld	h,a
 	ld	a,l
 	xor	#21
 	ld	l,a
-_crc16Next:
-	djnz _crc16CrcByte
+.next:
+	djnz .byte
 	dec de
 	ld a,e
 	or d
-	jr nz,_crc16Read	
+	jr nz,.read
 	ret
 
 
@@ -207,29 +207,29 @@ PrintROMName:
 	ld b,ROMCount
 	ld ix,ROMInfoTable
 	
-_printROMNameLoop:
+.loop:
 	ld e,(ix)
 	ld d,(ix+1)
 	ld a,e
 	ld a,l
 	cp e
-	jr nz, _printROMNameNext
+	jr nz, .next
 
 	ld a,d
 	ld a,h
 	cp d
-	jr nz, _printROMNameNext
+	jr nz, .next
 	ld l,(ix+2)
 	ld h,(ix+3)
 	call PrintString
 	ret
 	
-_printROMNameNext:
+.next:
 	inc ix
 	inc ix
 	inc ix
 	inc ix
-	djnz _printROMNameLoop
+	djnz .loop
 	
 	ld hl,TxtUnknownROM
 	call PrintString

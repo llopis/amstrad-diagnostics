@@ -31,3 +31,11 @@ SetDefaultColors:
 	ret
 	
 
+; IN A = color
+SetBorderColor:
+	ld bc,#7F10
+	out (c),c
+	ld bc,#7F00
+	add a,#40
+	out (c),a
+	ret

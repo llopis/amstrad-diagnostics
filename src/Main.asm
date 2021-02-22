@@ -5,6 +5,8 @@ MAINBEGIN:
 Main:
 	call make_scr_table
 	call ClearScreen
+	ld a, 4
+	call SetBorderColor
 
 	call SetTitleColors
 	ld hl, TxtTitle

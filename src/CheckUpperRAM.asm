@@ -4,14 +4,14 @@ CheckUpperRAM:
 	call NewLine
 	
 	call IsUpperRAMPresent
-	jr z,_CheckUpperRAM_None
+	jr z,.none
 
 	ld hl,TxtYesUpperRAM
 	call PrintString
 	
 	; Loop for all 4 data banks
 	ld bc,#7FC4
-_CheckUpperRAM_BankLoop:
+.loop:
 	ld a,46
 	call PrintChar
 
@@ -26,13 +26,13 @@ _CheckUpperRAM_BankLoop:
 	out (c),c
 
 	or a
-	jr nz,_CheckUpperRAM_Failed
+	jr nz,.failed
 	
 	pop bc
 	inc c
 	ld a,c
 	cp #C8
-	jr nz,_CheckUpperRAM_BankLoop
+	jr nz,.loop
 
 	call NewLine
 	ld hl,TxtRAMTestPassed
@@ -42,7 +42,7 @@ _CheckUpperRAM_BankLoop:
 	ret
 	
 	
-_CheckUpperRAM_Failed:
+.failed:
 	pop bc
 	ld d,a
 	push de
@@ -56,7 +56,7 @@ _CheckUpperRAM_Failed:
 	call NewLine
 	ret
 	
-_CheckUpperRAM_None:
+.none:
 	ld hl,TxtNoUpperRAM
 	call PrintString
 	call NewLine
@@ -91,17 +91,17 @@ IsUpperRAMPresent:
 	ld ix,TestPattern
 	ld a,(ix)
 	cpi
-	jr nz,_IsUpperRAMPresentEnd
+	jr nz,.end
 	ld a,(ix+1)
 	cpi
-	jr nz,_IsUpperRAMPresentEnd
+	jr nz,.end
 	ld a,(ix+2)
 	cpi
-	jr nz,_IsUpperRAMPresentEnd
+	jr nz,.end
 	ld a,(ix+3)
 	cpi
 
-_IsUpperRAMPresentEnd:
+.end:
 	ld bc,#7FC0
 	out (c),c
 	ret
@@ -113,22 +113,22 @@ TestRAM:
 	ld b, 8     ; test 8 bits
 	or a        ; ensure carry is cleared
 
-_TestRAMBits:
+.bits:
 	ld (hl), a
 	ld c, a     ; for compare
 	ld a, (hl)
 	cp c
-	jr nz, _TestRAMBad
+	jr nz,.bad
 	rla
-	djnz _TestRAMBits
+	djnz .bits
 	inc hl
 	dec de
 	ld a, d     ; does de=0?
 	or e
-	jp z, _TestRAMDone
+	jp z, .done
 	jr TestRAM
 
-_TestRAMDone:
+.done:
 	ld a,0
 	IFDEF UpperRAMFailure
 		DISPLAY "Simulating upper RAM failure."
@@ -136,7 +136,7 @@ _TestRAMDone:
 	ENDIF
 	ret
 
-_TestRAMBad:
+.bad:
 	xor c	; a contains failing bits
 	ret
 
@@ -152,12 +152,12 @@ PrintFailingBits:
 	; TODO Print which data bits failed
 	; TODO Print which ICs are likely bad
 	ld b,8
-_PrintFailingBits_BitLoop:
+.loop:
 	ld a,d
 	push de
 	push bc
 	and 1	; Check if the LSB is set
-	jr z, _PrintFailingBits_Next
+	jr z, .next
 
 	ld hl,TxtBit
 	call PrintString
@@ -183,10 +183,10 @@ _PrintFailingBits_BitLoop:
 	call NewLine
 	
 
-_PrintFailingBits_Next:
+.next:
 	pop bc
 	pop de
 	rr d    ; Shift bits right once
-	djnz _PrintFailingBits_BitLoop
+	djnz .loop
 	
 	ret

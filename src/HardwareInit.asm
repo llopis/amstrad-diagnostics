@@ -69,7 +69,7 @@ HwInit_Crtc50:
 HWInit_GAInk:
   db #44, #4A, #53, #53, #5C, #4C, #4E, #4A
   db #5C, #4C, #4E, #4A, #5C, #4C, #4E, #4A
-  db #57
+  db #57   ; Border color
     
 __HwInit:
 	;; Disable Interrupt (warm boot)
@@ -83,9 +83,9 @@ __HwInit:
 	out (C),C
 	ld BC, #EF7F     ;; Printer port all high
 	out (C),C
+
 	;; Initialize Display
 	ld HL, HwInit_Crtc50     ;; CRTC init table for 50Hz
-	;; Init CRTC
 	ld BC, #BC0F      ;; CRTC select 0F
 HwInit_CrtcLoop:
 	out (C),C        
@@ -110,7 +110,6 @@ HwInit_GACLoop:
 	inc c
 	dec e
 	jr nz, HwInit_GACLoop
-
   
 	;; Other HW init
 	im 1
