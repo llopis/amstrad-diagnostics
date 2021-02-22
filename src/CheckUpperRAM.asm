@@ -1,8 +1,4 @@
 CheckUpperRAM:
-	ld hl,TxtCheckingUpperRAM
-	call PrintString
-	call NewLine
-	
 	call IsUpperRAMPresent
 	jr z,.none
 
@@ -64,7 +60,6 @@ CheckUpperRAM:
 	ret
 	
 
-TxtCheckingUpperRAM: db 'CHECKING UPPER RAM...',0
 TxtNoUpperRAM: db 'NO UPPER RAM DETECTED.',0
 TxtYesUpperRAM: db 'FOUND UPPER RAM',0
 TxtRAMTestPassed: db 'RAM TEST PASSED.',0

@@ -52,7 +52,7 @@ HwInit_Crtc_base:
 	db 63                 ;* R0 = 63     : Horizontal Total
 	db 40                 ;* R1 = 40     : Horizontal Displayed
 	db 46                 ;* R2 = 46     : Horizontal Sync Position
-	db 142                ;* R3 = 128+15 : Horizontal and Vertical Sync Widths
+	db 142                ;* R3 = 8*16+14 : Horizontal and Vertical Sync Widths
 	db 38                 ;* R4 = 38     : Vertical Total
 	db 0                  ;* R5 =  0     : Vertical Total Adjust
 	db 25                 ;* R6 = 25     : Vertical Displayed
