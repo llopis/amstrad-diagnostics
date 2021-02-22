@@ -7,7 +7,8 @@ Right now it does three things:
 * Check that upper system ROMs are valid.
 * Detect CRTC model.
 
-![image](/images/screenshot.png)
+![image](/images/success.png)
+![image](/images/failure.png)
 
 # TODO
 * Check system lower ROM
@@ -17,4 +18,4 @@ Right now it does three things:
 
 # Credits
 
-Project created and maintained by Noel Llopis. Some code and support by: Brendan Alford, Gérald Vincent, Kevin Thacker, Rhino, KaosOverride, Rafa Pardo.
+Project created and maintained by Noel Llopis. Some code and support by: Brendan Alford, Gérald Vincent, Kevin Thacker, Rhino, KaosOverride, Spirax.

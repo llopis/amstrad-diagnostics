@@ -167,13 +167,13 @@ RTE_WaitLp:
 	ld e, #08
         
 RTE_BitLp:
-	ld b, #7F             ; [2]
-	rlc d                   ; [2]
+	ld b, #7F               ; [2]
+	rrc d                   ; [2]
 	jr c, RTE_ColErr        ; [2][3]
-	ld c, #5a             ; [2]    green (21)
+	ld c, #5a               ; [2]    green (21)
 	jr RTE_ColSet           ; [3]
 RTE_ColErr:     
-	ld c, #4c             ;    [2] red (6s)
+	ld c, #4c               ;    [2] red (6s)
 	nop                     ;    [1]
 	nop                     ;    [1]
 RTE_ColSet:

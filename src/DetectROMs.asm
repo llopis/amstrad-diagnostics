@@ -15,10 +15,8 @@ DetectROMs:
 	ld a,d
 	cp #0F
 	jr nz,.loop
-	pop de
 
-	call NewLine
-	
+	pop de	
 	ret
 	
 

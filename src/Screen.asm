@@ -21,12 +21,21 @@ SetTitleColors:
 	ret
 	
 
-
 SetDefaultColors:
-	; TODO Set ink colors here once we load from ROM
-
 	ld h,pen0
 	ld l,pen1
+	call set_txt_colours
+	ret
+
+SetErrorColors:
+	ld h,pen0
+	ld l,pen3
+	call set_txt_colours
+	ret
+
+SetSuccessColors:
+	ld h,pen0
+	ld l,pen2
 	call set_txt_colours
 	ret
 	

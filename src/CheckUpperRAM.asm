@@ -38,28 +38,28 @@ CheckUpperRAM:
 	ld hl,TxtRAMTestPassed
 	call PrintString
 	call NewLine
-	call NewLine
 	ret
-	
 	
 .failed:
 	pop bc
 	ld d,a
 	push de
 	call NewLine
+	call SetErrorColors
 	ld hl,TxtRAMTestFailed
 	call PrintString
 	call NewLine
 	
 	pop de
 	call PrintFailingBits
-	call NewLine
+	call SetDefaultColors
+
+	call SetErrorFound
 	ret
 	
 .none:
 	ld hl,TxtNoUpperRAM
 	call PrintString
-	call NewLine
 	call NewLine
 	ret
 	

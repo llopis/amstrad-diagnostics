@@ -67,7 +67,7 @@ HwInit_Crtc_base:
 	db #00                ;R15
 HwInit_Crtc50:
 HWInit_GAInk:
-  db #44, #4A, #53, #53, #5C, #4C, #4E, #4A
+  db #44, #4A, #53, #4C, #5C, #4C, #4E, #4A
   db #5C, #4C, #4E, #4A, #5C, #4C, #4E, #4A
   db #57   ; Border color
     
