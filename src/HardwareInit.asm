@@ -11,6 +11,7 @@
 ;; RESET
 ;; RST #00
 	ORG #0000
+	
 	ld bc, #7F89
 	out (c),c        ;; CRTC RMR : Disable Upper Rom, Enable Lower ROM, mode 1
 	jp __HwInit

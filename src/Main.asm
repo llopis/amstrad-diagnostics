@@ -39,5 +39,6 @@ TxtLowerRAMOK: db 'LOWER RAM OK.',0
 	INCLUDE "Screen.asm"
 	INCLUDE "DetectCRTC.asm"
 
-
+	ENT
 ENDOFPROG:
+	ds 16384-ENDOFPROG		;; Round it up to 16 KB
