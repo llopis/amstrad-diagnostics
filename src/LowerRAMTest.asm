@@ -181,9 +181,12 @@ RTE_ColSet:
 
 	;; wait end of line
 	;; wait for 7 lines
-	ld b, #7B               ; [2]
+	ld b, #F6               ; [2]
 RTE_L1: 
 	djnz RTE_L1
+
+	dec e                   ; [1]
+	jr z, RTE_done        ; [3]
 
 	;; wait for 7 lines
 	ld b, #7f
@@ -191,11 +194,9 @@ RTE_L1:
 	out (c), c              ; [4]
 RTE_L2: 
 	djnz RTE_L2
+	jr RTE_BitLp
 
-	;; loop
-	dec e                   ; [1]
-	jr nz, RTE_BitLp        ; [3]
-
+RTE_done:
 	ld bc, #7F57
 	out (c), c
 	jp RamTestError
