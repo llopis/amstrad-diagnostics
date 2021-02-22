@@ -130,7 +130,10 @@ _TestRAMBits:
 
 _TestRAMDone:
 	ld a,0
-	; ld a,10   ; Uncomment this to test failing case
+	IFDEF UpperRAMFailure
+		DISPLAY "Simulating upper RAM failure."
+		ld a, UpperRAMFailure
+	ENDIF
 	ret
 
 _TestRAMBad:

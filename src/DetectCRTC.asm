@@ -70,10 +70,10 @@ GetCRTCType:
     ; CRTC 3 or 4
 
 @CRTC_3_4
-    ld     bc,&f782
+    ld     bc,#f782
     out     (c),c
     dec     b
-    ld     a,&F
+    ld     a,#F
     out     (c),a
     inc     b
     out     (c),c

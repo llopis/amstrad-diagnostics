@@ -3,7 +3,7 @@ DetectROMs:
 	call PrintString
 	call NewLine
 	
-	call CheckLowerROM
+	;call CheckLowerROM
 	
 	ld d,0
 	push de
@@ -51,7 +51,6 @@ CheckLowerROM:
 
 
 CRCLowerRom:
-	di
 	ld bc,#7F89                        ; GA select lower rom, and mode 1
 	out (c),c
 
@@ -61,7 +60,6 @@ CRCLowerRom:
 	
 	ld bc,#7F8D                        ; GA deselect lower rom, and mode 1
 	out (c),c
-	ei
 	
 	ret
 
@@ -109,7 +107,6 @@ _checkUpperROMDoIt:
 ; IN A = ROM number to read
 ; OUT A = ROM Type
 GetUpperROMType:
-	di
 	ld bc,#7F85                        ; GA select upper rom, and mode 1
 	out (c),c
 
@@ -120,7 +117,6 @@ GetUpperROMType:
 	
 	ld bc,#7F8D                        ; GA deselect upper rom, and mode 1
 	out (c),c
-	ei
 	
 	ret
 
@@ -128,7 +124,6 @@ GetUpperROMType:
 ; OUT HL = CRC
 ;     A = ROM Type
 CRCRom:
-	di
 	ld bc,#7F85                        ; GA select upper rom, and mode 1
 	out (c),c
 
@@ -143,7 +138,6 @@ CRCRom:
 	
 	ld bc,#7F8D                        ; GA deselect upper rom, and mode 1
 	out (c),c
-	ei
 	
 	ret
 
