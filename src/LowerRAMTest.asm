@@ -1,14 +1,8 @@
         
-;;*****************************************************************************
-;; RamTestBasic :
-;; Entry :
-;;   L : command
-;;
-;; Exit  : 
-;;
-;;*****************************************************************************
-TestStartAddress equ #C000
-TestAmount equ #4000
+	INCLUDE "Colors.asm"
+
+TestStartAddress EQU #4000
+TestAmount EQU #C000
 
 
 LowerRAMTest::
@@ -132,74 +126,10 @@ RTB_L4OK:
 
 	ld a,d
 	or a
-	jr z,RAMTestPassed
-        
-        
-RamTestError:
-	ld b, #F5
-	;; wait for VSYNC
-RTE_Sync:
-	in a,(c)
-	and 1
-	jr z, RTE_Sync
+	jp z,RAMTestPassed
 
-	;; Select color 0 register
-	ld bc, #7F00
-	out (c), c
-	;; set to black
-	ld c, #54
-	out (c), c
-	;; Select Border color register
-	ld bc, #7F10
-	out (c), c
-	;; set to black
-	ld c, #57
-	out (c), c
 
-	;; Wait for visible line
-	ld bc, #0806
-RTE_WaitLp:
-	djnz RTE_WaitLp
-	dec c
-	jr nz, RTE_WaitLp
-
-	;; Display bit in order
-	ld e, #08
-        
-RTE_BitLp:
-	ld b, #7F               ; [2]
-	rrc d                   ; [2]
-	jr c, RTE_ColErr        ; [2][3]
-	ld c, #5a               ; [2]    green (21)
-	jr RTE_ColSet           ; [3]
-RTE_ColErr:     
-	ld c, #4c               ;    [2] red (6s)
-	nop                     ;    [1]
-	nop                     ;    [1]
-RTE_ColSet:
-	out (c), c              ; [4]
-
-	;; wait end of line
-	;; wait for 7 lines
-	ld b, #F6               ; [2]
-RTE_L1: 
-	djnz RTE_L1
-
-	dec e                   ; [1]
-	jr z, RTE_done        ; [3]
-
-	;; wait for 7 lines
-	ld b, #7f
-	ld c, #54
-	out (c), c              ; [4]
-RTE_L2: 
-	djnz RTE_L2
-	jr RTE_BitLp
-
-RTE_done:
-	ld bc, #7F57
-	out (c), c
-	jp RamTestError
+	jp DisplayFailingBits
 
 
 
@@ -210,6 +140,7 @@ RAMTestPassed:
 	ld bc, ENDOFPROG-MAINBEGIN
 	ldir
 	jp MainProgramAddr
-       
+
+	INCLUDE "DisplayFailingBits.asm"       
 	INCLUDE "Main.asm"
 

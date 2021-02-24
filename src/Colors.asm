@@ -1,0 +1,29 @@
+;; http://www.cpcwiki.eu/index.php/CPC_Palette
+ColorBlack         EQU #54
+ColorBlue          EQU #44
+ColorBrightBlue    EQU #55
+ColorRed           EQU #5C
+ColorMagenta       EQU #58
+ColorMauve         EQU #5D
+ColorBrightRed     EQU #4C
+ColorPurple        EQU #45
+ColorBrightMagenta EQU #4D
+ColorGreen         EQU #56
+ColorCyan          EQU #46
+ColorSkyBlue       EQU #57
+ColorYellow        EQU #5E
+ColorGrey          EQU #40
+ColorPastelBlue    EQU #5F
+ColorOrange        EQU #4E
+ColorPink          EQU #47
+ColorPastelMagenta EQU #4F
+ColorBrightGreen   EQU #52
+ColorSeaGreen      EQU #42
+ColorBrightCyan    EQU #53
+ColorLime          EQU #5A
+ColorPastelGreen   EQU #59
+ColorPastelCyan    EQU #5B
+ColorBrightYellow  EQU #4A
+ColorPastelYellow  EQU #43
+ColorWhite         EQU #4B
+

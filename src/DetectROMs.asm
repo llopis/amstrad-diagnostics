@@ -216,12 +216,10 @@ PrintROMName:
 .loop:
 	ld e,(ix)
 	ld d,(ix+1)
-	ld a,e
 	ld a,l
 	cp e
 	jr nz, .next
 
-	ld a,d
 	ld a,h
 	cp d
 	jr nz, .next
