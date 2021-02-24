@@ -8,7 +8,7 @@ This test is intended to be run from the low ROM of the Amstrad CPC at startup.
 * Check that upper system ROMs are valid.
 * Detect CRTC model.
 
-![image](/images/Success.png)
+![image](/images/TestSuccessful.png)
 
 When the test is first launched, it starts by verifying that the lower 64KB of RAM are working correctly. If any faults are detected, the test stops with a screen like this. The numbers indicate the data bits, and the ones in red are faulty and the ones in green are working correctly. A faulty bit indicates a faulty IC.
 ![image](/images/LowerRAMFailure.png)
