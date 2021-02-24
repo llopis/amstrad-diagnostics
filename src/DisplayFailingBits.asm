@@ -1,3 +1,5 @@
+	INCLUDE "Colors.asm"
+
 ColorBackground EQU ColorBlack
 ColorNumber     EQU ColorWhite
 ColorGood       EQU ColorLime

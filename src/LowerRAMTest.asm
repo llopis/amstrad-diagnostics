@@ -1,5 +1,6 @@
         
-	INCLUDE "Colors.asm"
+;; Based on Quick and dirty RAM test for CPC by Gerald
+;; http://www.cpcwiki.eu/forum/amstrad-cpc-hardware/quick-and-dirty-ram-test-for-cpc/
 
 TestStartAddress EQU #4000
 TestAmount EQU #C000
@@ -16,8 +17,7 @@ RTB_L0:
 	ld (hl), e
 	inc hl
 	dec bc
-	xor a
-	or b
+	ld a,b
 	or c
 	jr nz, RTB_L0
 
@@ -42,8 +42,7 @@ RTB_L1OK:
 	ld (hl), e
 	inc hl
 	dec bc
-	xor a
-	or b
+	ld a,b
 	or c
 	jr nz, RTB_L1
 
@@ -65,8 +64,7 @@ RTB_L2OK:
 	ld (hl), e
 	inc hl
 	dec bc
-	xor a
-	or b
+	ld a,b
 	or c
 	jr nz, RTB_L2
 
@@ -88,8 +86,7 @@ RTB_L3OK:
 	ld (hl), e
 	inc hl
 	dec bc
-	xor a
-	or b
+	ld a,b
 	or c
 	jr nz, RTB_L3
 
@@ -109,8 +106,7 @@ RTB_L4:
 RTB_L4OK:
 	inc hl
 	dec bc
-	xor a
-	or b
+	ld a,b
 	or c
 	jr nz, RTB_L4
 
