@@ -1,10 +1,10 @@
 # amstrad-diagnostics
 Diagnostic Tests for the Amstrad CPC
 
-This test is intended to be run from the low ROM of the Amstrad CPC at startup.
-* Lower RAM test (errors reported with bars on border).
-* Upper RAM test (64K).
-* Dandanator build only: Check the low system ROM is valid.
+This test is intended to be run from the low ROM of the Amstrad CPC at startup. It performs the following tests:
+* Lower 64KB RAM test.
+* Upper 64KB RAM test.
+* [Dandanator build only] Check the low system ROM is valid.
 * Check that upper system ROMs are valid.
 * Detect CRTC model.
 
