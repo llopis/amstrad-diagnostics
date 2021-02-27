@@ -1,0 +1,40 @@
+
+TxtUnknownROM: db 'UNKNOWN ROM',0
+
+TxtOS464EN: db 'OS 464 EN',0
+TxtOS464SP: db 'OS 464 SP',0
+TxtOS464FR: db 'OS 464 FR',0
+TxtOS6128EN: db 'OS 6128 EN',0
+TxtOS6128SP: db 'OS 6128 SP',0
+TxtOS6128FR: db 'OS 6128 FR',0
+TxtOSSch464SP: db 'OS 464 Schneider SP',0
+
+TxtBASIC10EN: db 'BASIC 1.0 EN',0
+TxtBASICSch10Sp: db 'BASIC 1.0 Schneider SP',0
+TxtBASIC11EN: db 'BASIC 1.1 EN',0
+TxtBASIC11SP: db 'BASIC 1.1 SP',0
+TxtBASIC11FR: db 'BASIC 1.1 FR',0
+
+TxtAMSDOS: db 'AMSDOS',0
+TxtPARADOS: db 'PARADOS',0
+
+
+ROMInfoTable:
+	defw #5D07, TxtOS464EN
+	defw #3E84, TxtOS464SP
+	defw #0EEA, TxtOS464FR
+	defw #B360, TxtOS6128EN
+	defw #BAF7, TxtOS6128SP
+	defw #8051, TxtOS6128FR
+	defw #DCCF, TxtOSSch464SP
+
+	defw #6098, TxtBASIC10EN
+	defw #CAA0, TxtBASIC11EN
+	defw #03E4, TxtBASIC11SP
+	defw #814D, TxtBASIC11FR
+	defw #5646, TxtBASICSch10Sp
+
+	defw #0F91, TxtAMSDOS
+	defw #D75F, TxtPARADOS
+
+ROMCount equ ($-ROMInfoTable)/4
