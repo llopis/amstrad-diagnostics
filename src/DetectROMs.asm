@@ -13,18 +13,12 @@ DetectROMs:
 		call CheckLowerROM
 	ENDIF
 	
-	ld d,0
-	push de
-.loop:
-	call CheckUpperROM
-	pop de	
-	inc d
-	push de
-	ld a,d
-	cp #0F
-	jr nz,.loop
 
-	pop de	
+	ld d,0
+	call CheckUpperROM
+	ld d,7
+	call CheckUpperROM
+
 	ret
 	
 
