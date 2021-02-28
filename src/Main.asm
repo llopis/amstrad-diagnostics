@@ -84,4 +84,6 @@ ErrorFound: db 0
 
 	ENT
 ENDOFPROG:
-	ds 16384-ENDOFPROG		;; Round it up to 16 KB
+	IFDEF DandanatorSupport
+		ds 16384-ENDOFPROG		;; Round it up to 16 KB
+	ENDIF

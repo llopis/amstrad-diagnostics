@@ -48,316 +48,332 @@ DisplayFailingBits:
 	ld bc, #7F10
 	out (c), c
 	ld c, ColorBackground
-	ld a, ColorNumber
+	ld h, ColorNumber
 
-	DEFINE F #ed,#79, 
+	; out (c), h
+	DEFINE F #ed,#61, 
+	; out (c), c
 	DEFINE _ #ed,#49, 
+	; out (c), l
 	DEFINE B #ed,#69, 
-	DEFINE EOL #ed,#49, #ed,#49, #ed,#49, #ed,#49
+	DEFINE EOL , #ed,#49, #ed,#49
+
+/*
+	ld a,#f			; [2]
+.testLoop:
+	dec a			; [1]
+	jr nz,.testLoop		; [3] / [2]
+	nop
+	nop
+	nop
+*/
+	DEFINE WAIT16 #3E, #0f, #3D, #20, #fD, 0, 0, 0
+	DEFINE WAIT12 #3E, #0b, #3D, #20, #fD, 0, 0, 0
+	DEFINE WAIT9  #3E, #08, #3D, #20, #fD, 0, 0, 0
 
 	INCLUDE "ColorChange.asm"
 
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
+	db WAIT16
+	db WAIT16
+	db WAIT16
 
 	; 0
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
 
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _     EOL
+	db WAIT16
+	db WAIT16
+	db WAIT12
 
 	INCLUDE "ColorChange.asm"
 
 	; 1
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ B B B B B B B B    EOL
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
-	db _ F _ _ _ _ _ _ _ _ _ _    EOL
+	db _ F _ _ WAIT12
+	db _ F _ _ WAIT12
+	db _ F _ _ WAIT12
+	db _ F _ _ WAIT12
+	db _ F _ _ WAIT12
+	db _ F _ _ WAIT12
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ B WAIT9 EOL
+	db _ F _ _ WAIT12
+	db _ F _ _ WAIT12
+	db _ F _ _ WAIT12
+	db _ F _ _ WAIT12
+	db _ F _ _ WAIT12
+	db _ F _ _ WAIT12
 
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _     EOL
+	db WAIT16
+	db WAIT16
+	db WAIT12
 
 	INCLUDE "ColorChange.asm"
 
 	; 2
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
 
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _     EOL
+	db WAIT16
+	db WAIT16
+	db WAIT12
 
 	INCLUDE "ColorChange.asm"
 
 	; 3
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
 
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _     EOL
+	db WAIT16
+	db WAIT16
+	db WAIT12
 
 	INCLUDE "ColorChange.asm"
 
 	; 4
-	db F _ F _ _ _ _ _ _ _ _ _    EOL
-	db F _ F _ _ _ _ _ _ _ _ _    EOL
-	db F _ F _ _ _ _ _ _ _ _ _    EOL
-	db F _ F _ _ _ _ _ _ _ _ _    EOL
-	db F _ F _ _ _ _ _ _ _ _ _    EOL
-	db F _ F _ _ _ _ _ _ _ _ _    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
+	db F _ F _ WAIT12
+	db F _ F _ WAIT12
+	db F _ F _ WAIT12
+	db F _ F _ WAIT12
+	db F _ F _ WAIT12
+	db F _ F _ WAIT12
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ WAIT12
+	db _ _ F _ WAIT12
+	db _ _ F _ WAIT12
+	db _ _ F _ WAIT12
+	db _ _ F _ WAIT12
+	db _ _ F _ WAIT12
 
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _     EOL
+	db WAIT16
+	db WAIT16
+	db WAIT12
 
 	INCLUDE "ColorChange.asm"
 
 	; 5
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
 
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _     EOL
+	db WAIT16
+	db WAIT16
+	db WAIT12
 
 	INCLUDE "ColorChange.asm"
 
 	; 6
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F _ _ _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F F F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F _ F _ B B B B B B B B    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F _ _ _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F F F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F _ F _ B WAIT9 EOL
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
 
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _ _ _ _ _    EOL
-	db _ _ _ _ _ _ _ _     EOL
+	db WAIT16
+	db WAIT16
+	db WAIT12
 
 	INCLUDE "ColorChange.asm"
 
 	; 7
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db F F F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ B B B B B B B B    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
-	db _ _ F _ _ _ _ _ _ _ _ _    EOL
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db F F F _ WAIT12
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ B WAIT9 EOL
+	db _ _ F _ WAIT12
+	db _ _ F _ WAIT12
+	db _ _ F _ WAIT12
+	db _ _ F _ WAIT12
+	db _ _ F _ WAIT12
+	db _ _ F _ WAIT12
 
 
 	UNDEFINE F
