@@ -66,7 +66,7 @@ SetErrorFound:
 	ret
 
 
-TxtTitle: db '              AMSTRAD DIAGNOSTICS V0.2               ',0
+TxtTitle: db '              AMSTRAD DIAGNOSTICS V0.3               ',0
 TxtFooter: db '                  NOEL LLOPIS 2021                   ',0
 TxtLowerRAMOK: db 'LOWER RAM OK.',0
 TxtTestsFailed: db 'TESTS FAILED',0
