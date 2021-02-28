@@ -1,12 +1,3 @@
-	INCLUDE "Config.asm"
-
-	MACRO PADORG addr
-		; add padding
-		IF $ < addr
-		BLOCK addr-$
-		ENDIF
-		ORG addr
-	ENDM
     
 ;; Reset vector
 ;==============================================================================
@@ -131,8 +122,7 @@ HwInit_GACLoop:
 	xor A
 	out (C), A
 
+	ld sp, #BFFF
+
 	jp LowerRAMTest
-        
-
-	INCLUDE "LowerRAMTest.asm"
-
+  

@@ -6,6 +6,7 @@ ColorGood       EQU ColorLime
 ColorBad        EQU ColorBrightRed
 
 DisplayFailingBits:
+	di 
 	; Turn the whole screen into a giant border
 	; out &bc00,6:out &bd00,0
 	ld bc,#bc06

@@ -11,6 +11,8 @@ DetectROMs:
 		ld (iy+0),b
 		
 		call CheckLowerROM
+	ELSE IFDEF UpperROM
+		call CheckLowerROM
 	ENDIF
 	
 

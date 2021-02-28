@@ -2,3 +2,4 @@ AmstradDiag_list.txt
 *.sublime-workspace
 *.sublime-project
 ROMDump/build
+build

@@ -2,11 +2,16 @@
 ;; Based on Quick and dirty RAM test for CPC by Gerald
 ;; http://www.cpcwiki.eu/forum/amstrad-cpc-hardware/quick-and-dirty-ram-test-for-cpc/
 
+	IFDEF UpperROM
+TestStartAddress EQU #0000
+TestAmount EQU #C000
+	ELSE
 TestStartAddress EQU #4000
 TestAmount EQU #C000
+	ENDIF
 
-
-LowerRAMTest::
+LowerRAMTest:
+	di
 	;;===================================================== 
 	;; PASS0 : Fill screen with #ff
 	;;===================================================== 
@@ -128,15 +133,6 @@ RTB_L4OK:
 	jp DisplayFailingBits
 
 
-
-RAMTestPassed:
-	ld sp, #BFFF
-	ld hl, MAINBEGIN
-	ld de, MainProgramAddr
-	ld bc, ENDOFPROG-MAINBEGIN
-	ldir
-	jp MainProgramAddr
-
 	INCLUDE "DisplayFailingBits.asm"       
-	INCLUDE "Main.asm"
+
 
