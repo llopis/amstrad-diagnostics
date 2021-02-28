@@ -19,15 +19,6 @@ Then, if it detects the upper 64KB of RAM, it runs some tests to verify that mem
 Finally it does some checks on the system ROMs to make sure they match known ROMs and they're not corrupted. It also detects the CRTC type.
 
 
-# TODO
-* Better RAM tests
-* Detect addressing problems vs bit problems
-* Identify ROMs in more languages
-* Detect Plus range
-* Different IC numbers if detecting CRTC 4?
-* Sound, keyboard, and joystick tests
-* Maybe disk controller tests
-
 # Credits
 
 Project created and maintained by Noel Llopis. Some code and support by: Brendan Alford, Gérald Vincent, Kevin Thacker, Rhino, KaosOverride, Spirax.
