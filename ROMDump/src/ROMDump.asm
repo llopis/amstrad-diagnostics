@@ -51,6 +51,10 @@ DumpHighROM:
 	ld bc,#7F8D                        ; GA deselect upper rom, and mode 1
 	out (c),c
 
+	ld a,0
+	ld bc,#df00
+	out (c),a
+
 	ei
 
 	ld ix,#4000

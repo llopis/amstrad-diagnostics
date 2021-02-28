@@ -17,3 +17,5 @@
 220 crc = crch * 256 + crcl
 230 PRINT "CRC &";HEX$(crc,4) 
 240 SAVE rom$,b,&4000,&4000  
+
+
