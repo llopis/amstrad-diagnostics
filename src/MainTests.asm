@@ -12,6 +12,8 @@ MainTests:
 	call NewLine
 	call DetectCRTC
 	call NewLine
+	call TestKeyboard
+	call NewLine
 	
 	call PrintResult
 Wait:
@@ -79,4 +81,5 @@ ErrorFound: db 0
 	INCLUDE "UtilsText.asm"
 	INCLUDE "Screen.asm"
 	INCLUDE "DetectCRTC.asm"
+	INCLUDE "KeyboardTest.asm"
 
