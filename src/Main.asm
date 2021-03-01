@@ -8,15 +8,49 @@
 		ORG addr
 	ENDM
 
-	IFNDEF UpperROM
-		INCLUDE "HardwareInit.asm"
-	ELSE
-		ORG #C000
-		INCLUDE "RSXTable.asm"
-	ENDIF
 
+;; *******************************
+;; LOWER ROM BUILD
+	IFDEF LowerROMBuild
+	DISPLAY "Lower ROM build"
+	INCLUDE "HardwareInit.asm"
+
+TestStartAddress EQU #4000
+TestAmount EQU #C000
 	INCLUDE "LowerRAMTest.asm"
 
+	ENDIF
+
+
+;; **********************************
+;; UPPER ROM BUILD
+	IFDEF UpperROMBuild
+	DISPLAY "Upper ROM build"
+	ORG #C000
+	INCLUDE "RSXTable.asm"
+
+TestStartAddress EQU #0000
+TestAmount EQU #C000
+	INCLUDE "LowerRAMTest.asm"
+
+	ENDIF
+
+
+
+;; **********************************
+;; RAM BUILD
+	IFDEF RAMBuild
+	DISPLAY "RAM build"
+	ORG #4000
+TestStartAddress EQU #C000
+TestAmount EQU #4000
+	INCLUDE "LowerRAMTest.asm"
+
+	ENDIF
+
+
+
+;; COMMON
 
 RAMTestPassed:
 	ld hl, MAINBEGIN
@@ -24,7 +58,6 @@ RAMTestPassed:
 	ld bc, ENDOFPROG-MAINBEGIN
 	ldir
 	jp MainTests
-
 
 MainProgramAddr EQU #8000
 MAINBEGIN:
@@ -35,4 +68,3 @@ ENDOFPROG:
 	IFDEF DandanatorSupport
 		ds 16384-ENDOFPROG		;; Round it up to 16 KB
 	ENDIF
-

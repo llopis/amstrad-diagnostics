@@ -2,14 +2,6 @@
 ;; Based on Quick and dirty RAM test for CPC by Gerald
 ;; http://www.cpcwiki.eu/forum/amstrad-cpc-hardware/quick-and-dirty-ram-test-for-cpc/
 
-	IFDEF UpperROM
-TestStartAddress EQU #0000
-TestAmount EQU #C000
-	ELSE
-TestStartAddress EQU #4000
-TestAmount EQU #C000
-	ENDIF
-
 LowerRAMTest:
 	di
 	;;===================================================== 

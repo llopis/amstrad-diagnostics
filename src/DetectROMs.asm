@@ -3,15 +3,14 @@ DetectROMs:
 	call PrintString
 	call NewLine
 	
+	IFDEF LOWER_ROM_CHECK_ENABLED
 	IFDEF DandanatorSupport
 		; Stop paging mode in Dandanator so system lower ROM is accessible
 		ld b,#20
 		ld iy,ScratchByte
 		db #FD, #FD
 		ld (iy+0),b
-		
-		call CheckLowerROM
-	ELSE IFDEF UpperROM
+	ENDIF		
 		call CheckLowerROM
 	ENDIF
 	
