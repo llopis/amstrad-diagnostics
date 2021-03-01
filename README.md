@@ -18,7 +18,10 @@ Then, if it detects the upper 64KB of RAM, it runs some tests to verify that mem
 
 Finally it does some checks on the system ROMs to make sure they match known ROMs and they're not corrupted. It also detects the CRTC type.
 
+# Support and Development
+Come join the Discord server https://discord.gg/ETcCh6J﻿ and look for the amstrad-diagnostics channel.
+
 
 # Credits
 
-Project created and maintained by Noel Llopis. Some code and support by: Brendan Alford, Gérald Vincent, Kevin Thacker, Rhino, KaosOverride, Spirax.
+Project created and maintained by Noel Llopis. Many people contributed code and ideas to this project: Brendan Alford, Gérald Vincent, Kevin Thacker, Rhino, KaosOverride, Spirax.
