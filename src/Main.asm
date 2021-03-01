@@ -65,6 +65,8 @@ MAINBEGIN:
 	INCLUDE "MainTests.asm"
 	ENT
 ENDOFPROG:
-	IFDEF DandanatorSupport
+	IFDEF UpperROM
+		ds 65536-ENDOFPROG		;; Round it up to 16 KB
+	ELSE
 		ds 16384-ENDOFPROG		;; Round it up to 16 KB
 	ENDIF
