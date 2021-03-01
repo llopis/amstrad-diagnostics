@@ -3,18 +3,31 @@ DetectROMs:
 	call PrintString
 	call NewLine
 	
-	IFDEF LOWER_ROM_CHECK_ENABLED
-	IFDEF DandanatorSupport
-		; Stop paging mode in Dandanator so system lower ROM is accessible
-		ld b,#20
-		ld iy,ScratchByte
-		db #FD, #FD
-		ld (iy+0),b
-	ENDIF		
-		call CheckLowerROM
-	ENDIF
-	
+	; Stop paging mode in Dandanator so system lower ROM is accessible
+	ld b,#20
+	ld iy,ScratchByte
+	db #FD, #FD
+	ld (iy+0),b
 
+	; Now check if the low RAM is still there
+	; Check if we see the mark DIAG, if not, skip low RAM test
+	ld ix,TxtROMMark
+	ld a,'D'
+	cp (ix)
+	jr nz, .startUpperROMCheck
+	ld a,'I'
+	cp (ix+1)
+	jr nz, .startUpperROMCheck
+	ld a,'A'
+	cp (ix+2)
+	jr nz, .startUpperROMCheck
+	ld a,'G'
+	cp (ix+3)
+	jr nz, .startUpperROMCheck
+
+	call CheckLowerROM
+	
+.startUpperROMCheck:
 	ld d,0
 	call CheckUpperROM
 	ld d,7
@@ -22,7 +35,6 @@ DetectROMs:
 
 	ret
 	
-
 TxtDetecting: db 'DETECTING ROM...',0
 TxtLowerROM: db 'LOWER ROM: ',0
 TxtROM: db 'ROM ',0

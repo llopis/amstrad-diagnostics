@@ -61,6 +61,9 @@ RAMTestPassed:
 	ldir
 	jp MainTests
 
+TxtROMMark:
+	db 'DIAG'
+
 MainProgramAddr EQU #8000
 MainBegin:
 	DISP MainProgramAddr
