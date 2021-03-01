@@ -8,8 +8,8 @@ LowerRAMTest:
 	;; PASS0 : Fill screen with #ff
 	;;===================================================== 
 	ld e, #FF
-	ld hl, TestStartAddress
-	ld bc, TestAmount
+	ld hl, LOWER_RAM_TEST_START
+	ld bc, LOWER_RAM_TEST_SIZE
 RTB_L0:
 	ld (hl), e
 	inc hl
@@ -25,8 +25,8 @@ RTB_L0:
 	;; PASS1 : Check #ff filling and replace with #55
 	;;===================================================== 
 	ld e, #55
-	ld hl, TestStartAddress
-	ld bc, TestAmount
+	ld hl, LOWER_RAM_TEST_START
+	ld bc, LOWER_RAM_TEST_SIZE
 RTB_L1:
 	ld a, (hl)
 	xor #FF                 ; compare to expected
@@ -47,8 +47,8 @@ RTB_L1OK:
 	;; PASS2 : Check #55 filling and replace with #AA
 	;;===================================================== 
 	ld e, #AA
-	ld hl, TestStartAddress
-	ld bc, TestAmount
+	ld hl, LOWER_RAM_TEST_START
+	ld bc, LOWER_RAM_TEST_SIZE
 RTB_L2:
 	ld a, (hl)
 	xor #55                 ; compare to expected
@@ -69,8 +69,8 @@ RTB_L2OK:
 	;; PASS3 : Check #AA filling and replace with #00
 	;;===================================================== 
 	ld e, #00
-	ld hl, TestStartAddress
-	ld bc, TestAmount
+	ld hl, LOWER_RAM_TEST_START
+	ld bc, LOWER_RAM_TEST_SIZE
 RTB_L3:
 	ld a, (hl)
 	xor #AA                 ; compare to expected
@@ -90,8 +90,8 @@ RTB_L3OK:
 	;;===================================================== 
 	;; PASS4 : Check #00 filling
 	;;===================================================== 
-	ld hl, TestStartAddress
-	ld bc, TestAmount
+	ld hl, LOWER_RAM_TEST_START
+	ld bc, LOWER_RAM_TEST_SIZE
 RTB_L4:
 	ld a, (hl)
 	xor 0                 ; compare to expected

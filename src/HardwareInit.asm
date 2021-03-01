@@ -1,3 +1,12 @@
+	MACRO PADORG addr
+		; add padding
+		IF $ < addr
+		BLOCK addr-$
+		ENDIF
+		ORG addr
+	ENDM
+
+
     
 ;; Reset vector
 ;==============================================================================

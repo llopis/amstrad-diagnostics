@@ -1,24 +1,14 @@
 	INCLUDE "Config.asm"
 
-	MACRO PADORG addr
-		; add padding
-		IF $ < addr
-		BLOCK addr-$
-		ENDIF
-		ORG addr
-	ENDM
-
 
 ;; *******************************
 ;; LOWER ROM BUILD
 	IFDEF LowerROMBuild
 	DISPLAY "Lower ROM build"
+
+	ORG #0000
+ProgramStart:
 	INCLUDE "HardwareInit.asm"
-
-TestStartAddress EQU #4000
-TestAmount EQU #C000
-	INCLUDE "LowerRAMTest.asm"
-
 	ENDIF
 
 
@@ -27,14 +17,9 @@ TestAmount EQU #C000
 	IFDEF UpperROMBuild
 	DISPLAY "Upper ROM build"
 	ORG #C000
+ProgramStart:
 	INCLUDE "RSXTable.asm"
-
-TestStartAddress EQU #0000
-TestAmount EQU #C000
-	INCLUDE "LowerRAMTest.asm"
-
 	ENDIF
-
 
 
 ;; **********************************
@@ -42,31 +27,30 @@ TestAmount EQU #C000
 	IFDEF RAMBuild
 	DISPLAY "RAM build"
 	ORG #4000
-TestStartAddress EQU #C000
-TestAmount EQU #4000
-	INCLUDE "LowerRAMTest.asm"
-
 	ENDIF
 
 
 
 ;; COMMON
 
+	INCLUDE "LowerRAMTest.asm"
 RAMTestPassed:
-	ld hl, MAINBEGIN
+	ld hl, MainBegin
 	ld de, MainProgramAddr
-	ld bc, ENDOFPROG-MAINBEGIN
+	ld bc, ProgramEnd-MainBegin
 	ldir
 	jp MainTests
 
 MainProgramAddr EQU #8000
-MAINBEGIN:
+MainBegin:
 	DISP MainProgramAddr
 	INCLUDE "MainTests.asm"
 	ENT
-ENDOFPROG:
-	IFDEF UpperROM
-		ds 65536-ENDOFPROG		;; Round it up to 16 KB
-	ELSE
-		ds 16384-ENDOFPROG		;; Round it up to 16 KB
+ProgramEnd:
+	IFDEF PAD_TO_16K
+		ds (ProgramStart+#4000)-ProgramEnd		;; Round it up to 16 KB
+	ENDIF
+
+	IFDEF PRINT_PROGRAM_SIZE
+		DISPLAY "Program size: ", ProgramEnd - ProgramStart
 	ENDIF

@@ -1,17 +1,36 @@
 
-	; If DandanatorSupport is defined, it will attempt to remove page 0 and access the low system ROM
+;; The build types are passed in from the build script (but can also be forced here)
 ;	DEFINE LowerROMBuild 1
-;	DEFINE DandanatorSupport 1
 ;	DEFINE UpperROMBuild 1
 ;	DEFINE RAMBuild 1
+
+;	DEFINE DandanatorSupport 1
+
 
 ;	DEFINE LowerRAMFailure #13
 ;	DEFINE UpperRAMFailure #61
 
-	IFNDEF LowerROMBuild
-		DEFINE LOWER_ROM_CHECK_ENABLED
-	ELSE
+
+	IFDEF LowerROMBuild
+		DEFINE PAD_TO_16K
 		IFDEF DandanatorSupport
 			DEFINE LOWER_ROM_CHECK_ENABLED
+			DEFINE PRINT_PROGRAM_SIZE
 		ENDIF
+
+		DEFINE LOWER_RAM_TEST_START #4000
+		DEFINE LOWER_RAM_TEST_SIZE  #C000
+	ENDIF
+
+	IFDEF UpperROMBuild
+		DEFINE PAD_TO_16K
+		DEFINE LOWER_ROM_CHECK_ENABLED
+		DEFINE LOWER_RAM_TEST_START #0000
+		DEFINE LOWER_RAM_TEST_SIZE  #C000
+	ENDIF
+
+	IFDEF RAMBuild
+		DEFINE LOWER_ROM_CHECK_ENABLED
+		DEFINE LOWER_RAM_TEST_START #C000
+		DEFINE LOWER_RAM_TEST_SIZE  #4000
 	ENDIF
