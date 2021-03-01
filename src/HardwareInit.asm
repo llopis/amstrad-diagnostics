@@ -132,6 +132,4 @@ HwInit_GACLoop:
 	out (C), A
 
 	ld sp, #BFFF
-
-	jp LowerRAMTest
   
