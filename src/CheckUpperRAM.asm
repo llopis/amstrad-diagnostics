@@ -1,4 +1,6 @@
 CheckUpperRAM:
+	call UpperRAMSetUpScreen
+
 	call IsUpperRAMPresent
 	jr z,.none
 
@@ -59,7 +61,24 @@ CheckUpperRAM:
 	call NewLine
 	ret
 	
+UpperRAMSetUpScreen:
+	call ClearScreen
+	ld a,4
+	call SetBorderColor 
 
+	ld hl,#0000
+	call SetTextCoords
+	call SetTitleColors
+	ld hl,TxtUpperRAMTitle
+	call PrintString
+
+	ld hl,#0002
+	call SetTextCoords
+	call SetDefaultColors
+	ret
+
+
+TxtUpperRAMTitle: db '       AMSTRAD DIAGNOSTICS - UPPER RAM TEST          ',0
 TxtNoUpperRAM: db 'NO UPPER RAM DETECTED.',0
 TxtYesUpperRAM: db 'FOUND UPPER RAM',0
 TxtRAMTestPassed: db 'RAM TEST PASSED.',0

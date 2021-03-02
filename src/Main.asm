@@ -72,7 +72,7 @@ RAMTestPassed:
 	ld de, MainProgramAddr
 	ld bc, ProgramEnd-MainBegin
 	ldir
-	jp MainTests
+	jp MainMenu
 
 TxtROMMark:
 	db 'DIAG'
@@ -80,7 +80,7 @@ TxtROMMark:
 MainProgramAddr EQU #8000
 MainBegin:
 	DISP MainProgramAddr
-	INCLUDE "MainTests.asm"
+	INCLUDE "MainMenu.asm"
 	ENT
 ProgramEnd:
 	IFDEF PAD_TO_16K

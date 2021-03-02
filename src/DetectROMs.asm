@@ -1,6 +1,8 @@
 
 	IFDEF ROM_CHECK
 DetectROMs:
+	call ROMSetUpScreen
+
 	ld hl,TxtDetecting
 	call PrintString
 	call NewLine
@@ -37,6 +39,26 @@ DetectROMs:
 
 	ret
 	
+
+ROMSetUpScreen:
+	call ClearScreen
+	ld a,4
+	call SetBorderColor 
+
+	ld hl,#0000
+	call SetTextCoords
+	call SetTitleColors
+	ld hl,TxtROMTitle
+	call PrintString
+
+	ld hl,#0002
+	call SetTextCoords
+	call SetDefaultColors
+	ret
+
+
+TxtROMTitle: db '          AMSTRAD DIAGNOSTICS - ROM TEST             ',0
+
 TxtDetecting: db 'DETECTING ROM...',0
 TxtLowerROM: db 'LOWER ROM: ',0
 TxtROM: db 'ROM ',0

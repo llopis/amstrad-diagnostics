@@ -40,6 +40,17 @@ ClearScreen:
 	ret
 	
 
+WaitForVsync:
+        ; Wait for Vsync
+.frameLoop:
+	ld     b,#f5
+.vbLoop1
+	in    a,(c)
+	rra
+	jr    nc,.vbLoop1
+	ret
+
+
 ;; nibbles swapped!
 pen0 equ %00000000
 pen1 equ %00001000
