@@ -22,6 +22,19 @@ ProgramStart:
 	ENDIF
 
 
+;; *******************************
+;; CARTRIDGE BUILD
+	IFDEF CartridgeBuild
+	DISPLAY "Lower ROM build"
+
+	ORG #0000
+ProgramStart:
+	INCLUDE "CartridgeHeader.asm"
+	INCLUDE "HardwareInit.asm"
+	ENDIF
+
+
+
 ;; **********************************
 ;; RAM BUILD
 	IFDEF RAMBuild

@@ -1,3 +1,5 @@
+
+	IFDEF ROM_CHECK
 DetectROMs:
 	ld hl,TxtDetecting
 	call PrintString
@@ -216,3 +218,5 @@ PrintROMName:
 	ret
 	
 	INCLUDE "ROMTable.asm"
+
+	ENDIF
