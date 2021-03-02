@@ -8,8 +8,12 @@ MainTests:
 
 	call CheckUpperRAM
 	call NewLine
+
+	IFDEF ROM_CHECK
 	call DetectROMs
 	call NewLine
+	ENDIF
+	
 	call DetectCRTC
 	call NewLine
 	call TestKeyboard
