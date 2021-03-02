@@ -4,6 +4,7 @@ KEYBOARD_Y EQU #06
 TestKeyboard:
 		call KeyboardSetUpScreen
 		call	PrintKeyboard
+		call ClearKeyPresses
 		ret
 
 PrintKeyboard:
@@ -11,6 +12,13 @@ PrintKeyboard:
 		cp	#a4				; for ctrl+shift+enter %c0s0 0e00 = #A4
 		jr	nz, PrintKeyboardContinue
 		ret
+ClearKeyPresses:
+		ld	hl, KeyboardMatrixBufferPerm	; clear all previous keypresses
+		ld	b,10
+ClearKeypressesLoop:
+		ld	(hl), 0
+		inc	hl
+		djnz	ClearKeypressesLoop
 
 PrintKeyboardContinue:
 		ld	b,80
@@ -52,7 +60,7 @@ PrintKeyboardLoop:
 SetKeyColor:
 		ld	a,80
 		sub	b		; Get key number
-		ld	hl,KeyboardMatrixBuffer
+		ld	hl,KeyboardMatrixBufferPerm
 		ld	c,a
 		sra	a
 		sra	a
