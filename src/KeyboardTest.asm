@@ -69,7 +69,7 @@ SetKeyColor:
 		and	%00000111	; Find relevant bit
 		sll	a
 		sll	a
-		sll	a		; prepration for bit manipulation
+		sll	a		; preparation for bit manipulation
 		or	%01000110	; the second part of the BIT 0, (HL) opcode
 		ld	(TestBitDirtyHack+1),a ; !!!
 		ld	a,(hl)
