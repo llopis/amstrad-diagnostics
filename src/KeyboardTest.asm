@@ -1,17 +1,8 @@
 
 KEYBOARD_Y EQU #06
 
-TxtKeyboard:
-		db	'PRESS CONTROL+SHIFT+RETURN TO EXIT',0
-
 TestKeyboard:
 		call KeyboardSetUpScreen
-
-		ld	hl,#0014
-		ld	(txt_coords),hl
-		ld	hl,TxtKeyboard
-		call	PrintString
-		call	NewLine
 		call	PrintKeyboard
 		ret
 
@@ -104,7 +95,14 @@ KeyboardSetUpScreen:
 	ld hl,#0002
 	call SetTextCoords
 	call SetDefaultColors
+
+	ld hl,#0014
+	ld (txt_coords),hl
+	ld hl,TxtKeyboard
+	call PrintString
+	call NewLine
 	ret
 
 
 TxtKeyboardTitle: db '       AMSTRAD DIAGNOSTICS - KEYBOARD TEST          ',0
+TxtKeyboard:      db 'PRESS CONTROL+SHIFT+RETURN TO EXIT',0
