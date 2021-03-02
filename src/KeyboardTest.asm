@@ -1,12 +1,6 @@
-TxtKeyboard:
-		db	'KEYBOARD TEST (CONTROL+SHIFT+RETURN TO EXIT)',0
 
 TestKeyboard:
 		call KeyboardSetUpScreen
-
-		ld	hl,TxtKeyboard
-		call	PrintString
-		call	NewLine
 		call	PrintKeyboard
 		ret
 PrintKeyboard:
@@ -100,7 +94,13 @@ KeyboardSetUpScreen:
 	ld hl,#0002
 	call SetTextCoords
 	call SetDefaultColors
+
+	ld hl,TxtKeyboard
+	call PrintString
+	call NewLine
+
 	ret
 
 
 TxtKeyboardTitle: db '       AMSTRAD DIAGNOSTICS - KEYBOARD TEST          ',0
+TxtKeyboard:      db 'KEYBOARD TEST (CONTROL+SHIFT+RETURN TO EXIT)',0
