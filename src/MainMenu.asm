@@ -42,9 +42,12 @@ MainMenuRepeat:
 
 .keyboardTestSelected:
 	call TestKeyboard
-	jp TestComplete
+	jp MainMenuRepeat
 
 TestComplete:
+	call NewLine
+	ld hl,TxtAnyKeyMainMenu
+	call PrintString
 .loop:
 	call WaitForVsync
 	call ReadFullKeyboard
@@ -94,6 +97,7 @@ TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtRAMTest: db "[1] UPPER RAM",0
 TxtROMTest: db "[2] ROM",0
 TxtKeyboardTest: db "[3] KEYBOARD",0
+TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 
 
 	INCLUDE "MainTests.asm"
