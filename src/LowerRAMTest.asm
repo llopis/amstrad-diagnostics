@@ -2,6 +2,11 @@
 ;; Based on Quick and dirty RAM test for CPC by Gerald
 ;; http://www.cpcwiki.eu/forum/amstrad-cpc-hardware/quick-and-dirty-ram-test-for-cpc/
 
+  IFDEF SkipLowerRAMTest
+  	DISPLAY "Skipping lower RAM tests."
+ 	jp RAMTestPassed
+  ENDIF
+
 LowerRAMTest:
 	di
 	;;===================================================== 

@@ -1,21 +1,26 @@
+
+KEYBOARD_Y EQU #06
+
 TxtKeyboard:
-		db	'KEYBOARD TEST (CONTROL+SHIFT+RETURN TO EXIT)',0
+		db	'PRESS CONTROL+SHIFT+RETURN TO EXIT',0
 
 TestKeyboard:
 		call KeyboardSetUpScreen
 
+		ld	hl,#0014
+		ld	(txt_coords),hl
 		ld	hl,TxtKeyboard
 		call	PrintString
 		call	NewLine
 		call	PrintKeyboard
 		ret
+
 PrintKeyboard:
 		ld	a, (KeyboardMatrixBuffer+2)	; check row 2 (keys 16-23)
 		cp	#a4				; for ctrl+shift+enter %c0s0 0e00 = #A4
 		jr	nz, PrintKeyboardContinue
-		ld	hl, #0014
-		ld	(txt_coords), hl
 		ret
+
 PrintKeyboardContinue:
 		ld	b,80
 		ld	hl,KeyboardLocations
@@ -24,11 +29,10 @@ PrintKeyboardLoop:
 		dec	d
 		inc	hl
 		ld	e,(hl) ; text row
-		ld	a,14
+		ld	a,KEYBOARD_Y
 		add	e
 		ld	e,a
 		ld	(txt_coords),de
-
 
 		push	bc
 		push	hl
