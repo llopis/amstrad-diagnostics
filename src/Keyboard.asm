@@ -72,7 +72,12 @@ ScanKey:
 						;if a key/joystick button is pressed bit will be "1"
 						;keys that are not pressed will be "0"
 
-		ld	(hl),a			;write line data to buffer
+		ld	(hl),a			;write line data to temporary buffer
+		ld	de,KeyboardMatrixBufferPerm-KeyboardMatrixBuffer
+		add	hl,de		;move to permanent buffer
+		or	(hl)		;update pressed keys
+		ld	(hl),a		;
+		sbc	hl,de		;go back to temp buffer		
 		inc	hl			;update position in buffer
 		inc	c			;update line
 
@@ -97,7 +102,10 @@ ScanKey:
 ;;
 ;; A bit in a byte will be '1' if the corresponding key 
 ;; is pressed, '0' if the key is not pressed.
+
 KeyboardMatrixBuffer:
+		defs	10
+KeyboardMatrixBufferPerm:
 		defs	10
 
 
