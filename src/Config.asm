@@ -6,6 +6,7 @@
 ;	DEFINE RAMBuild 1
 
 
+;	DEFINE SkipLowerRAMTest
 ;	DEFINE LowerRAMFailure #13
 ;	DEFINE UpperRAMFailure #61
 

@@ -36,7 +36,6 @@ DetectROMs:
 	call CheckUpperROM
 	ld d,7
 	call CheckUpperROM
-
 	ret
 	
 
@@ -59,7 +58,7 @@ ROMSetUpScreen:
 
 TxtROMTitle: db '          AMSTRAD DIAGNOSTICS - ROM TEST             ',0
 
-TxtDetecting: db 'DETECTING ROM...',0
+TxtDetecting: db 'DETECTING ROMS...',0
 TxtLowerROM: db 'LOWER ROM: ',0
 TxtROM: db 'ROM ',0
 TxtColon: db ': ',0

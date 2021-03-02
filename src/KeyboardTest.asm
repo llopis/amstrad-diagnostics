@@ -1,23 +1,26 @@
 
+KEYBOARD_Y EQU #06
+
+TxtKeyboard:
+		db	'PRESS CONTROL+SHIFT+RETURN TO EXIT',0
+
 TestKeyboard:
 		call KeyboardSetUpScreen
+
+		ld	hl,#0014
+		ld	(txt_coords),hl
+		ld	hl,TxtKeyboard
+		call	PrintString
+		call	NewLine
 		call	PrintKeyboard
-		call	ClearKeyPresses
 		ret
+
 PrintKeyboard:
 		ld	a, (KeyboardMatrixBuffer+2)	; check row 2 (keys 16-23)
 		cp	#a4				; for ctrl+shift+enter %c0s0 0e00 = #A4
 		jr	nz, PrintKeyboardContinue
-		ld	hl, #0014
-		call	SetTextCoords
-ClearKeyPresses:
-		ld	hl, KeyboardMatrixBufferPerm	; clear all previous keypresses
-		ld	b,10
-ClearKeypressesLoop:
-		ld	(hl), 0
-		inc	hl
-		djnz	ClearKeypressesLoop
 		ret
+
 PrintKeyboardContinue:
 		ld	b,80
 		ld	hl,KeyboardLocations
@@ -26,11 +29,10 @@ PrintKeyboardLoop:
 		dec	d
 		inc	hl
 		ld	e,(hl) ; text row
-		ld	a,14
+		ld	a,KEYBOARD_Y
 		add	e
 		ld	e,a
 		ld	(txt_coords),de
-
 
 		push	bc
 		push	hl
@@ -59,7 +61,7 @@ PrintKeyboardLoop:
 SetKeyColor:
 		ld	a,80
 		sub	b		; Get key number
-		ld	hl,KeyboardMatrixBufferPerm
+		ld	hl,KeyboardMatrixBuffer
 		ld	c,a
 		sra	a
 		sra	a
@@ -71,7 +73,7 @@ SetKeyColor:
 		and	%00000111	; Find relevant bit
 		sll	a
 		sll	a
-		sll	a		; preparation for bit manipulation
+		sll	a		; prepration for bit manipulation
 		or	%01000110	; the second part of the BIT 0, (HL) opcode
 		ld	(TestBitDirtyHack+1),a ; !!!
 		ld	a,(hl)
@@ -102,13 +104,7 @@ KeyboardSetUpScreen:
 	ld hl,#0002
 	call SetTextCoords
 	call SetDefaultColors
-
-	ld hl,TxtKeyboard
-	call PrintString
-	call NewLine
-
 	ret
 
 
 TxtKeyboardTitle: db '       AMSTRAD DIAGNOSTICS - KEYBOARD TEST          ',0
-TxtKeyboard:      db 'KEYBOARD TEST (CONTROL+SHIFT+RETURN TO EXIT)',0
