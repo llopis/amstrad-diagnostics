@@ -2,6 +2,10 @@ CheckUpperRAM:
 	call UpperRAMSetUpScreen
 	call AddAllRAMMarkers
 	call RunUpperRAMTests
+
+	call AddAllRAMMarkers
+	call CheckC3Config
+
 	call PrintResult
 	ret
 
@@ -80,15 +84,31 @@ PrintResult:
 	call PrintHLDec
 	ld hl,TxtKB
 	call PrintString
+	call NewLine
 
-	ld hl,#0015
-	ld (txt_coords),hl
+	; Only print C3 config if some upper RAM was found
+	ld a,(ValidBlockCount)
+	or a
+	jr z,.printFinalResult
+
+	ld hl,TxtC3Config
+	call PrintString
+	ld hl,C3ConfigFailed
+	ld a,(hl)
+	or a
+	jr nz,.C3NotSupported
+	ld hl,TxtSupported
+	call PrintString
+	call NewLine
+
+.printFinalResult:
 	ld a,(FailingBits)
 	or a
 	jr nz,.failingTests
 	ld hl,TxtRAMTestPassed
 	call PrintString
 	ret
+
 .failingTests:
 	call SetErrorColors
 	ld hl,TxtRAMTestFailed
@@ -99,6 +119,16 @@ PrintResult:
 	call SetDefaultColors
 	ret
 
+.C3NotSupported:
+	call SetErrorColors
+	ld hl,TxtNot
+	call PrintString
+	ld a,' '
+	call PrintChar
+	ld hl,TxtSupported
+	call PrintString
+	call SetDefaultColors
+	jr .printFinalResult	
 
 
 //////////////////////////////
@@ -116,6 +146,9 @@ TxtTotalMemory: db 'TOTAL UPPER RAM: ',0
 TxtKB: db 'KB',0
 TxtRAMTestPassed: db 'UPPER RAM TESTS PASSED',0
 TxtRAMTestFailed: db 'UPPER RAM TESTS FAILED: ',0
+TxtC3Config: db 'C3 CONFIG: ',0
+TxtSupported: db 'SUPPORTED',0
+TxtNot: db 'NOT',0
 
 BankLabelXStart EQU 4
 BankLabelYStart EQU 4
@@ -130,6 +163,7 @@ BankNumbers: db #C4, #C5, #C6, #C7
 // Variables
 ValidBlockCount: db 0
 FailingBits: db 0
+C3ConfigFailed: db 0
 
 
 
@@ -384,3 +418,82 @@ SetErrorFound:
 	ld a,#c
 	call SetBorderColor
 	ret
+
+
+ScreenPattern EQU #BE
+
+;; See if the X3 config is supported. When setting C3 we should get blocks 1 3 2 7
+CheckC3Config:
+	ld hl,C3ConfigFailed
+	ld (hl),0
+	ld ix,RAMBankStart
+	ld iy,#C000
+	ld (iy),ScreenPattern
+	; d = bank
+	ld d,0
+.ramLoop:
+	;; Get high nibble from bank
+	ld a,d
+	rrca
+	and #0F
+	rla
+	rla
+	rla
+	rla
+	add #C0
+	ld l,a
+	push hl
+
+	;; First try X4 and make sure this one exists
+	or #4
+	ld l,a
+	ld b,#7F
+	out (c),l
+
+	ld a,(ix)
+	cp l
+	pop hl
+	jr nz, .nextBank
+
+	;; Set up X3 config
+	ld a,l
+	and #F0
+	or #3
+	ld l,a
+	ld b,#7F
+	out (c),l
+
+	;; First byte of slot 3 should be block 7
+	ld a,l
+	and #F0
+	or #7
+	ld l,a
+	ld a,(iy)
+	cp l
+	jr nz, .noC3
+
+	;; First byte of slot 2 should be the screen
+	ld a,(ix)
+	cp ScreenPattern
+	jr nz, .noC3
+
+.nextBank:
+	ld e,0
+	inc d
+	ld a,d
+	cp d,8
+	jr nz,.ramLoop
+
+	ld bc,#7FC0
+	out (c),c
+	ret
+
+.noC3:
+	ld hl,C3ConfigFailed
+	ld (hl),1
+	ld bc,#7FC0
+	out (c),c
+	ret
+
+
+

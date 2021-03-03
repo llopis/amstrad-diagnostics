@@ -87,6 +87,7 @@ PrintHLDec:
 	call .digit
 	ld de,10
 	call .digit
+	ld b,1   ; We want to print this digit for sure
 	ld de,1
 .digit:
 	xor a
@@ -101,15 +102,15 @@ PrintHLDec:
 	add hl,de
 
 	; Skip leading zeroes
+	ld c,a
 	or a
 	jr nz,.nonZeroChar
-	push af	
 	ld a,b
 	or a
-	pop af
 	ret z
 .nonZeroChar:
 	ld b,1
+	ld a,c
 	add a,#30
 	call PrintChar
 	ret
