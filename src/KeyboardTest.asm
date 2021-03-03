@@ -1,26 +1,26 @@
 
 KEYBOARD_Y EQU #06
 
-TxtKeyboard:
-		db	'PRESS CONTROL+SHIFT+RETURN TO EXIT',0
-
 TestKeyboard:
 		call KeyboardSetUpScreen
-
-		ld	hl,#0014
-		ld	(txt_coords),hl
-		ld	hl,TxtKeyboard
-		call	PrintString
-		call	NewLine
+		call ClearKeyPresses
 		call	PrintKeyboard
+		call ClearKeyPresses
 		ret
+
+ClearKeyPresses:
+		ld	hl, KeyboardMatrixBufferPerm	; clear all previous keypresses
+		ld	b,10
+ClearKeypressesLoop:
+		ld	(hl), 0
+		inc	hl
+		djnz	ClearKeypressesLoop
 
 PrintKeyboard:
 		ld	a, (KeyboardMatrixBuffer+2)	; check row 2 (keys 16-23)
 		cp	#a4				; for ctrl+shift+enter %c0s0 0e00 = #A4
 		jr	nz, PrintKeyboardContinue
 		ret
-
 PrintKeyboardContinue:
 		ld	b,80
 		ld	hl,KeyboardLocations
@@ -61,7 +61,7 @@ PrintKeyboardLoop:
 SetKeyColor:
 		ld	a,80
 		sub	b		; Get key number
-		ld	hl,KeyboardMatrixBuffer
+		ld	hl,KeyboardMatrixBufferPerm
 		ld	c,a
 		sra	a
 		sra	a
@@ -104,7 +104,14 @@ KeyboardSetUpScreen:
 	ld hl,#0002
 	call SetTextCoords
 	call SetDefaultColors
+
+	ld hl,#0014
+	ld (txt_coords),hl
+	ld hl,TxtKeyboard
+	call PrintString
+	call NewLine
 	ret
 
 
 TxtKeyboardTitle: db '       AMSTRAD DIAGNOSTICS - KEYBOARD TEST          ',0
+TxtKeyboard:      db 'PRESS CONTROL+SHIFT+RETURN TO EXIT',0
