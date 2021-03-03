@@ -5,7 +5,7 @@ DetectCRTC:
 	ld hl,TxtCRTC
 	call PrintString
 	call GetCRTCType
-	call PrintNumHex
+	call PrintAHex
 	call NewLine
 	
 	ret

@@ -1,65 +1,11 @@
 CheckUpperRAM:
 	call UpperRAMSetUpScreen
-
-	call IsUpperRAMPresent
-	jr z,.none
-
-	ld hl,TxtYesUpperRAM
-	call PrintString
-	
-	; Loop for all 4 data banks
-	ld bc,#7FC4
-.loop:
-	ld a,46
-	call PrintChar
-
-	push bc
-	out (c),c
-	
-	ld hl, RAMBankStart
-	ld de, #4000
-	call TestRAM
-
-	ld bc,#7FC0
-	out (c),c
-
-	or a
-	jr nz,.failed
-	
-	pop bc
-	inc c
-	ld a,c
-	cp #C8
-	jr nz,.loop
-
-	call NewLine
-	ld hl,TxtRAMTestPassed
-	call PrintString
-	call NewLine
+	call AddAllRAMMarkers
+	call RunUpperRAMTests
+	call PrintResult
 	ret
-	
-.failed:
-	pop bc
-	ld d,a
-	push de
-	call NewLine
-	call SetErrorColors
-	ld hl,TxtRAMTestFailed
-	call PrintString
-	call NewLine
-	
-	pop de
-	call PrintFailingBits
-	call SetDefaultColors
 
-	call SetErrorFound
-	ret
 	
-.none:
-	ld hl,TxtNoUpperRAM
-	call PrintString
-	call NewLine
-	ret
 	
 UpperRAMSetUpScreen:
 	call ClearScreen
@@ -75,52 +21,299 @@ UpperRAMSetUpScreen:
 	ld hl,#0002
 	call SetTextCoords
 	call SetDefaultColors
+
+	ld de,0
+.bankPrintLoop:
+	ld hl,BankLabelRows
+	add hl,de
+	ld a,(hl)
+	ld l,a
+	ld h,BankLabelXStart
+	ld (txt_coords),hl
+	ld hl,TxtBank
+	call PrintString
+	ld a,' '
+	call PrintChar
+	ld a,e
+	add '0'
+	call PrintChar
+	inc e
+	ld a,e
+	cp 8
+	jr nz,.bankPrintLoop
+
+
+	ld de,0
+.blockPrintLoop:
+	ld hl,BlockLabelCols
+	add hl,de
+	ld a,(hl)
+	ld h,a
+	ld l,BankLabelYStart-2
+	ld (txt_coords),hl
+	ld hl,TxtBlock
+	call PrintString
+	ld a,' '
+	call PrintChar
+	ld a,e
+	add '0'
+	call PrintChar
+	inc e
+	ld a,e
+	cp 4
+	jr nz,.blockPrintLoop
+
 	ret
+
+PrintResult:
+	ld hl,#0014
+	ld (txt_coords),hl
+	ld hl,TxtTotalMemory
+	call PrintString
+	ld a,(ValidBlockCount)
+	ld l,a
+	ld h,0
+	add hl,hl
+	add hl,hl
+	add hl,hl
+	add hl,hl
+	call PrintHLDec
+	ld hl,TxtKB
+	call PrintString
+
+	ld hl,#0015
+	ld (txt_coords),hl
+	ld a,(FailingBits)
+	or a
+	jr nz,.failingTests
+	ld hl,TxtRAMTestPassed
+	call PrintString
+	ret
+.failingTests:
+	call SetErrorColors
+	ld hl,TxtRAMTestFailed
+	call PrintString
+	ld a,(FailingBits)
+	ld d,a
+	call PrintFailingBits
+	call SetDefaultColors
+	ret
+
+
+
+//////////////////////////////
+// Constants
 
 
 TxtUpperRAMTitle: db '       AMSTRAD DIAGNOSTICS - UPPER RAM TEST          ',0
-TxtNoUpperRAM: db 'NO UPPER RAM DETECTED.',0
-TxtYesUpperRAM: db 'FOUND UPPER RAM',0
-TxtRAMTestPassed: db 'RAM TEST PASSED.',0
-TxtRAMTestFailed: db 'RAM TEST FAILED: ',0
+TxtBank: db 'BANK',0
+TxtBlock: db 'BLOCK',0
+TxtBlockTesting: db '........',0
+TxtBlockInvalid: db '________',0
+TxtBlockValid: db '~~~~~~~~',0
+
+TxtTotalMemory: db 'TOTAL UPPER RAM: ',0
+TxtKB: db 'KB',0
+TxtRAMTestPassed: db 'UPPER RAM TESTS PASSED',0
+TxtRAMTestFailed: db 'UPPER RAM TESTS FAILED: ',0
+
+BankLabelXStart EQU 4
+BankLabelYStart EQU 4
+BankLabelRows:  db BankLabelYStart, BankLabelYStart+2, BankLabelYStart+4, BankLabelYStart+6
+		db BankLabelYStart+8, BankLabelYStart+10, BankLabelYStart+12, BankLabelYStart+14
+BlockLabelCols: db BankLabelXStart+8, BankLabelXStart+17, BankLabelXStart+26, BankLabelXStart+35
 
 RAMBankStart equ #4000
-TestPatternLength equ 4
-TestPattern: defb #DE,#AD,#BE,#EF
+BankNumbers: db #C4, #C5, #C6, #C7
+
+//////////////////////////////
+// Variables
+ValidBlockCount: db 0
+FailingBits: db 0
 
 
-; OUT Z flag = set no, not set yes
-IsUpperRAMPresent:
-	; Write test pattern to beginning of bank
-	ld hl,TestPattern
-	ld de,RAMBankStart
-	ld bc,TestPatternLength
-	ldir
-	
-	ld bc,#7FC4
+
+;; Go through every bank and block and clear the first word to 0
+AddAllRAMMarkers:
+	ld ix,RAMBankStart
+	; d = bank
+	; e = block
+	ld de,#0703
+.ramLoop:
+	;; Get high nibble from bank
+	ld a,d
+	rrca
+	and #0F
+	rla
+	rla
+	rla
+	rla
+	add #C0
+	ld l,a
+
+	;; Get low nibble from block
+	ld a,d
+	and #01
+	rla
+	rla
+	rla
+	add e
+	add 4
+	or l
+	ld l,a
+
+	;; Set first byte to full block byte
+	out (c),l
+	ld (ix),l
+
+	;; Next block
+	ld a,e
+	dec e
+	or a
+	jr nz,.ramLoop
+
+	;; Next bank
+	ld e,3
+	ld a,d
+	dec d
+	or a
+	jr nz,.ramLoop
+
+	;; Clear the ones in main memory
+	ld bc,0x7FC0
 	out (c),c
+	ld (ix),0
 
-	; Read it back. If any bytes don't match up, we have upper RAM
-	ld hl,RAMBankStart
-	ld ix,TestPattern
-	ld a,(ix)
-	cpi
-	jr nz,.end
-	ld a,(ix+1)
-	cpi
-	jr nz,.end
-	ld a,(ix+2)
-	cpi
-	jr nz,.end
-	ld a,(ix+3)
-	cpi
-
-.end:
-	ld bc,#7FC0
-	out (c),c
 	ret
 
-; IN HL = Start, BC = length
+
+RunUpperRAMTests:
+	ld hl,ValidBlockCount
+	ld (hl),0
+	ld ix,RAMBankStart
+	; d = bank
+	; e = block
+	ld de,#0000
+.ramLoop:
+	push de				; Save the bank and block
+	ld b,0
+	ld c,d
+	ld hl,BankLabelRows
+	add hl,bc
+	ld a,(hl)
+	ld e,a
+
+	pop bc
+	push bc	
+	ld b,0
+	ld hl,BlockLabelCols
+	add hl,bc
+	ld a,(hl)
+	ld d,a
+
+	ld (txt_coords),de
+	ld hl,TxtBlockTesting
+	call PrintString
+	ld (txt_coords),de
+	pop de				; Restore bank and block
+
+
+	;; Get high nibble from bank
+	ld a,d
+	rrca
+	and #0F
+	rla
+	rla
+	rla
+	rla
+	add #C0
+	ld l,a
+
+	;; Get low nibble from block
+	ld a,d
+	and #01
+	rla
+	rla
+	rla
+	add e
+	add 4
+	or l
+	ld l,a
+
+	;; Check first byte
+	ld b,#7F
+	out (c),l
+	ld a,(ix)
+	cp l
+	jr nz, .invalidBlock
+
+	;; Valid block
+	ld hl,ValidBlockCount
+	inc (hl)
+
+	push de
+	ld c,0
+	ld b,8
+	ld hl, RAMBankStart
+.dotLoop:
+	push bc
+	ld de, #500
+	call TestRAM
+	pop bc
+	or c
+	ld c,a
+
+	push af
+	ld a,'~'
+	call PrintChar
+	pop af
+
+	djnz .dotLoop
+	pop de
+
+	or a
+	jr nz,.failedBlock
+
+.nextBlock:
+	;; Next block
+	inc e
+	ld a,e
+	cp 4
+	jr nz,.ramLoop
+
+	;; Next bank
+	ld e,0
+	inc d
+	ld a,d
+	cp d,8
+	jr nz,.ramLoop
+
+	ld bc,#7FC0
+	out (c),c
+
+	ret
+
+.failedBlock:
+	call SetErrorFound
+
+	ld iy,txt_coords
+	ld a,(iy+1)
+	sub 8
+	ld (iy+1),a
+
+	call SetErrorColors
+	ld hl,TxtBlockValid
+	call PrintString
+	call SetDefaultColors
+	jr .nextBlock
+
+.invalidBlock:
+	ld hl,TxtBlockInvalid
+	call PrintString
+	jr .nextBlock
+
+
+; IN HL = Start, DE = length
 ; OUT A = 0 if good, otherwise failing bits
 TestRAM:
 	ld a, 1
@@ -155,16 +348,11 @@ TestRAM:
 	ret
 
 
-TxtBit: db "BIT ",0
-TxtIC: db "IC",0
-
 FirstUpperRAMIC equ 119
 
 
 ; IN D = failing bits
 PrintFailingBits:
-	; TODO Print which data bits failed
-	; TODO Print which ICs are likely bad
 	ld b,8
 .loop:
 	ld a,d
@@ -173,28 +361,12 @@ PrintFailingBits:
 	and 1	; Check if the LSB is set
 	jr z, .next
 
-	ld hl,TxtBit
-	call PrintString
 	ld a,8
 	sub b
-	push af
-	call PrintNumHex
+	call PrintAHex
 	
-	ld a,CharSpace
+	ld a,' '
 	call PrintChar
-	ld a,CharLeftParen
-	call PrintChar
-
-	ld hl,TxtIC
-	call PrintString
-	
-	pop af
-	add a,FirstUpperRAMIC
-	call PrintNumDec
-
-	ld a,CharRightParen
-	call PrintChar
-	call NewLine
 	
 
 .next:
@@ -203,4 +375,12 @@ PrintFailingBits:
 	rr d    ; Shift bits right once
 	djnz .loop
 	
+	ret
+
+
+SetErrorFound:
+	ld hl,FailingBits
+	ld (hl),a
+	ld a,#c
+	call SetBorderColor
 	ret

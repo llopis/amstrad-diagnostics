@@ -36,6 +36,11 @@ DetectROMs:
 	call CheckUpperROM
 	ld d,7
 	call CheckUpperROM
+
+	call NewLine
+	ld hl,TxtAnyKeyMainMenu
+	call PrintString
+
 	ret
 	
 
@@ -71,16 +76,16 @@ CheckLowerROM:
 	call CRCLowerRom
 	push hl
 	call PrintROMName
-	ld a,CharSpace
+	ld a,' '
 	call PrintChar
-	ld a,CharLeftParen
+	ld a,'('
 	call PrintChar
 	pop hl
 	ld a,h
-	call PrintNumHex
+	call PrintAHex
 	ld a,l
-	call PrintNumHex
-	ld a,CharRightParen
+	call PrintAHex
+	ld a,')'
 	call PrintChar
 	call NewLine
 	ret
@@ -117,7 +122,7 @@ CheckUpperROM:
 	ld hl,TxtROM
 	call PrintString
 	ld a,d
-	call PrintNumHex
+	call PrintAHex
 	ld hl,TxtColon
 	call PrintString	
 	ld a,d
@@ -125,16 +130,16 @@ CheckUpperROM:
 	push hl
 	call PrintROMName
 
-	ld a,CharSpace
+	ld a,' '
 	call PrintChar
-	ld a,CharLeftParen
+	ld a,'('
 	call PrintChar
 	pop hl
 	ld a,h
-	call PrintNumHex
+	call PrintAHex
 	ld a,l
-	call PrintNumHex
-	ld a,CharRightParen
+	call PrintAHex
+	ld a,')'
 	call PrintChar
 	call NewLine
 	ret

@@ -46,8 +46,6 @@ MainMenuRepeat:
 
 TestComplete:
 	call NewLine
-	ld hl,TxtAnyKeyMainMenu
-	call PrintString
 .loop:
 	call WaitForVsync
 	call ReadFullKeyboard
@@ -105,7 +103,6 @@ TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 TxtDisabled: db "(DISABLED)",0
 
 
-	INCLUDE "MainTests.asm"
 	INCLUDE "DetectROMs.asm"
 	INCLUDE "CheckUpperRAM.asm"
 	INCLUDE "UtilsPrint.asm"

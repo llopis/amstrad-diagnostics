@@ -1,9 +1,6 @@
 
 CharCR equ 13
 CharLF equ 10
-CharSpace equ 32
-CharLeftParen equ 40
-CharRightParen equ 41
 
 ; IN HL = address of string
 PrintString:
@@ -14,9 +11,9 @@ PrintString:
 	call PrintChar
     jr PrintString
 
-; IN A = number to rpint
+; IN A = number to print
 ; Modifies BC
-PrintNumHex:
+PrintAHex:
 	ld b,0
 	ld c,a
 	rr a
@@ -45,9 +42,19 @@ PrintNumHex:
 	jr .low
 
 
+; IN A = number to print
+; Modifies BC
+PrintHLHex:
+	ld a,h
+	call PrintAHex
+	ld a,l
+	call PrintAHex
+	ret
+
+
 ; IN A = number to rpint
 ; Modifies BC, D
-PrintNumDec:
+PrintADec:
 	ld d,100
 	call .digit
 	ld d,10
@@ -70,3 +77,39 @@ PrintNumDec:
 	ret
 
 
+PrintHLDec:
+	ld b,0
+	ld de,10000
+	call .digit
+	ld de,1000
+	call .digit
+	ld de,100
+	call .digit
+	ld de,10
+	call .digit
+	ld de,1
+.digit:
+	xor a
+.loop:
+	scf
+	ccf
+	sbc hl,de
+	jr c,.exit
+	inc a
+	jr .loop
+.exit:
+	add hl,de
+
+	; Skip leading zeroes
+	or a
+	jr nz,.nonZeroChar
+	push af	
+	ld a,b
+	or a
+	pop af
+	ret z
+.nonZeroChar:
+	ld b,1
+	add a,#30
+	call PrintChar
+	ret
