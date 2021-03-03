@@ -26,6 +26,10 @@ MainMenuRepeat:
 	bit 1,a
 	jr nz,.keyboardTestSelected
 
+	ld a,(KeyboardMatrixBuffer+7)
+	bit 0,a
+	jr nz,.systemInfoSelected
+
 	jr .mainMenuLoop
 
 
@@ -43,6 +47,10 @@ MainMenuRepeat:
 .keyboardTestSelected:
 	call TestKeyboard
 	jp MainMenuRepeat
+
+.systemInfoSelected:
+	call SystemInfo
+	jp TestComplete
 
 TestComplete:
 	call NewLine
@@ -91,7 +99,14 @@ DrawMainMenu:
 	ld hl,TxtKeyboardTest
 	call PrintString
 
+	ld hl,#040B
+	call SetTextCoords
+	ld hl,TxtSystemInfo
+	call PrintString
+
 	ret
+
+
 
 
 TxtTitle: db '             AMSTRAD DIAGNOSTICS V', VERSION_STR, BUILD_STR, '               ',0
@@ -99,6 +114,7 @@ TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtRAMTest: db "[1] UPPER RAM",0
 TxtROMTest: db "[2] ROM",0
 TxtKeyboardTest: db "[3] KEYBOARD",0
+TxtSystemInfo: db "[4] SYSTEM INFO",0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 TxtDisabled: db "(DISABLED)",0
 
@@ -111,4 +127,5 @@ TxtDisabled: db "(DISABLED)",0
 	INCLUDE "Keyboard.asm"
 	INCLUDE "DetectCRTC.asm"
 	INCLUDE "KeyboardTest.asm"
+	INCLUDE "SystemInfo.asm"
 

@@ -1,14 +1,4 @@
 
-TxtCRTC: db 'CRTC TYPE ',0
-
-DetectCRTC:
-	ld hl,TxtCRTC
-	call PrintString
-	call GetCRTCType
-	call PrintAHex
-	call NewLine
-	
-	ret
 
 ;; By Rhino http://www.cpcwiki.eu/forum/programming/crtc-type-detection-code/
 ; Detect CRTC type
