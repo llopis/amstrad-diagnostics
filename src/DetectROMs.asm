@@ -1,12 +1,9 @@
 
-	IFDEF ROM_CHECK
+ IFDEF ROM_CHECK
 DetectROMs:
 	call ROMSetUpScreen
 
-	ld hl,TxtDetecting
-	call PrintString
-	call NewLine
-	
+	IFDEF TRY_UNPAGING_LOW_ROM
 	; Stop paging mode in Dandanator so system lower ROM is accessible
 	ld b,#20
 	ld iy,ScratchByte
@@ -28,10 +25,18 @@ DetectROMs:
 	ld a,'G'
 	cp (ix+3)
 	jr nz, .startUpperROMCheck
+	ENDIF
 
+	ld hl,TxtCheckingLowerROM
+	call PrintString
+	call NewLine
 	call CheckLowerROM
+	call NewLine
 	
 .startUpperROMCheck:
+	ld hl,TxtDetectingUpperROMs
+	call PrintString
+	call NewLine
 	ld d,0
 	call CheckUpperROM
 	ld d,7
@@ -63,8 +68,9 @@ ROMSetUpScreen:
 
 TxtROMTitle: db '          AMSTRAD DIAGNOSTICS - ROM TEST             ',0
 
-TxtDetecting: db 'DETECTING ROMS...',0
+TxtCheckingLowerROM: db 'CHECKING LOWER ROM...',0
 TxtLowerROM: db 'LOWER ROM: ',0
+TxtDetectingUpperROMs: db 'DETECTING UPPER ROMS...',0
 TxtROM: db 'ROM ',0
 TxtColon: db ': ',0
 ScratchByte: db 0
@@ -245,4 +251,4 @@ PrintROMName:
 	
 	INCLUDE "ROMTable.asm"
 
-	ENDIF
+ ENDIF
