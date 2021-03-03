@@ -21,13 +21,13 @@ SystemInfoSetUpScreen:
 	call SetBorderColor 
 
 	ld hl,#0000
-	call SetTextCoords
+	ld (txt_coords),hl
 	call SetTitleColors
 	ld hl,TxtSystemInfoTitle
 	call PrintString
 
 	ld hl,#0002
-	call SetTextCoords
+	ld (txt_coords),hl
 	call SetDefaultColors
 	ret
 

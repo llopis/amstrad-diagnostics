@@ -96,13 +96,13 @@ KeyboardSetUpScreen:
 	call SetBorderColor 
 
 	ld hl,#0000
-	call SetTextCoords
+	ld (txt_coords),hl
 	call SetTitleColors
 	ld hl,TxtKeyboardTitle
 	call PrintString
 
 	ld hl,#0002
-	call SetTextCoords
+	ld (txt_coords),hl
 	call SetDefaultColors
 
 	ld hl,#0014

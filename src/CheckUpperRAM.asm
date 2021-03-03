@@ -17,13 +17,13 @@ UpperRAMSetUpScreen:
 	call SetBorderColor 
 
 	ld hl,#0000
-	call SetTextCoords
+	ld (txt_coords),hl
 	call SetTitleColors
 	ld hl,TxtUpperRAMTitle
 	call PrintString
 
 	ld hl,#0002
-	call SetTextCoords
+	ld (txt_coords),hl
 	call SetDefaultColors
 
 	ld de,0
