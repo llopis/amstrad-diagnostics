@@ -3,15 +3,11 @@ KEYBOARD_Y EQU #06
 
 TestKeyboard:
 		call KeyboardSetUpScreen
+		call ClearKeyPresses
 		call	PrintKeyboard
 		call ClearKeyPresses
 		ret
 
-PrintKeyboard:
-		ld	a, (KeyboardMatrixBuffer+2)	; check row 2 (keys 16-23)
-		cp	#a4				; for ctrl+shift+enter %c0s0 0e00 = #A4
-		jr	nz, PrintKeyboardContinue
-		ret
 ClearKeyPresses:
 		ld	hl, KeyboardMatrixBufferPerm	; clear all previous keypresses
 		ld	b,10
@@ -20,6 +16,11 @@ ClearKeypressesLoop:
 		inc	hl
 		djnz	ClearKeypressesLoop
 
+PrintKeyboard:
+		ld	a, (KeyboardMatrixBuffer+2)	; check row 2 (keys 16-23)
+		cp	#a4				; for ctrl+shift+enter %c0s0 0e00 = #A4
+		jr	nz, PrintKeyboardContinue
+		ret
 PrintKeyboardContinue:
 		ld	b,80
 		ld	hl,KeyboardLocations
