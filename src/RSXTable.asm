@@ -32,4 +32,4 @@ loop_show_message:
 		RET
 
 game_message
-    db " Amstrad Diagnostics ",164," Noel Llopis 2021",13,10,13,10,0
+    db " Amstrad Diagnostics |DIAG",13,10,13,10,0
