@@ -95,11 +95,9 @@ KeyboardSetUpScreen:
 	ld a,4
 	call SetBorderColor 
 
-	ld hl,#0000
-	ld (txt_coords),hl
-	call SetTitleColors
 	ld hl,TxtKeyboardTitle
-	call PrintString
+	ld d,#9
+	call PrintTitleBanner
 
 	ld hl,#0002
 	ld (txt_coords),hl
@@ -113,5 +111,5 @@ KeyboardSetUpScreen:
 	ret
 
 
-TxtKeyboardTitle: db '       AMSTRAD DIAGNOSTICS - KEYBOARD TEST          ',0
+TxtKeyboardTitle: db '- KEYBOARD TEST',0
 TxtKeyboard:      db 'PRESS CONTROL+SHIFT+RETURN TO EXIT',0

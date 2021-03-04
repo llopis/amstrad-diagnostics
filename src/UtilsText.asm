@@ -18,6 +18,7 @@
 
 ;; even/odd x coord
 
+ScreenCharsWidth equ 53
 
 PrintChar:
 	push hl

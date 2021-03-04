@@ -76,12 +76,11 @@ DrawMainMenu:
 	ld a,4
 	call SetBorderColor 
 
-	ld hl,#0000
-	ld (txt_coords),hl
-	call SetTitleColors
-	ld hl,TxtTitle
-	call PrintString
+	ld hl,TxtVersion
+	ld d,#e
+	call PrintTitleBanner
 
+	; Menu items
 	call SetDefaultColors
 
 	ld ix,MenuTable
@@ -107,6 +106,27 @@ DrawMainMenu:
 	ret
 
 
+; IN HL = Address of title
+;    D = starting X
+PrintTitleBanner:
+	push hl
+	call SetTitleColors
+	ld hl,#0000
+	ld (txt_coords),hl
+	ld b,ScreenCharsWidth
+.bannerLoop:
+	ld a,' '
+	call PrintChar
+	djnz .bannerLoop
+
+	ld e,0
+	ld (txt_coords),de
+	ld hl,TxtDiagnostics
+	call PrintString
+	pop hl
+	call PrintString
+	ret
+
 
 TxtRAMTest: db "[1] UPPER RAM",0
 TxtROMTest: db "[2] ROM",0
@@ -128,7 +148,10 @@ MenuItemSize equ 1+1+2+2
 MenuItemCount equ ($-MenuTable)/MenuItemSize
 
 
-TxtTitle: db '             AMSTRAD DIAGNOSTICS V', VERSION_STR, BUILD_STR, '               ',0
+TxtDiagnostics: db 'AMSTRAD DIAGNOSTICS ',0
+TxtDiagnosticsLen equ $ - TxtDiagnostics
+TxtVersion: db 'V', VERSION_STR, BUILD_STR,0
+
 TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 TxtDisabled: db "(DISABLED)",0

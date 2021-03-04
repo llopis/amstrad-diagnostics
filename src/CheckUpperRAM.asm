@@ -16,11 +16,9 @@ UpperRAMSetUpScreen:
 	ld a,4
 	call SetBorderColor 
 
-	ld hl,#0000
-	ld (txt_coords),hl
-	call SetTitleColors
 	ld hl,TxtUpperRAMTitle
-	call PrintString
+	ld d,#8
+	call PrintTitleBanner
 
 	ld hl,#0002
 	ld (txt_coords),hl
@@ -135,7 +133,7 @@ PrintResult:
 // Constants
 
 
-TxtUpperRAMTitle: db '       AMSTRAD DIAGNOSTICS - UPPER RAM TEST          ',0
+TxtUpperRAMTitle: db '- UPPER RAM TEST',0
 TxtBank: db 'BANK',0
 TxtBlock: db 'BLOCK',0
 TxtBlockTesting: db '........',0
