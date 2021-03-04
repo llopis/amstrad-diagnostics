@@ -5,6 +5,16 @@ MainMenu:
 
 	call make_scr_table
 
+	; Check if we're in the middle of a soak test
+	ld ix,SoakTestIndicator		
+	ld a,(ix)
+	cp SoakTestByte1
+	jr nz, MainMenuRepeat
+	ld a,(ix+1)
+	cp SoakTestByte2
+	jr nz, MainMenuRepeat
+	jp SoakTestSelected
+
 MainMenuRepeat:
 	call DrawMainMenu
 
@@ -60,6 +70,17 @@ KeyboardTestSelected:
 SystemInfoSelected:
 	call SystemInfo
 	jp TestComplete
+
+SoakTestSelected:
+	ld ix, SoakTestIndicator
+	ld (ix), SoakTestByte1			; Set those byte to indicate soak test
+	ld (ix+1), SoakTestByte2
+
+	call CheckUpperRAM
+
+	ld bc,#7F89                        ; GA select lower rom, and mode 1
+	out (c),c
+	jp SoakTestStart
 
 TestComplete:
 	call NewLine
@@ -127,11 +148,16 @@ PrintTitleBanner:
 	call PrintString
 	ret
 
+SoakTestByte1 EQU #BE
+SoakTestByte2 EQU #EF
+SoakTestIndicator: db 0,0
+SoakTestCount: db 0
 
 TxtRAMTest: db "[1] UPPER RAM",0
 TxtROMTest: db "[2] ROM",0
 TxtKeyboardTest: db "[3] KEYBOARD",0
 TxtSystemInfo: db "[4] SYSTEM INFO",0
+TxtSoakTest: db "[5] SOAK TEST",0
 MenuTable:
 	; Offset into keyboard buffer, bit mask, address to jump to, item text
 	db 8, %0001
@@ -144,6 +170,8 @@ MenuTable:
 	dw KeyboardTestSelected, TxtKeyboardTest
 	db 7, %0001
 	dw SystemInfoSelected, TxtSystemInfo
+	db 6, %0010
+	dw SoakTestSelected, TxtSoakTest
 MenuItemSize equ 1+1+2+2
 MenuItemCount equ ($-MenuTable)/MenuItemSize
 

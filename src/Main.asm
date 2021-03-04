@@ -56,8 +56,28 @@ ProgramStart:
 	UNDEFINE SOUND_TONE_L
 	UNDEFINE SOUND_TONE_H
 
+SoakTestStart:
+	ld iy,0
+	ld ix,SoakTestIndicator		; This is out in RAM
+	ld a,(ix)			; See if we can find the two bytes that tells us we're doing a soak test
+	cp SoakTestByte1
+	jr nz,.startTests
+	ld a,(ix+1)
+	cp SoakTestByte2
+	jr nz,.startTests
+	ld iy,1				; Remember that we're in a soak test
+.startTests:
 	INCLUDE "LowerRAMTest.asm"
 RAMTestPassed:
+
+	ld hl, MainBegin
+	ld de, MainProgramAddr
+	ld bc, ProgramEnd-MainBegin
+	ldir
+
+	ld a,iyl
+	or a
+	jp nz,.soakTest
 
 	DEFINE SOUND_DURATION #4000
 	DEFINE SILENCE_DURATION #1000
@@ -66,13 +86,16 @@ RAMTestPassed:
 	INCLUDE "PlaySound.asm"
 
 	INCLUDE "PlaySound.asm"
-
-
-	ld hl, MainBegin
-	ld de, MainProgramAddr
-	ld bc, ProgramEnd-MainBegin
-	ldir
 	jp MainMenu
+
+.soakTest:
+	ld ix, SoakTestIndicator
+	ld (ix), SoakTestByte1
+	ld (ix+1), SoakTestByte2
+	jp MainMenu
+
+
+
 
 TxtROMMark:
 	db 'DIAG'
