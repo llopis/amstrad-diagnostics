@@ -3,10 +3,6 @@ KEYBOARD_Y EQU #06
 
 TestKeyboard:
 		call KeyboardSetUpScreen
-		call ClearKeyPresses
-		call	PrintKeyboard
-		call ClearKeyPresses
-		ret
 
 ClearKeyPresses:
 		ld	hl, KeyboardMatrixBufferPerm	; clear all previous keypresses
