@@ -2,92 +2,164 @@
 KEYBOARD_Y EQU #06
 
 TestKeyboard:
-		call KeyboardSetUpScreen
-		call ClearKeyPresses
-		call	PrintKeyboard
-		call ClearKeyPresses
-		ret
+	call KeyboardSetUpScreen
+	call PrintKeyboard
+	call ClearKeyboardBuffer
 
-ClearKeyPresses:
-		ld	hl, KeyboardMatrixBufferPerm	; clear all previous keypresses
-		ld	b,10
-ClearKeypressesLoop:
-		ld	(hl), 0
-		inc	hl
-		djnz	ClearKeypressesLoop
+.keyboardLoop:
+	call WaitForVsync
+	call ReadFullKeyboard
+
+	; Look for exit key combination
+	ld a, (KeyboardMatrixBuffer+2)	; check row 2 (keys 16-23)
+	cp %10100100			; for ctrl+shift+enter bits 2, 5, 7
+	ret z
+
+	call UpdateKeyBuffers
+
+	; Print edge on keys in blue
+	ld h,pen2
+	ld l,pen0
+	call set_txt_colours	
+	ld hl,EdgeOnKeyboardMatrixBuffer
+	call PrintOnKeysFromBuffer
+
+	; Print edge off keys in yellow
+	ld h,pen1
+	ld l,pen0
+	call set_txt_colours	
+	ld hl,EdgeOffKeyboardMatrixBuffer
+	call PrintOnKeysFromBuffer
+
+	jr .keyboardLoop
+
 
 PrintKeyboard:
-		ld	a, (KeyboardMatrixBuffer+2)	; check row 2 (keys 16-23)
-		cp	#a4				; for ctrl+shift+enter %c0s0 0e00 = #A4
-		jr	nz, PrintKeyboardContinue
-		ret
-PrintKeyboardContinue:
-		ld	b,80
-		ld	hl,KeyboardLocations
-PrintKeyboardLoop:
-		ld	d,(hl) ; text column
-		dec	d
-		inc	hl
-		ld	e,(hl) ; text row
-		ld	a,KEYBOARD_Y
-		add	e
-		ld	e,a
-		ld	(txt_coords),de
+	call SetDefaultColors
+	ld b,80
+	ld ix,KeyboardLocations
+.printLoop:
+	call DrawKey
+	inc ix
+	inc ix
+	inc ix
+	djnz	.printLoop
+	ret
 
-		push	bc
-		push	hl
-		call	ReadFullKeyboard
-		pop	hl
-		pop	bc
+; IN: IX pointing to keyboard table for that key
+; Modifies DE
+DrawKey:
+	ld	d,(ix)   ; text column
+	dec	d
+	ld	e,(ix+1) ; text row
+	ld	a,KEYBOARD_Y
+	add	e
+	ld	e,a
+	ld	(txt_coords),de
 
-		push	bc
-		push	hl
-		call	SetKeyColor
-		pop	hl
-		pop	bc
+	ld 	a,(ix+2)
+	cp	' '
+	jr	z,.drawSpaceBar
+	call	PrintChar
+	ret
+.drawSpaceBar:
+	push	bc
+	ld	b,19
+.loop:
+	ld	a,' '
+	call	PrintChar
+	djnz	.loop
+	pop	bc
+	ret
 
-		inc	hl
-		ld	a,(hl)
-		inc	hl
-		push	hl
-		push	bc
-		call	PrintChar
-		pop	bc
-		pop	hl
-		djnz	PrintKeyboardLoop
-		ld	hl,#0010
-		ld	(txt_coords),hl
-		jr	PrintKeyboard
-SetKeyColor:
-		ld	a,80
-		sub	b		; Get key number
-		ld	hl,KeyboardMatrixBufferPerm
-		ld	c,a
-		sra	a
-		sra	a
-		sra	a		; Divide by 8
-		ld	e,a
-		ld	d,0
-		add	hl,de		; Find matrix address for row
-		ld	a,c
-		and	%00000111	; Find relevant bit
-		sll	a
-		sll	a
-		sll	a		; prepration for bit manipulation
-		or	%01000110	; the second part of the BIT 0, (HL) opcode
-		ld	(TestBitDirtyHack+1),a ; !!!
-		ld	a,(hl)
-TestBitDirtyHack:
-		bit	0,(hl)
-		jr	z,KeyNormalColor
-		ld	hl,#0800
-		call	set_txt_colours
-		jr	KeyColorsDone
-KeyNormalColor:
-		ld	hl,#0008
-		call	set_txt_colours
-KeyColorsDone:
-		ret
+
+; IN: HL - Keyboard buffer
+PrintOnKeysFromBuffer:
+	ld ix,KeyboardLocations
+	ld b,KeyboardBufferSize
+.byteLoop:
+	push bc
+	ld a,(hl)
+	ld d,a
+	ld b,1
+.bitLoop:
+	ld a,d
+	and b
+	jr z,.nextBit
+
+	; This one is pressed. Draw it.
+	push de
+	call DrawKey
+	pop de
+
+.nextBit:
+	inc ix
+	inc ix
+	inc ix
+	sla b
+	jr nc,.bitLoop
+
+.nextByte:
+	inc hl
+	pop bc
+	djnz .byteLoop
+
+
+	ret
+
+
+ClearKeyboardBuffer:
+	ld hl,LastKeyboardMatrixBuffer
+	ld b,KeyboardBufferSize
+.loop:
+	ld (hl),0
+	inc hl
+	djnz .loop
+	ret
+
+; Put bits for new keys in EdgeOnKeyboardMatrixBuffer and EdgeOffKeyboardMatrixBuffer
+; Save matris buffer to LastKeyboardMatrixBuffer
+UpdateKeyBuffers:
+	; First detect edge offs and copy last buffer
+	ld hl,KeyboardMatrixBuffer
+	ld de,LastKeyboardMatrixBuffer
+	ld ix,EdgeOffKeyboardMatrixBuffer
+	ld iy,EdgeOnKeyboardMatrixBuffer
+	ld b,KeyboardBufferSize
+.loop:
+	ld a,(de)	; Last pressed keys
+	ld c,a
+	ld a,(hl)	; Currently pressed keys
+	xor c
+	and c
+	ld (ix),a	; Off edges
+
+	ld c,(hl)	; Currently pressed keys
+	ld a,(de)       ; Last pressed keys
+	xor c
+	and c
+	ld (iy),a	; On edges
+
+	ld a,(hl)
+	ld (de),a	; Copy currently pressed keys
+
+	inc de
+	inc hl
+	inc ix
+	inc iy
+	djnz .loop
+
+	ret
+
+
+LastKeyboardMatrixBuffer:
+	defs KeyboardBufferSize
+
+EdgeOnKeyboardMatrixBuffer:
+	defs KeyboardBufferSize
+EdgeOffKeyboardMatrixBuffer:
+	defs KeyboardBufferSize
+
 
 
 KeyboardSetUpScreen:
@@ -95,14 +167,12 @@ KeyboardSetUpScreen:
 	ld a,4
 	call SetBorderColor 
 
-	ld hl,#0000
-	call SetTextCoords
-	call SetTitleColors
 	ld hl,TxtKeyboardTitle
-	call PrintString
+	ld d,#9
+	call PrintTitleBanner
 
 	ld hl,#0002
-	call SetTextCoords
+	ld (txt_coords),hl
 	call SetDefaultColors
 
 	ld hl,#0014
@@ -113,5 +183,5 @@ KeyboardSetUpScreen:
 	ret
 
 
-TxtKeyboardTitle: db '       AMSTRAD DIAGNOSTICS - KEYBOARD TEST          ',0
+TxtKeyboardTitle: db '- KEYBOARD TEST',0
 TxtKeyboard:      db 'PRESS CONTROL+SHIFT+RETURN TO EXIT',0

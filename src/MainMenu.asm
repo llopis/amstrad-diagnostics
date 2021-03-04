@@ -12,43 +12,52 @@ MainMenuRepeat:
 	call WaitForVsync
 	call ReadFullKeyboard
 
-	ld a,(KeyboardMatrixBuffer+8)
-	bit 0,a
-	jr nz,.upperRAMTestSelected
 
- IFDEF ROM_CHECK
-	ld a,(KeyboardMatrixBuffer+8)
-	bit 1,a
-	jr nz,.ROMTestSelected
- ENDIF
+	ld ix,MenuTable
+	ld b,MenuItemCount
+.itemLoop:
+	; Get address of part of keyboard buffer to read
+	ld hl,KeyboardMatrixBuffer
+	ld d,0
+	ld e,(ix)
+	add hl,de
+	ld a,(hl)
+	; Get mask to check against for the key we care about
+	ld d,(ix+1)
+	and d
+	or a
+	jp nz,.doItem
 
-	ld a,(KeyboardMatrixBuffer+7)
-	bit 1,a
-	jr nz,.keyboardTestSelected
+	; Increase ix to next menu item
+	ld de,MenuItemSize
+	add ix,de
 
-	ld a,(KeyboardMatrixBuffer+7)
-	bit 0,a
-	jr nz,.systemInfoSelected
+	djnz .itemLoop
 
 	jr .mainMenuLoop
 
+.doItem:
+	ld l,(ix+2)
+	ld h,(ix+3)
+	jp (hl)	
 
-.upperRAMTestSelected:
+
+UpperRAMTestSelected:
 	call CheckUpperRAM
 	jp TestComplete
 
 
  IFDEF ROM_CHECK
-.ROMTestSelected:
+ROMTestSelected:
 	call DetectROMs
 	jp TestComplete
  ENDIF
 
-.keyboardTestSelected:
+KeyboardTestSelected:
 	call TestKeyboard
 	jp MainMenuRepeat
 
-.systemInfoSelected:
+SystemInfoSelected:
 	call SystemInfo
 	jp TestComplete
 
@@ -67,54 +76,83 @@ DrawMainMenu:
 	ld a,4
 	call SetBorderColor 
 
-	ld hl,#0000
-	call SetTextCoords
-	call SetTitleColors
-	ld hl,TxtTitle
-	call PrintString
+	ld hl,TxtVersion
+	ld d,#e
+	call PrintTitleBanner
 
+	; Menu items
 	call SetDefaultColors
 
+	ld ix,MenuTable
 	ld hl,#0403
-	call SetTextCoords
-	ld hl,TxtSelectTest
+	ld b,MenuItemCount
+.itemLoop:
+	ld (txt_coords),hl
+	push hl
+	ld l,(ix+4)
+	ld h,(ix+5)
 	call PrintString
 
-	ld hl,#0405
-	call SetTextCoords
-	ld hl,TxtRAMTest
-	call PrintString
+	; Increase ix to next menu item
+	ld de,MenuItemSize
+	add ix,de
 
-	ld hl,#0407
-	call SetTextCoords
-	ld hl,TxtROMTest
-	call PrintString
-  IFNDEF ROM_CHECK
-	ld hl,TxtDisabled
-	call PrintString
-  ENDIF
+	pop hl
+	inc l
+	inc l
 
-	ld hl,#0409
-	call SetTextCoords
-	ld hl,TxtKeyboardTest
-	call PrintString
-
-	ld hl,#040B
-	call SetTextCoords
-	ld hl,TxtSystemInfo
-	call PrintString
+	djnz .itemLoop
 
 	ret
 
 
+; IN HL = Address of title
+;    D = starting X
+PrintTitleBanner:
+	push hl
+	call SetTitleColors
+	ld hl,#0000
+	ld (txt_coords),hl
+	ld b,ScreenCharsWidth
+.bannerLoop:
+	ld a,' '
+	call PrintChar
+	djnz .bannerLoop
+
+	ld e,0
+	ld (txt_coords),de
+	ld hl,TxtDiagnostics
+	call PrintString
+	pop hl
+	call PrintString
+	ret
 
 
-TxtTitle: db '             AMSTRAD DIAGNOSTICS V', VERSION_STR, BUILD_STR, '               ',0
-TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtRAMTest: db "[1] UPPER RAM",0
 TxtROMTest: db "[2] ROM",0
 TxtKeyboardTest: db "[3] KEYBOARD",0
 TxtSystemInfo: db "[4] SYSTEM INFO",0
+MenuTable:
+	; Offset into keyboard buffer, bit mask, address to jump to, item text
+	db 8, %0001
+	dw UpperRAMTestSelected, TxtRAMTest
+ IFDEF ROM_CHECK
+	db 8, %0010
+	dw ROMTestSelected, TxtROMTest
+ ENDIF
+	db 7, %0010
+	dw KeyboardTestSelected, TxtKeyboardTest
+	db 7, %0001
+	dw SystemInfoSelected, TxtSystemInfo
+MenuItemSize equ 1+1+2+2
+MenuItemCount equ ($-MenuTable)/MenuItemSize
+
+
+TxtDiagnostics: db 'AMSTRAD DIAGNOSTICS ',0
+TxtDiagnosticsLen equ $ - TxtDiagnostics
+TxtVersion: db 'V', VERSION_STR, BUILD_STR,0
+
+TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 TxtDisabled: db "(DISABLED)",0
 

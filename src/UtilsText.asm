@@ -18,6 +18,7 @@
 
 ;; even/odd x coord
 
+ScreenCharsWidth equ 53
 
 PrintChar:
 	push hl
@@ -80,11 +81,6 @@ display_char2:
 	jp nz,display_char_odd
 	jp display_char_even
 
-;; H = x coord
-;; L = y coord
-SetTextCoords:
-	ld (txt_coords),hl
-	ret
 
 NewLine:
 	ld hl,(txt_coords)

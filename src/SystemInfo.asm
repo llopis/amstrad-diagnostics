@@ -20,18 +20,16 @@ SystemInfoSetUpScreen:
 	ld a,4
 	call SetBorderColor 
 
-	ld hl,#0000
-	call SetTextCoords
-	call SetTitleColors
 	ld hl,TxtSystemInfoTitle
-	call PrintString
+	ld d,#A
+	call PrintTitleBanner
 
 	ld hl,#0002
-	call SetTextCoords
+	ld (txt_coords),hl
 	call SetDefaultColors
 	ret
 
 
-TxtSystemInfoTitle: db '         AMSTRAD DIAGNOSTICS - SYSTEM INFO           ',0
+TxtSystemInfoTitle: db '- SYSTEM INFO',0
 TxtCRTC: db 'CRTC TYPE ',0
 

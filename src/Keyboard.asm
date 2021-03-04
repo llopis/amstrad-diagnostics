@@ -72,12 +72,7 @@ ScanKey:
 						;if a key/joystick button is pressed bit will be "1"
 						;keys that are not pressed will be "0"
 
-		ld	(hl),a			;write line data to temporary buffer
-		ld	de,KeyboardMatrixBufferPerm-KeyboardMatrixBuffer
-		add	hl,de		;move to permanent buffer
-		or	(hl)		;update pressed keys
-		ld	(hl),a		;
-		sbc	hl,de		;go back to temp buffer		
+		ld	(hl),a			;write line data to buffer
 		inc	hl			;update position in buffer
 		inc	c			;update line
 
@@ -103,10 +98,9 @@ ScanKey:
 ;; A bit in a byte will be '1' if the corresponding key 
 ;; is pressed, '0' if the key is not pressed.
 
+KeyboardBufferSize equ 10
 KeyboardMatrixBuffer:
-		defs	10
-KeyboardMatrixBufferPerm:
-		defs	10
+		defs	KeyboardBufferSize
 
 
 ; Special key symbols
@@ -126,6 +120,7 @@ KeyboardMatrixBufferPerm:
 ; o = Copy
 
 KeyboardLocations:
+		;; Column, row, char
 		;; 0
 		defb	33,04,'a' ; # Key number 00 : ↑
 		defb	35,05,'d' ; # Key number 01 : →
@@ -133,7 +128,7 @@ KeyboardLocations:
 		defb	35,01,'9' ; # Key number 03 : f9
 		defb	35,02,'6' ; # Key number 04 : f6
 		defb	35,03,'3' ; # Key number 05 : f3
-		defb	07,05,'f' ; # Key number 06 : ENTER
+		defb	25,05,'f' ; # Key number 06 : ENTER
 		defb	35,04,'.' ; # Key number 07 : .
 
 		;; 1
@@ -185,7 +180,7 @@ KeyboardLocations:
 		defb	13,03,'H' ; # Key number 44 : H
 		defb	15,03,'J' ; # Key number 45 : J
 		defb	13,04,'N' ; # Key number 46 : N
-		defb	05,05,'.' ; # Key number 47 : SPACE
+		defb	05,05,' ' ; # Key number 47 : SPACE
 
 		;; 6
 		defb	13,01,'6' ; # Key number 48 : &6

@@ -54,19 +54,17 @@ ROMSetUpScreen:
 	ld a,4
 	call SetBorderColor 
 
-	ld hl,#0000
-	call SetTextCoords
-	call SetTitleColors
 	ld hl,TxtROMTitle
-	call PrintString
+	ld d,#B
+	call PrintTitleBanner
 
 	ld hl,#0002
-	call SetTextCoords
+	ld (txt_coords),hl
 	call SetDefaultColors
 	ret
 
 
-TxtROMTitle: db '          AMSTRAD DIAGNOSTICS - ROM TEST             ',0
+TxtROMTitle: db '- ROM TEST',0
 
 TxtCheckingLowerROM: db 'CHECKING LOWER ROM...',0
 TxtLowerROM: db 'LOWER ROM: ',0
