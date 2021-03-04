@@ -6,14 +6,8 @@ MainMenu:
 	call make_scr_table
 
 	; Check if we're in the middle of a soak test
-	ld ix,SoakTestIndicator		
-	ld a,(ix)
-	cp SoakTestByte1
-	jr nz, MainMenuRepeat
-	ld a,(ix+1)
-	cp SoakTestByte2
-	jr nz, MainMenuRepeat
-	jp SoakTestSelected
+	call IsSoakTestRunning
+	jp z, SoakTestSelected
 
 MainMenuRepeat:
 	call DrawMainMenu
@@ -71,16 +65,6 @@ SystemInfoSelected:
 	call SystemInfo
 	jp TestComplete
 
-SoakTestSelected:
-	ld ix, SoakTestIndicator
-	ld (ix), SoakTestByte1			; Set those byte to indicate soak test
-	ld (ix+1), SoakTestByte2
-
-	call CheckUpperRAM
-
-	ld bc,#7F89                        ; GA select lower rom, and mode 1
-	out (c),c
-	jp SoakTestStart
 
 TestComplete:
 	call NewLine
@@ -148,10 +132,6 @@ PrintTitleBanner:
 	call PrintString
 	ret
 
-SoakTestByte1 EQU #BE
-SoakTestByte2 EQU #EF
-SoakTestIndicator: db 0,0
-SoakTestCount: db 0
 
 TxtRAMTest: db "[1] UPPER RAM",0
 TxtROMTest: db "[2] ROM",0
@@ -184,7 +164,7 @@ TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 TxtDisabled: db "(DISABLED)",0
 
-
+	INCLUDE "SoakTest.asm"
 	INCLUDE "DetectROMs.asm"
 	INCLUDE "CheckUpperRAM.asm"
 	INCLUDE "UtilsPrint.asm"

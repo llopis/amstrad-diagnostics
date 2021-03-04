@@ -65,7 +65,8 @@ SoakTestStart:
 	ld a,(ix+1)
 	cp SoakTestByte2
 	jr nz,.startTests
-	ld iy,1				; Remember that we're in a soak test
+	ld a,(SoakTestCount)
+	ld iyl,a			; Remember that we're in a soak test
 .startTests:
 	INCLUDE "LowerRAMTest.asm"
 RAMTestPassed:
@@ -89,9 +90,10 @@ RAMTestPassed:
 	jp MainMenu
 
 .soakTest:
+	ld (SoakTestCount),a
 	ld ix, SoakTestIndicator
 	ld (ix), SoakTestByte1
-	ld (ix+1), SoakTestByte2
+	ld (ix+1), SoakTestByte2	
 	jp MainMenu
 
 

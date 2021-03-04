@@ -1,4 +1,6 @@
 CheckUpperRAM:
+	call UpperRAMPrintTitle
+CheckUpperRAMWithoutTitle:
 	call UpperRAMSetUpScreen
 	call AddAllRAMMarkers
 	call RunUpperRAMTests
@@ -10,8 +12,7 @@ CheckUpperRAM:
 	ret
 
 	
-	
-UpperRAMSetUpScreen:
+UpperRAMPrintTitle:
 	call ClearScreen
 	ld a,4
 	call SetBorderColor 
@@ -19,7 +20,9 @@ UpperRAMSetUpScreen:
 	ld hl,TxtUpperRAMTitle
 	ld d,#8
 	call PrintTitleBanner
+	ret
 
+UpperRAMSetUpScreen:
 	ld hl,#0002
 	ld (txt_coords),hl
 	call SetDefaultColors
