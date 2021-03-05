@@ -315,6 +315,9 @@ GetROMAddrFromCRC:
 	ld a,l
 	cp e
 	jr nz, .next
+	ld a,h
+	cp d
+	jr nz, .next
 
 	ld de, ix
 	ret
