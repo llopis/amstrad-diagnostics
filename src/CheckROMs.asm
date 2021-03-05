@@ -1,10 +1,39 @@
 
-
-DetectROMs:
+CheckROMs:
 	call ROMSetUpScreen
+CheckROMsWithoutTitle:
 	call CheckLowerROM
 	call CheckUpperROMs
 	ret
+
+ROMsPrintTitle:
+
+	
+ROMSetUpScreen:
+	call ClearScreen
+	ld a,4
+	call SetBorderColor 
+
+	ld hl,TxtROMTitle
+	ld d,#B
+	call PrintTitleBanner
+
+	ld hl,#0002
+	ld (txt_coords),hl
+	call SetDefaultColors
+	ret
+
+
+TxtROMTitle: db '- ROM TEST',0
+
+TxtCheckingLowerROM: db 'CHECKING LOWER ROM...',0
+TxtLowerROM: db 'LOWER ROM: ',0
+TxtDetectingUpperROMs: db 'DETECTING UPPER ROMS...',0
+TxtROM: db 'ROM ',0
+TxtColon: db ': ',0
+
+
+//////////////////////////////////////
 
 CheckLowerROM:
 	IFDEF TRY_UNPAGING_LOW_ROM
@@ -54,7 +83,22 @@ CheckLowerROM:
 
 	ret
 
+CRCLowerRom:
+	ld bc,#7F89                        ; GA select lower rom, and mode 1
+	out (c),c
+
+	ld ix,#0000
+	ld de,#4000	
+	call Crc16
 	
+	ld bc,#7F8D                        ; GA deselect lower rom, and mode 1
+	out (c),c
+	
+	ret
+
+//////////////////////////////////////
+
+
 CheckUpperROMs:
 	ld hl,TxtDetectingUpperROMs
 	call PrintString
@@ -68,44 +112,6 @@ CheckUpperROMs:
 	ld hl,TxtAnyKeyMainMenu
 	call PrintString
 
-	ret
-	
-ROMSetUpScreen:
-	call ClearScreen
-	ld a,4
-	call SetBorderColor 
-
-	ld hl,TxtROMTitle
-	ld d,#B
-	call PrintTitleBanner
-
-	ld hl,#0002
-	ld (txt_coords),hl
-	call SetDefaultColors
-	ret
-
-
-TxtROMTitle: db '- ROM TEST',0
-
-TxtCheckingLowerROM: db 'CHECKING LOWER ROM...',0
-TxtLowerROM: db 'LOWER ROM: ',0
-TxtDetectingUpperROMs: db 'DETECTING UPPER ROMS...',0
-TxtROM: db 'ROM ',0
-TxtColon: db ': ',0
-
-
-
-CRCLowerRom:
-	ld bc,#7F89                        ; GA select lower rom, and mode 1
-	out (c),c
-
-	ld ix,#0000
-	ld de,#4000	
-	call Crc16
-	
-	ld bc,#7F8D                        ; GA deselect lower rom, and mode 1
-	out (c),c
-	
 	ret
 
 

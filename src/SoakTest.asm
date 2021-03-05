@@ -9,7 +9,7 @@ SoakTestCount: db 0
  IFDEF UpperROMBuild
 UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
  ENDIF
- 
+
 IsSoakTestRunning:
 	ld ix, SoakTestIndicator		
 	ld b,4
@@ -35,6 +35,10 @@ SoakTestSelected:
 	inc a
 	ld (SoakTestCount),a
 
+ IFDEF ROM_CHECK
+	call SoakTestPrintTitle
+	call CheckROMsWithoutTitle
+ ENDIF
 	call SoakTestPrintTitle
 	call CheckUpperRAMWithoutTitle
 	; Check if upper RAM test failed and if so stop
@@ -88,6 +92,10 @@ SoakTestPrintTitle:
 	ld (txt_coords),hl
 	ld a, (SoakTestCount)
 	call PrintADec
+
+	call SetDefaultColors
+	ld hl,#0002
+	ld (txt_coords),hl
 
 	ret
 

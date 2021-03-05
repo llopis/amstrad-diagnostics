@@ -53,7 +53,7 @@ UpperRAMTestSelected:
 
  IFDEF ROM_CHECK
 ROMTestSelected:
-	call DetectROMs
+	call CheckROMs
 	jp TestComplete
  ENDIF
 
@@ -179,7 +179,7 @@ TxtDisabled: db "(DISABLED)",0
 
  INCLUDE "SoakTest.asm"
  IFDEF ROM_CHECK
-	INCLUDE "DetectROMs.asm"
+	INCLUDE "CheckROMs.asm"
  ENDIF
  INCLUDE "CheckUpperRAM.asm"
  INCLUDE "UtilsPrint.asm"
