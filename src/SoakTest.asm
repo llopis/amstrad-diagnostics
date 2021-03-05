@@ -34,6 +34,13 @@ SoakTestSelected:
 
 	call SoakTestPrintTitle
 	call CheckUpperRAMWithoutTitle
+	; Check if upper RAM test failed and if so stop
+	ld a, (FailingBits)
+	or a
+.infiniteLoop:
+	jr nz, .infiniteLoop
+
+	; Everything passed, so add a delay and do it over
 	ld hl, #FFFF
 .delay:
 	dec hl
