@@ -8,7 +8,7 @@ RSXTable:
 
 
 RSXNames:
-	dc 'AmsDiag'
+	dc 'Ams DIAG'
 	dc 'DIAG'
 	db 0                     ;end of name table marker
 

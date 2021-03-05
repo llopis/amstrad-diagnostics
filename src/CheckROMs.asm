@@ -1,3 +1,6 @@
+////// Variables
+ROMStringBuffer: ds 16
+
 
 CheckROMs:
 	call ROMSetUpScreen
@@ -31,6 +34,8 @@ TxtLowerROM: db 'LOWER ROM: ',0
 TxtDetectingUpperROMs: db 'DETECTING UPPER ROMS...',0
 TxtROM: db 'ROM ',0
 TxtColon: db ': ',0
+TxtDashes: db '____',0
+TxtUnknownROM: db 'UNKNOWN: ',0
 
 
 //////////////////////////////////////
@@ -104,9 +109,14 @@ CheckUpperROMs:
 	call PrintString
 	call NewLine
 	ld d,0
+.romLoop:
+	push de
 	call CheckUpperROM
-	ld d,7
-	call CheckUpperROM
+	pop de
+	inc d
+	ld a,d
+	cp #10
+	jr nz, .romLoop
 
 	call NewLine
 	ld hl,TxtAnyKeyMainMenu
@@ -117,41 +127,84 @@ CheckUpperROMs:
 
 ; IN D = ROM to check
 CheckUpperROM:
-	ld a,d
-	call GetUpperROMType
-	
-	; Skip any roms of type #80 that are not the 0 ROM
-	cp #80
-	jr nz,.doIt
-	ld a,d
-	or a
-	jr z,.doIt
-	ret
-	
-.doIt:
+	push de
+
+	call SetDefaultColors
 	ld hl,TxtROM
 	call PrintString
 	ld a,d
 	call PrintAHex
 	ld hl,TxtColon
 	call PrintString	
-	ld a,d
-	call CRCRom
-	push hl
-	call PrintROMName
 
-	ld a,' '
-	call PrintChar
+	pop de
+	ld a,d
+	; Always do the 0 ROM
+	or a
+	jr z,.doIt
+	call GetUpperROMType
+	
+	; Skip any roms of type #80 (because that's the BASIC ROM repeated in other places)
+	cp #80
+	jr nz, .doIt
+
+	ld hl,TxtDashes
+	call PrintString	
+	call NewLine
+	ret
+	
+.doIt:
+	push de				; Save ROM index for later
+	ld a, d
+	call CRCRom
+	pop de
+	push hl
+
+	push de
+	call GetROMAddrFromCRC
+
+	ld a,d
+	or e
+	jr z, .unknownROM
+
+	call PrintROMName
+	pop de
+.finishROM:
+	ld a,(txt_coords+1)
+	inc a
+	ld (txt_coords+1),a
+	pop hl
+	call PrintCRC
+	call NewLine
+	ret
+
+.unknownROM:
+	call SetErrorColors
+	ld hl,TxtUnknownROM
+	call PrintString
+
+	pop de
+	ld a,d
+	ld de, ROMStringBuffer
+	call GetROMString
+	ld hl, ROMStringBuffer
+	call ConvertToUpperCase7BitEnding
+	ld hl, ROMStringBuffer
+	call PrintString7BitEnding
+
+	jr .finishROM
+
+
+; IN HL = CRC
+PrintCRC:
 	ld a,'('
 	call PrintChar
-	pop hl
 	ld a,h
 	call PrintAHex
 	ld a,l
 	call PrintAHex
 	ld a,')'
 	call PrintChar
-	call NewLine
 	ret
 
 
@@ -223,10 +276,10 @@ Crc16:
 
 
 ; IN HL = CRC
-PrintROMName:
-	ld b,ROMCount
-	ld ix,ROMInfoTable
-	
+; OUT DE = ROM index or 0000 if unknown
+GetROMAddrFromCRC:
+	ld b, 0
+	ld ix, ROMInfoTable
 .loop:
 	ld e,(ix)
 	ld d,(ix+1)
@@ -234,12 +287,7 @@ PrintROMName:
 	cp e
 	jr nz, .next
 
-	ld a,h
-	cp d
-	jr nz, .next
-	ld l,(ix+2)
-	ld h,(ix+3)
-	call PrintString
+	ld de, ix
 	ret
 	
 .next:
@@ -247,10 +295,62 @@ PrintROMName:
 	inc ix
 	inc ix
 	inc ix
-	djnz .loop
-	
-	ld hl,TxtUnknownROM
+	inc b
+	ld a,b
+	cp ROMCount
+	jr nz, .loop
+
+	ld de,0
+	ret
+
+
+; IN DE = ROM address in table
+PrintROMName:
+	ld ix,de
+	ld l,(ix+2)
+	ld h,(ix+3)
 	call PrintString
+	ret
+
+
+; IN A = ROM number to read
+;    DE = Destination buffer
+GetROMString:
+	ld bc,#7F85                        ; GA select upper rom, and mode 1
+	out (c),c
+	ld bc,#df00
+	out (c),a
+	
+	ld ix, #C000
+	ld l, (ix+4)
+	ld h, (ix+5)
+.loop:
+	ld a,(hl)
+	ld (de),a
+	inc hl
+	inc de
+	bit 7,a
+	jr z, .loop
+	
+	ld bc,#7F8D                        ; GA deselect upper rom, and mode 1
+	out (c),c
+	ret
+
+
+; IN HL = String
+ConvertToUpperCase7BitEnding:
+	ld a, (hl)
+	and %01111111
+	cp #61
+	jr c, .skipChar
+	ld a, (hl)
+	sub #20
+	ld (hl), a
+.skipChar:
+	ld a, (hl)
+	inc hl
+	bit 7, a
+	jr z, ConvertToUpperCase7BitEnding
 	ret
 	
 	INCLUDE "ROMTable.asm"

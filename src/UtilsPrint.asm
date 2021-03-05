@@ -9,7 +9,20 @@ PrintString:
 	or a
 	ret z
 	call PrintChar
-    jr PrintString
+	jr PrintString
+
+; IN HL = address of string
+PrintString7BitEnding:
+	ld a,(hl)
+	push af
+	and %01111111
+	call PrintChar
+	inc hl
+	pop af
+	bit 7,a
+	jr z, PrintString7BitEnding	
+	ret
+
 
 ; IN A = number to print
 ; Modifies BC

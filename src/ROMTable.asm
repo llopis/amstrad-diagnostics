@@ -1,5 +1,4 @@
 
-TxtUnknownROM: db 'UNKNOWN ROM',0
 
 TxtOS464EN: db 'OS 464 EN',0
 TxtOS464SP: db 'OS 464 SP',0
