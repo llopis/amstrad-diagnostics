@@ -82,8 +82,21 @@ DrawMainMenu:
 	call SetBorderColor 
 
 	ld hl,TxtVersion
+ IFDEF UpperROMBuild
+	ld d,#a
+	call PrintTitleBanner
+ 	ld a,(txt_coords+1)
+ 	inc a
+ 	ld (txt_coords+1),a
+ 	ld hl, TxtROM
+ 	call PrintString
+ 	ld a, (UpperROMConfig)
+ 	call PrintAHex
+ ELSE
 	ld d,#e
 	call PrintTitleBanner
+ ENDIF
+
 
 	; Menu items
 	call SetDefaultColors
