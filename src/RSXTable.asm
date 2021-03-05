@@ -4,7 +4,7 @@
 RSXTable:
 	dw RSXNames
 	jp Bootup
-	jp TestStart
+	jp StartDiagCommand
 
 
 RSXNames:
@@ -14,22 +14,28 @@ RSXNames:
 
 
 Bootup:
-		PUSH AF
-		PUSH BC
-		PUSH DE
-		PUSH HL
-		LD   HL, game_message
+	push af
+	push bc
+	push de
+	push hl
+	ld hl, game_message
 loop_show_message:
-		LD   A,(HL)
-		CALL $BB5A                      ; TXT_OUTPUT
-		INC  HL
-		OR	 A
-		JR   NZ,loop_show_message
-		POP  HL
-		POP  DE
-		POP  BC
-		POP  AF
-		RET
+	ld a,(hl)
+	call $bb5a                      ; txt_output
+	inc hl
+	or a
+	jr nz, loop_show_message
+	pop hl
+	pop de
+	pop bc
+	pop af
+	ret
+
+StartDiagCommand:
+	; C contains the upper ROM the command was executed from
+	ld iyh,c		; Save it in iyh
+	jp TestStart
+
 
 game_message
     db " Amstrad Diagnostics |DIAG",13,10,13,10,0

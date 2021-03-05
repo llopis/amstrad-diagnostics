@@ -6,7 +6,10 @@ SoakTestByte4 EQU 'K'
 
 SoakTestIndicator: ds 4				; Save 4 bytes
 SoakTestCount: db 0
-
+ IFDEF UpperROMBuild
+UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
+ ENDIF
+ 
 IsSoakTestRunning:
 	ld ix, SoakTestIndicator		
 	ld b,4
@@ -57,7 +60,7 @@ SoakTestSelected:
 	ld bc,#7F85                        ; GA select upper rom, and mode 1
 	out (c),c
  	ld bc,#df00
- 	ld a,6
+ 	ld a,(UpperROMConfig)
 	out (c),a
  ENDIF
 	jp TestStart

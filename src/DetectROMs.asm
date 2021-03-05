@@ -1,8 +1,12 @@
 
- IFDEF ROM_CHECK
+
 DetectROMs:
 	call ROMSetUpScreen
+	call CheckLowerROM
+	call CheckUpperROMs
+	ret
 
+CheckLowerROM:
 	IFDEF TRY_UNPAGING_LOW_ROM
 	call DandanatorPagingStop
 
@@ -11,25 +15,47 @@ DetectROMs:
 	ld ix,TxtROMMark
 	ld a,'D'
 	cp (ix)
-	jr nz, .startUpperROMCheck
+	ret nz
 	ld a,'I'
 	cp (ix+1)
-	jr nz, .startUpperROMCheck
+	ret nz
 	ld a,'A'
 	cp (ix+2)
-	jr nz, .startUpperROMCheck
+	ret nz
 	ld a,'G'
 	cp (ix+3)
-	jr nz, .startUpperROMCheck
+	ret nz
 	ENDIF
 
 	ld hl,TxtCheckingLowerROM
 	call PrintString
 	call NewLine
-	call CheckLowerROM
+
+	ld hl,TxtLowerROM
+	call PrintString
+
+	call CRCLowerRom
+	push hl
+	call PrintROMName
+	ld a,' '
+	call PrintChar
+	ld a,'('
+	call PrintChar
+	pop hl
+	ld a,h
+	call PrintAHex
+	ld a,l
+	call PrintAHex
+	ld a,')'
+	call PrintChar
 	call NewLine
+
+	call NewLine
+
+	ret
+
 	
-.startUpperROMCheck:
+CheckUpperROMs:
 	ld hl,TxtDetectingUpperROMs
 	call PrintString
 	call NewLine
@@ -44,7 +70,6 @@ DetectROMs:
 
 	ret
 	
-
 ROMSetUpScreen:
 	call ClearScreen
 	ld a,4
@@ -68,26 +93,6 @@ TxtDetectingUpperROMs: db 'DETECTING UPPER ROMS...',0
 TxtROM: db 'ROM ',0
 TxtColon: db ': ',0
 
-CheckLowerROM:
-	ld hl,TxtLowerROM
-	call PrintString
-
-	call CRCLowerRom
-	push hl
-	call PrintROMName
-	ld a,' '
-	call PrintChar
-	ld a,'('
-	call PrintChar
-	pop hl
-	ld a,h
-	call PrintAHex
-	ld a,l
-	call PrintAHex
-	ld a,')'
-	call PrintChar
-	call NewLine
-	ret
 
 
 CRCLowerRom:
@@ -244,4 +249,3 @@ PrintROMName:
 	
 	INCLUDE "ROMTable.asm"
 
- ENDIF

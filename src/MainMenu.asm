@@ -165,7 +165,9 @@ TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 TxtDisabled: db "(DISABLED)",0
 
  INCLUDE "SoakTest.asm"
- INCLUDE "DetectROMs.asm"
+ IFDEF ROM_CHECK
+	INCLUDE "DetectROMs.asm"
+ ENDIF
  INCLUDE "CheckUpperRAM.asm"
  INCLUDE "UtilsPrint.asm"
  INCLUDE "UtilsText.asm"
