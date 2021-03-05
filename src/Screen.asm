@@ -62,11 +62,16 @@ SetTitleColors:
 	ld l,pen0
 	call set_txt_colours
 	ret
-	
 
 SetDefaultColors:
 	ld h,pen0
 	ld l,pen1
+	call set_txt_colours
+	ret
+
+SetInverseColors:
+	ld h,pen1
+	ld l,pen0
 	call set_txt_colours
 	ret
 

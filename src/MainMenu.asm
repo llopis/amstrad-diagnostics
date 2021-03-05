@@ -10,15 +10,16 @@ MainMenu:
 	jp z, SoakTestSelected
 
 MainMenuRepeat:
-	call DrawMainMenu
+	call SetUpScreen
+	call DrawMenuItems
 
 .mainMenuLoop:
 	call WaitForVsync
 	call ReadFullKeyboard
 
-
-	ld ix,MenuTable
-	ld b,MenuItemCount
+	;; Check if key keys for the items are pressed
+	ld ix, MenuTable
+	ld b, MenuItemCount
 .itemLoop:
 	; Get address of part of keyboard buffer to read
 	ld hl,KeyboardMatrixBuffer
@@ -38,12 +39,72 @@ MainMenuRepeat:
 
 	djnz .itemLoop
 
+
+	;; Check if keys to move the selected item are pressed
+	ld a,(KeyboardMatrixBuffer)
+	bit 0,a					; Cursor down
+	jr nz, .selectionUp
+	bit 2,a					; Cursor up
+	jr nz, .selectionDown
+
+	ld a,(KeyboardMatrixBuffer+9)		
+	bit 0,a					; Joystick up
+	jr nz, .selectionUp
+	bit 1,a					; Joystick down
+	jr nz, .selectionDown
+
+	;; Check if keys to activate selected item are pressed
+	ld a,(KeyboardMatrixBuffer+5)		
+	bit 7,a					; Space
+	jr nz, .selectionChoose
+	ld a,(KeyboardMatrixBuffer+2)		
+	bit 2,a					; Enter
+	jr nz, .selectionChoose
+	ld a,(KeyboardMatrixBuffer+0)		
+	bit 6,a					; Return
+	jr nz, .selectionChoose
+	ld a,(KeyboardMatrixBuffer+9)		
+	bit 4,a					; Joystick fire
+	jr nz, .selectionChoose
+
 	jr .mainMenuLoop
 
 .doItem:
 	ld l,(ix+2)
 	ld h,(ix+3)
 	jp (hl)	
+
+.selectionDown:
+	ld a,(SelectedMenuItem)
+	inc a
+	cp MenuItemCount
+	jr nz, .selectionChanged
+	ld a,0
+	jr .selectionChanged
+
+.selectionUp:
+	ld a,(SelectedMenuItem)
+	dec a
+	jr nc, .selectionChanged
+	ld a, MenuItemCount
+	dec a
+	jr .selectionChanged
+
+.selectionChanged:
+	ld (SelectedMenuItem),a
+	call DrawMenuItems
+	jr .mainMenuLoop
+
+.selectionChoose:
+	ld ix, MenuTable
+	ld de, MenuItemSize
+	ld a,(SelectedMenuItem)	
+.loop:
+	or a
+	jr z,.doItem
+	add ix,de
+	dec a
+	jr .loop
 
 
 UpperRAMTestSelected:
@@ -76,7 +137,7 @@ TestComplete:
 	jp MainMenuRepeat
 
 
-DrawMainMenu:
+SetUpScreen:
 	call ClearScreen
 	ld a,4
 	call SetBorderColor 
@@ -96,17 +157,25 @@ DrawMainMenu:
 	ld d,#e
 	call PrintTitleBanner
  ENDIF
+ 	ret
 
-
+DrawMenuItems:
 	; Menu items
-	call SetDefaultColors
 
 	ld ix,MenuTable
 	ld hl,#0403
-	ld b,MenuItemCount
+	ld b,0
 .itemLoop:
 	ld (txt_coords),hl
 	push hl
+
+	call SetDefaultColors
+	ld a, (SelectedMenuItem)
+	cp b
+	jr nz, .normalItem
+	call SetInverseColors
+
+.normalItem:
 	ld l,(ix+4)
 	ld h,(ix+5)
 	call PrintString
@@ -118,10 +187,13 @@ DrawMainMenu:
 	pop hl
 	inc l
 	inc l
-
-	djnz .itemLoop
+	inc b
+	ld a,b
+	cp MenuItemCount
+	jr nz, .itemLoop
 
 	ret
+
 
 
 ; IN HL = Address of title
@@ -146,16 +218,17 @@ PrintTitleBanner:
 	ret
 
 ////// Variables
+SelectedMenuItem: db 0
  IFDEF UpperROMBuild
 UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
  ENDIF
 
 /////// Constants
-TxtRAMTest: db "[1] UPPER RAM",0
-TxtROMTest: db "[2] ROM",0
-TxtKeyboardTest: db "[3] KEYBOARD",0
-TxtSystemInfo: db "[4] SYSTEM INFO",0
-TxtSoakTest: db "[5] SOAK TEST",0
+TxtRAMTest: db "[1] UPPER RAM ",0
+TxtROMTest: db "[2] ROM ",0
+TxtKeyboardTest: db "[3] KEYBOARD ",0
+TxtSystemInfo: db "[4] SYSTEM INFO ",0
+TxtSoakTest: db "[5] SOAK TEST ",0
 MenuTable:
 	; Offset into keyboard buffer, bit mask, address to jump to, item text
 	db 8, %0001
