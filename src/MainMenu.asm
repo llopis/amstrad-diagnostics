@@ -164,14 +164,15 @@ TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 TxtDisabled: db "(DISABLED)",0
 
-	INCLUDE "SoakTest.asm"
-	INCLUDE "DetectROMs.asm"
-	INCLUDE "CheckUpperRAM.asm"
-	INCLUDE "UtilsPrint.asm"
-	INCLUDE "UtilsText.asm"
-	INCLUDE "Screen.asm"
-	INCLUDE "Keyboard.asm"
-	INCLUDE "DetectCRTC.asm"
-	INCLUDE "KeyboardTest.asm"
-	INCLUDE "SystemInfo.asm"
+ INCLUDE "SoakTest.asm"
+ INCLUDE "DetectROMs.asm"
+ INCLUDE "CheckUpperRAM.asm"
+ INCLUDE "UtilsPrint.asm"
+ INCLUDE "UtilsText.asm"
+ INCLUDE "Screen.asm"
+ INCLUDE "Keyboard.asm"
+ INCLUDE "DetectCRTC.asm"
+ INCLUDE "KeyboardTest.asm"
+ INCLUDE "SystemInfo.asm"
+ INCLUDE "Dandanator.asm"
 

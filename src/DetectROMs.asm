@@ -4,11 +4,7 @@ DetectROMs:
 	call ROMSetUpScreen
 
 	IFDEF TRY_UNPAGING_LOW_ROM
-	; Stop paging mode in Dandanator so system lower ROM is accessible
-	ld b,#20
-	ld iy,ScratchByte
-	db #FD, #FD
-	ld (iy+0),b
+	call DandanatorPagingStop
 
 	; Now check if the low RAM is still there
 	; Check if we see the mark DIAG, if not, skip low RAM test
@@ -71,7 +67,6 @@ TxtLowerROM: db 'LOWER ROM: ',0
 TxtDetectingUpperROMs: db 'DETECTING UPPER ROMS...',0
 TxtROM: db 'ROM ',0
 TxtColon: db ': ',0
-ScratchByte: db 0
 
 CheckLowerROM:
 	ld hl,TxtLowerROM

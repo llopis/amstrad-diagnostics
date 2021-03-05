@@ -31,6 +31,7 @@ SoakTestSelected:
 	or l
 	jr nz, .delay
 
+	call DandanatorPagingStart
 	ld bc,#7F89                        ; GA select lower rom, and mode 1
 	out (c),c
 	jp SoakTestStart
