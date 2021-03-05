@@ -40,12 +40,13 @@ ProgramStart:
 	IFDEF RAMBuild
 	DISPLAY "RAM build"
 	ORG #4000
-
+	nop				; Just to be able to set the first byte of the bank in the tests
 	ENDIF
 
 
 
 ;; COMMON
+TestStart:
 	DEFINE SOUND_DURATION #6000
 	DEFINE SILENCE_DURATION #1
 	DEFINE SOUND_TONE_L #FF
@@ -56,7 +57,6 @@ ProgramStart:
 	UNDEFINE SOUND_TONE_L
 	UNDEFINE SOUND_TONE_H
 
-SoakTestStart:
 	ld iy,0
 	ld ix,SoakTestIndicator		; This is out in RAM
 	ld a,(ix)			; See if we can find the two bytes that tells us we're doing a soak test
@@ -64,6 +64,14 @@ SoakTestStart:
 	jr nz,.startTests
 	ld a,(ix+1)
 	cp SoakTestByte2
+	jr nz,.startTests
+	ld a,(SoakTestCount)
+	ld a,(ix+2)
+	cp SoakTestByte3
+	jr nz,.startTests
+	ld a,(SoakTestCount)
+	ld a,(ix+3)
+	cp SoakTestByte4
 	jr nz,.startTests
 	ld a,(SoakTestCount)
 	ld iyl,a			; Remember that we're in a soak test
@@ -91,9 +99,7 @@ RAMTestPassed:
 
 .soakTest:
 	ld (SoakTestCount),a
-	ld ix, SoakTestIndicator
-	ld (ix), SoakTestByte1
-	ld (ix+1), SoakTestByte2	
+	call MarkSoakTestActive
 	jp MainMenu
 
 

@@ -174,6 +174,7 @@ AddAllRAMMarkers:
 	; d = bank
 	; e = block
 	ld de,#0703
+
 .ramLoop:
 	;; Get high nibble from bank
 	ld a,d
@@ -198,6 +199,7 @@ AddAllRAMMarkers:
 	ld l,a
 
 	;; Set first byte to full block byte
+	ld b,#7F
 	out (c),l
 	ld (ix),l
 

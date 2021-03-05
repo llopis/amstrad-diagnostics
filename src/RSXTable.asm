@@ -4,7 +4,7 @@
 RSXTable:
 	dw RSXNames
 	jp Bootup
-	jp LowerRAMTest
+	jp TestStart
 
 
 RSXNames:
