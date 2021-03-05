@@ -17,6 +17,8 @@ TxtBASIC11FR: db 'BASIC 1.1 FR',0
 TxtAMSDOS: db 'AMSDOS',0
 TxtPARADOS: db 'PARADOS',0
 
+TxtEmpty: db 'EMPTY',0
+
 
 ROMInfoTable:
 	defw #5D07, TxtOS464EN
@@ -35,5 +37,7 @@ ROMInfoTable:
 
 	defw #0F91, TxtAMSDOS
 	defw #D75F, TxtPARADOS
+
+	defw #FFF0, TxtEmpty
 
 ROMCount equ ($-ROMInfoTable)/4

@@ -7,11 +7,13 @@ CheckROMs:
 CheckROMsWithoutTitle:
 	call CheckLowerROM
 	call CheckUpperROMs
+
+	call SetDefaultColors
+	call NewLine
+	ld hl,TxtAnyKeyMainMenu
+	call PrintString
 	ret
 
-ROMsPrintTitle:
-
-	
 ROMSetUpScreen:
 	call ClearScreen
 	ld a,4
@@ -34,8 +36,9 @@ TxtLowerROM: db 'LOWER ROM: ',0
 TxtDetectingUpperROMs: db 'DETECTING UPPER ROMS...',0
 TxtROM: db 'ROM ',0
 TxtColon: db ': ',0
-TxtDashes: db '____',0
+TxtDashes: db '----',0
 TxtUnknownROM: db 'UNKNOWN: ',0
+TxtAmsDiagROM: db 'AMSTRAD DIAG (THIS ROM)',0
 
 
 //////////////////////////////////////
@@ -70,24 +73,32 @@ CheckLowerROM:
 
 	call CRCLowerRom
 	push hl
+	call GetROMAddrFromCRC
+
+	ld a,d
+	or e
+	jr z, .unknownROM
+
 	call PrintROMName
-	ld a,' '
-	call PrintChar
-	ld a,'('
-	call PrintChar
+.finishROM:
+	ld a,(txt_coords+1)
+	inc a
+	ld (txt_coords+1),a
 	pop hl
-	ld a,h
-	call PrintAHex
-	ld a,l
-	call PrintAHex
-	ld a,')'
-	call PrintChar
-	call NewLine
+	call PrintCRC
 
 	call NewLine
-
+	call NewLine
 	ret
 
+.unknownROM:
+	call SetErrorColors
+	ld hl,TxtUnknownROM
+	call PrintString
+	jr .finishROM
+
+
+; OUT HL = CRC
 CRCLowerRom:
 	ld bc,#7F89                        ; GA select lower rom, and mode 1
 	out (c),c
@@ -110,26 +121,44 @@ CheckUpperROMs:
 	call NewLine
 	ld d,0
 .romLoop:
+	call SetDefaultColors
 	push de
+ IFDEF UpperROMBuild
+	ld a,(UpperROMConfig)
+	cp d
+	jr z, .thisROM
+ ENDIF
 	call CheckUpperROM
+
+.finishLoop
 	pop de
 	inc d
 	ld a,d
 	cp #10
 	jr nz, .romLoop
 
-	call NewLine
-	ld hl,TxtAnyKeyMainMenu
+	ret
+
+ IFDEF UpperROMBuild
+.thisROM:
+	ld hl,TxtROM
+	call PrintString
+	ld a,d
+	call PrintAHex
+	ld hl,TxtColon
 	call PrintString
 
-	ret
+	ld hl,TxtAmsDiagROM
+	call PrintString
+	call NewLine
+	jr .finishLoop
+ ENDIF
 
 
 ; IN D = ROM to check
 CheckUpperROM:
 	push de
 
-	call SetDefaultColors
 	ld hl,TxtROM
 	call PrintString
 	ld a,d

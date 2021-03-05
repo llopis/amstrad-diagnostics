@@ -145,7 +145,12 @@ PrintTitleBanner:
 	call PrintString
 	ret
 
+////// Variables
+ IFDEF UpperROMBuild
+UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
+ ENDIF
 
+/////// Constants
 TxtRAMTest: db "[1] UPPER RAM",0
 TxtROMTest: db "[2] ROM",0
 TxtKeyboardTest: db "[3] KEYBOARD",0

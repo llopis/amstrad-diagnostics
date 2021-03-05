@@ -6,9 +6,6 @@ SoakTestByte4 EQU 'K'
 
 SoakTestIndicator: ds 4				; Save 4 bytes
 SoakTestCount: db 0
- IFDEF UpperROMBuild
-UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
- ENDIF
 
 IsSoakTestRunning:
 	ld ix, SoakTestIndicator		
