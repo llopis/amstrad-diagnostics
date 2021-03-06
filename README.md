@@ -12,6 +12,8 @@ It performs several diagnostics:
 
 [Check the Wiki for details](https://github.com/llopis/amstrad-diagnostics/wiki)
 
+# Downloading
+More information in the [download page](https://github.com/llopis/amstrad-diagnostics/wiki/Downloads)
 
 # Support and Development
 Come join the Discord server https://discord.gg/ETcCh6J﻿ and look for the amstrad-diagnostics channel.
