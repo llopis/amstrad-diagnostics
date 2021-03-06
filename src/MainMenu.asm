@@ -107,6 +107,9 @@ MainMenuRepeat:
 	jr .loop
 
 
+
+
+
 UpperRAMTestSelected:
 	call CheckUpperRAM
 	jp TestComplete
@@ -142,9 +145,9 @@ SetUpScreen:
 	ld a,4
 	call SetBorderColor 
 
-	ld hl,TxtVersion
+	ld hl,TxtBlank
  IFDEF UpperROMBuild
-	ld d,#a
+	ld d, (ScreenCharsWidth-TxtTitleLen)/2
 	call PrintTitleBanner
  	ld a,(txt_coords+1)
  	inc a
@@ -202,7 +205,7 @@ PrintTitleBanner:
 	push hl
 	call SetTitleColors
 	ld hl,#0000
-	ld (txt_coords),hl
+	ld (txt_coords), hl
 	ld b,ScreenCharsWidth
 .bannerLoop:
 	ld a,' '
@@ -210,8 +213,8 @@ PrintTitleBanner:
 	djnz .bannerLoop
 
 	ld e,0
-	ld (txt_coords),de
-	ld hl,TxtDiagnostics
+	ld (txt_coords), de
+	ld hl, TxtTitle
 	call PrintString
 	pop hl
 	call PrintString
@@ -247,9 +250,9 @@ MenuItemSize equ 1+1+2+2
 MenuItemCount equ ($-MenuTable)/MenuItemSize
 
 
-TxtDiagnostics: db 'AMSTRAD DIAGNOSTICS ',0
-TxtDiagnosticsLen equ $ - TxtDiagnostics
-TxtVersion: db 'V', VERSION_STR, BUILD_STR,0
+TxtTitle: db 'AMSTRAD DIAGNOSTICS V', VERSION_STR, BUILD_STR,0
+TxtTitleLen EQU $-TxtTitle-1
+TxtBlank: db 0
 
 TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0

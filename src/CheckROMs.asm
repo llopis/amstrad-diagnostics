@@ -20,7 +20,7 @@ ROMSetUpScreen:
 	call SetBorderColor 
 
 	ld hl,TxtROMTitle
-	ld d,#B
+	ld d,(ScreenCharsWidth - TxtTitleLen - TxtROMTitleLen)/2
 	call PrintTitleBanner
 
 	ld hl,#0002
@@ -29,7 +29,9 @@ ROMSetUpScreen:
 	ret
 
 
-TxtROMTitle: db '- ROM TEST',0
+TxtROMTitle: db ' - ROM TEST',0
+TxtROMTitleLen EQU $-TxtROMTitle-1
+
 
 TxtCheckingLowerROM: db 'CHECKING LOWER ROM...',0
 TxtLowerROM: db 'LOWER ROM: ',0

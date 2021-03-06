@@ -18,13 +18,13 @@ Bootup:
 	push bc
 	push de
 	push hl
-	ld hl, game_message
-loop_show_message:
+	ld hl, TxtInitializationText
+.showMessage:
 	ld a,(hl)
 	call $bb5a                      ; txt_output
 	inc hl
 	or a
-	jr nz, loop_show_message
+	jr nz, .showMessage
 	pop hl
 	pop de
 	pop bc
@@ -37,5 +37,5 @@ StartDiagCommand:
 	jp TestStart
 
 
-game_message
-    db " Amstrad Diagnostics |DIAG",13,10,13,10,0
+TxtInitializationText:
+    db " Amstrad Diagnostics v",VERSION_STR," |diag",13,10,13,10,0

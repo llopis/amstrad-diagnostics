@@ -168,7 +168,7 @@ KeyboardSetUpScreen:
 	call SetBorderColor 
 
 	ld hl,TxtKeyboardTitle
-	ld d,#9
+	ld d,(ScreenCharsWidth - TxtTitleLen - TxtKeyboardTitleLen)/2
 	call PrintTitleBanner
 
 	ld hl,#0002
@@ -183,5 +183,7 @@ KeyboardSetUpScreen:
 	ret
 
 
-TxtKeyboardTitle: db '- KEYBOARD TEST',0
+TxtKeyboardTitle: db ' - KEYBOARD TEST',0
+TxtKeyboardTitleLen EQU $-TxtKeyboardTitle-1
+
 TxtKeyboard:      db 'PRESS CONTROL+SHIFT+RETURN TO EXIT',0

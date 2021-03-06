@@ -21,7 +21,7 @@ SystemInfoSetUpScreen:
 	call SetBorderColor 
 
 	ld hl,TxtSystemInfoTitle
-	ld d,#A
+	ld d,(ScreenCharsWidth - TxtTitleLen - TxtSystemInfoTitleLen)/2
 	call PrintTitleBanner
 
 	ld hl,#0002
@@ -30,6 +30,7 @@ SystemInfoSetUpScreen:
 	ret
 
 
-TxtSystemInfoTitle: db '- SYSTEM INFO',0
+TxtSystemInfoTitle: db ' - SYSTEM INFO',0
+TxtSystemInfoTitleLen EQU $-TxtSystemInfoTitle-1
 TxtCRTC: db 'CRTC TYPE ',0
 

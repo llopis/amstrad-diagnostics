@@ -18,7 +18,7 @@ UpperRAMPrintTitle:
 	call SetBorderColor 
 
 	ld hl,TxtUpperRAMTitle
-	ld d,#8
+	ld d,(ScreenCharsWidth - TxtTitleLen - TxtUpperRAMTitleLen)/2
 	call PrintTitleBanner
 	ret
 
@@ -136,7 +136,9 @@ PrintResult:
 // Constants
 
 
-TxtUpperRAMTitle: db '- UPPER RAM TEST',0
+TxtUpperRAMTitle: db ' - UPPER RAM TEST',0
+TxtUpperRAMTitleLen EQU $-TxtUpperRAMTitle-1
+
 TxtBank: db 'BANK',0
 TxtBlock: db 'BLOCK',0
 TxtBlockTesting: db '........',0

@@ -81,11 +81,12 @@ SoakTestPrintTitle:
 	ld a,4
 	call SetBorderColor 
 
-	ld hl,TxtSoakTestTitle
-	ld d,#6
+	ld hl, TxtSoakTestTitle
+	ld d, TitleStartX
 	call PrintTitleBanner
 
-	ld hl,#2B00
+	ld h, TitleStartX + TxtTitleLen + TxtSoakTestTitleLen + 1
+	ld l, 0
 	ld (txt_coords),hl
 	ld a, (SoakTestCount)
 	call PrintADec
@@ -96,5 +97,7 @@ SoakTestPrintTitle:
 
 	ret
 
+TitleStartX EQU (ScreenCharsWidth - TxtTitleLen - TxtSoakTestTitleLen - 4)/2
+TxtSoakTestTitle: db ' - SOAK ITERATION',0
+TxtSoakTestTitleLen EQU $-TxtSoakTestTitle-1
 
-TxtSoakTestTitle: db '- SOAK ITERATION ',0

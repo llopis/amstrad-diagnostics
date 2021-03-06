@@ -18,7 +18,7 @@ ProgramStart:
 	DISPLAY "Upper ROM build"
  ORG #C000
 ProgramStart:
- INCLUDE "RSXTable.asm"
+ INCLUDE "UpperROMHeader.asm"
  ENDIF
 
 
