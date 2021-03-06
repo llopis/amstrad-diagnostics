@@ -35,7 +35,6 @@ ReadFullKeyboard:
 
 ;;--------------------------------------------------------------------------------
 
-ReadKeyboardMatrix:
 		ld	hl,KeyboardMatrixBuffer	; buffer to store matrix data
 
 		ld	bc,#f40e		; write PSG register index (14) to PPI port A (databus to PSG)
@@ -90,17 +89,6 @@ ScanKey:
 		dec	b
 		out	(c),c			;set PSG operation: bit7=0, bit 6=0 (PSG operation: inactive)
 		ret
-
-;; This buffer has one byte per keyboard line. 
-;; Each byte defines a single keyboard line, which defines 
-;; the state for up to 8 keys.
-;;
-;; A bit in a byte will be '1' if the corresponding key 
-;; is pressed, '0' if the key is not pressed.
-
-KeyboardBufferSize equ 10
-KeyboardMatrixBuffer:
-		defs	KeyboardBufferSize
 
 
 ; Special key symbols

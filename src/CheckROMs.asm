@@ -1,8 +1,5 @@
  MODULE ROMTEST
 
-////// Variables
-ROMStringBuffer: ds 16
-
 
 @CheckROMs:
 	call ROMSetUpScreen

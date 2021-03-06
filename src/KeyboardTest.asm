@@ -153,17 +153,6 @@ UpdateKeyBuffers:
 
 	ret
 
-
-LastKeyboardMatrixBuffer:
-	defs KeyboardBufferSize
-
-EdgeOnKeyboardMatrixBuffer:
-	defs KeyboardBufferSize
-EdgeOffKeyboardMatrixBuffer:
-	defs KeyboardBufferSize
-
-
-
 KeyboardSetUpScreen:
 	call ClearScreen
 	ld a,4

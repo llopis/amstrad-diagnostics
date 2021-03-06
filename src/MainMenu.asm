@@ -220,11 +220,6 @@ PrintTitleBanner:
 	call PrintString
 	ret
 
-////// Variables
-SelectedMenuItem: db 0
- IFDEF UpperROMBuild
-UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
- ENDIF
 
 /////// Constants
 TxtRAMTest: db "[1] UPPER RAM ",0
@@ -272,4 +267,4 @@ TxtROM: db 'ROM ',0
  INCLUDE "KeyboardTest.asm"
  INCLUDE "SystemInfo.asm"
  INCLUDE "Dandanator.asm"
-
+ INCLUDE "Variables.asm"

@@ -134,9 +134,6 @@ PrintResult:
 	jr .printFinalResult	
 
 
-//////////////////////////////
-// Constants
-
 
 TxtUpperRAMTitle: db ' - UPPER RAM TEST',0
 TxtUpperRAMTitleLen EQU $-TxtUpperRAMTitle-1
@@ -163,13 +160,6 @@ BlockLabelCols: db BankLabelXStart+8, BankLabelXStart+17, BankLabelXStart+26, Ba
 
 RAMBankStart equ #4000
 BankNumbers: db #C4, #C5, #C6, #C7
-
-//////////////////////////////
-// Variables
-ValidBlockCount: db 0
-@FailingBits: db 0
-C3ConfigFailed: db 0
-
 
 
 ;; Go through every bank and block and clear the first word to 0

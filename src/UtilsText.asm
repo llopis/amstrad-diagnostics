@@ -185,16 +185,6 @@ mst1:
 	ret
 
 
-scr_table:
-	defs 200*2
-
-
-txt_coords:
-txt_y:
-	defb 0
-txt_x:
-	defb 0
-
 ;; in this example B is the odd char
 ;; on screen:
 ;;
@@ -295,6 +285,6 @@ dce1:
 	ret
 
 
-char_depack_buffer: defs 16
 
-	INCLUDE "Font.asm"
+ INCLUDE "Font.asm"
+ 

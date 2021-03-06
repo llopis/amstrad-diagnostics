@@ -1,5 +1,4 @@
 
-ScratchByte: db 0
 
 DandanatorPagingStop:
 	; Stop paging mode in Dandanator so system lower ROM is accessible

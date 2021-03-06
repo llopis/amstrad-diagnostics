@@ -4,10 +4,10 @@ SoakTestByte2 EQU 'O'
 SoakTestByte3 EQU 'A'
 SoakTestByte4 EQU 'K'
 
-SoakTestIndicator: ds 4				; Save 4 bytes
-SoakTestCount: db 0
 
-IsSoakTestRunning:
+ MODULE SOAKTEST
+
+@IsSoakTestRunning:
 	ld ix, SoakTestIndicator		
 	ld b,4
 
@@ -26,7 +26,7 @@ IsSoakTestRunning:
 
 	ret	
 
-SoakTestSelected:
+@SoakTestSelected:
 	call MarkSoakTestActive
 	ld a,(SoakTestCount)
 	inc a
@@ -67,7 +67,7 @@ SoakTestSelected:
 	jp TestStart
 
 
-MarkSoakTestActive:
+@MarkSoakTestActive:
 	ld ix, SoakTestIndicator
 	ld (ix), SoakTestByte1			; Set those byte to indicate soak test
 	ld (ix+1), SoakTestByte2
@@ -101,3 +101,4 @@ TitleStartX EQU (ScreenCharsWidth - TxtTitleLen - TxtSoakTestTitleLen - 4)/2
 TxtSoakTestTitle: db ' - SOAK ITERATION',0
 TxtSoakTestTitleLen EQU $-TxtSoakTestTitle-1
 
+ ENDMODULE
