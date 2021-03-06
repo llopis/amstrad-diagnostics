@@ -84,9 +84,9 @@ TestStart:
 RAMTestPassed:
 
 	;; Copy the part of the program that can't run from ROM into RAM
-	ld hl, MainBegin
-	ld de, MainProgramAddr
-	ld bc, ProgramEnd-MainBegin
+	ld hl, RAMBegin
+	ld de, RAMProgramAddr
+	ld bc, ProgramEnd-RAMBegin
 	ldir
 
  IFDEF UpperROMBuild
@@ -118,14 +118,15 @@ RAMTestPassed:
 TxtROMMark:
 	db 'DIAG'
 
-MainProgramAddr EQU #8000
-MainBegin:
- DISP MainProgramAddr
- 	INCLUDE "Variables.asm"
+;; This is the code that needs to be in RAM to function
+RAMProgramAddr EQU #8000
+RAMBegin:
+ DISP RAMProgramAddr
  	INCLUDE "ROMAccess.asm"
  	INCLUDE "PrintChar.asm"
  	INCLUDE "UpperRAMC3Check.asm"
  	INCLUDE "Dandanator.asm"
+ 	INCLUDE "Variables.asm"
  ENT
 ProgramEnd:
  IFDEF PAD_TO_16K
@@ -133,5 +134,6 @@ ProgramEnd:
  ENDIF
 
  IFDEF PRINT_PROGRAM_SIZE
-	DISPLAY "Program size: ", ProgramEnd - ProgramStart
+	DISPLAY "Total size: ", ProgramEnd - ProgramStart
+	DISPLAY "RAM size: ", ProgramEnd - RAMBegin
  ENDIF

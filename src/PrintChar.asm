@@ -104,11 +104,12 @@ display_char2:
 	ret
 
 ;; set foreground and background colours
+;; Watch out for self-modifying code!
 @SetTxtColors:
 	ld a,h
-	ld (bk_color),a
+	ld (bk_color+1),a
 	ld a,l
-	ld (fg_color),a
+	ld (fg_color+1),a
 	ret
 
 ;; convert 1-bit per pixel into 2 bit per pixel
@@ -146,17 +147,12 @@ depack_pixel:
 depack_pix:
 	;; shift into carry
 	rlc c
-	push af
-	ld a, (bk_color)
-	ld b, a
-	pop af
+bk_color:
+	ld b,0
 	ret nc
-	push af
-	ld a, (fg_color)
-	ld b, a
-	pop af
+fg_color:
+	ld b,1
 	ret
-
 
 scr_NewLine:
 	ld a,h
