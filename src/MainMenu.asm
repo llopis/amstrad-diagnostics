@@ -11,7 +11,7 @@ MainMenuRepeat:
 	call SetUpScreen
 	call DrawMenuItems
 
-.mainMenuLoop:
+MainMenuLoop:
 	call WaitForVsync
 	call ReadFullKeyboard
 
@@ -65,7 +65,7 @@ MainMenuRepeat:
 	bit 4,a					; Joystick fire
 	jr nz, .selectionChoose
 
-	jr .mainMenuLoop
+	jr MainMenuLoop
 
 .doItem:
 	ld l,(ix+2)
@@ -91,7 +91,7 @@ MainMenuRepeat:
 .selectionChanged:
 	ld (SelectedMenuItem),a
 	call DrawMenuItems
-	jr .mainMenuLoop
+	jr MainMenuLoop
 
 .selectionChoose:
 	ld ix, MenuTable
@@ -113,10 +113,12 @@ UpperRAMTestSelected:
 	jp TestComplete
 
 
- IFDEF ROM_CHECK
 ROMTestSelected:
+ IFDEF ROM_CHECK
 	call CheckROMs
 	jp TestComplete
+ ELSE
+	jp MainMenuLoop
  ENDIF
 
 KeyboardTestSelected:
@@ -227,7 +229,11 @@ PrintTitleBanner:
 
 /////// Constants
 TxtRAMTest: db "[1] UPPER RAM ",0
+ IFDEF ROM_CHECK
 TxtROMTest: db "[2] ROM ",0
+ ELSE
+TxtROMTest: db "[2] ROM (DISABLED)",0
+ ENDIF
 TxtKeyboardTest: db "[3] KEYBOARD ",0
 TxtSystemInfo: db "[4] SYSTEM INFO ",0
 TxtSoakTest: db "[5] SOAK TEST ",0
@@ -235,10 +241,8 @@ MenuTable:
 	; Offset into keyboard buffer, bit mask, address to jump to, item text
 	db 8, %0001
 	dw UpperRAMTestSelected, TxtRAMTest
- IFDEF ROM_CHECK
 	db 8, %0010
 	dw ROMTestSelected, TxtROMTest
- ENDIF
 	db 7, %0010
 	dw KeyboardTestSelected, TxtKeyboardTest
 	db 7, %0001
@@ -255,7 +259,6 @@ TxtBlank: db 0
 
 TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
-TxtDisabled: db "(DISABLED)",0
 TxtROM: db 'ROM ',0
 
  INCLUDE "SoakTest.asm"
