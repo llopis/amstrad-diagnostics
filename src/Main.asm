@@ -115,9 +115,6 @@ RAMTestPassed:
 	INCLUDE "MainMenu.asm"
 
 
-TxtROMMark:
-	db 'DIAG'
-
 ;; This is the code that needs to be in RAM to function
 RAMProgramAddr EQU #8000
 RAMBegin:

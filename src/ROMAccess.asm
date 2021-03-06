@@ -7,18 +7,18 @@ CanAccessLowROM:
 
 	; Now check if the low RAM is still there
 	; Check if we see the mark DIAG, if not, skip low ROM test
-	ld ix,TxtROMMark
+	ld ix,TxtTitle
 	ld a,'D'
-	cp (ix)
+	cp (ix+8)
 	jr nz,.exit
 	ld a,'I'
-	cp (ix+1)
+	cp (ix+9)
 	jr nz,.exit
 	ld a,'A'
-	cp (ix+2)
+	cp (ix+10)
 	jr nz,.exit
 	ld a,'G'
-	cp (ix+3)
+	cp (ix+11)
 
 .exit:
 	push af
