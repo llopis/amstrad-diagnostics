@@ -45,6 +45,13 @@ ProgramStart:
 
 
 ;; COMMON
+	ld ix, SoakTestIndicator
+	ld (ix), 0
+	ld (ix+1), 0
+	ld (ix+2), 0
+	ld (ix+3), 0
+
+; This is where the Soak test loops
 TestStart:
 	DEFINE SOUND_DURATION #6000
 	DEFINE SILENCE_DURATION #1

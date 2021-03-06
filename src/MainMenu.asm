@@ -158,13 +158,19 @@ SetUpScreen:
 	ld d, (ScreenCharsWidth-TxtTitleLen)/2
 	call PrintTitleBanner
  ENDIF
+
+ 	call SetDefaultColors
+ 	ld hl, #0403
+ 	ld (TxtCoords), hl
+ 	ld hl, TxtSelectTest
+	call PrintString 	
  	ret
 
 DrawMenuItems:
 	; Menu items
 
 	ld ix,MenuTable
-	ld hl,#0403
+	ld hl,#0405
 	ld b,0
 .itemLoop:
 	ld (TxtCoords),hl
