@@ -147,7 +147,7 @@ SetUpScreen:
 
 	ld hl,TxtBlank
  IFDEF UpperROMBuild
-	ld d, (ScreenCharsWidth-TxtTitleLen)/2
+	ld d, (ScreenCharsWidth-TxtTitleLen-7)/2
 	call PrintTitleBanner
  	ld a,(txt_coords+1)
  	inc a
@@ -157,7 +157,7 @@ SetUpScreen:
  	ld a, (UpperROMConfig)
  	call PrintAHex
  ELSE
-	ld d,#e
+	ld d, (ScreenCharsWidth-TxtTitleLen)/2
 	call PrintTitleBanner
  ENDIF
  	ret

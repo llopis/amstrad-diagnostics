@@ -34,6 +34,16 @@ Bootup:
 StartDiagCommand:
 	; C contains the upper ROM the command was executed from
 	ld iyh,c		; Save it in iyh
+	; Clear screen just to give some feedback since the initial RAM does doesn't include screen area
+	ld hl, #C000
+	ld bc, #4000
+.loop:
+	ld (hl), #33
+	inc hl
+	dec bc
+	ld a,b
+	or c
+	jr nz, .loop
 	jp TestStart
 
 
