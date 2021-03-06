@@ -5,10 +5,11 @@
 	call ROMSetUpScreen
 @CheckROMsWithoutTitle:
 	call CheckLowerROM
+	call NewLine
 	call CheckUpperROMs
+	call NewLine
 
 	call SetDefaultColors
-	call NewLine
 	ld hl,TxtAnyKeyMainMenu
 	call PrintString
 	ret
@@ -40,6 +41,7 @@ TxtColon: db ': ',0
 TxtDashes: db '----',0
 TxtUnknownROM: db 'UNKNOWN: ',0
 TxtAmsDiagROM: db 'AMSTRAD DIAG (THIS ROM)',0
+TxtCantAccessLowerROM: db "CAN'T ACCESS SYSTEM LOWER ROM",0
 
 
 //////////////////////////////////////
@@ -47,10 +49,14 @@ TxtAmsDiagROM: db 'AMSTRAD DIAG (THIS ROM)',0
 CheckLowerROM:
 	IFDEF TRY_UNPAGING_LOW_ROM
 	call CanAccessLowROM
-	ret z
-
+	jr nz, .continueLowerROM
+	ld hl,TxtCantAccessLowerROM
+	call PrintString
+	call NewLine
+	ret
 	ENDIF
 
+.continueLowerROM:
 	ld hl,TxtCheckingLowerROM
 	call PrintString
 	call NewLine
@@ -73,7 +79,6 @@ CheckLowerROM:
 	pop hl
 	call PrintCRC
 
-	call NewLine
 	call NewLine
 	ret
 
