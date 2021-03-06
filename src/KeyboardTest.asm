@@ -22,14 +22,14 @@ KEYBOARD_Y EQU #06
 	; Print edge on keys in blue
 	ld h,pen2
 	ld l,pen0
-	call set_txt_colours	
+	call SetTxtColors	
 	ld hl,EdgeOnKeyboardMatrixBuffer
 	call PrintOnKeysFromBuffer
 
 	; Print edge off keys in yellow
 	ld h,pen1
 	ld l,pen0
-	call set_txt_colours	
+	call SetTxtColors	
 	ld hl,EdgeOffKeyboardMatrixBuffer
 	call PrintOnKeysFromBuffer
 
@@ -57,7 +57,7 @@ DrawKey:
 	ld	a,KEYBOARD_Y
 	add	e
 	ld	e,a
-	ld	(txt_coords),de
+	ld	(TxtCoords),de
 
 	ld 	a,(ix+2)
 	cp	' '
@@ -111,8 +111,8 @@ PrintOnKeysFromBuffer:
 
 
 ClearKeyboardBuffer:
-	ld hl,LastKeyboardMatrixBuffer
-	ld b,KeyboardBufferSize
+	ld hl, LastKeyboardMatrixBuffer
+	ld b, KeyboardBufferSize
 .loop:
 	ld (hl),0
 	inc hl
@@ -154,6 +154,7 @@ UpdateKeyBuffers:
 	ret
 
 KeyboardSetUpScreen:
+	ld d, 0
 	call ClearScreen
 	ld a,4
 	call SetBorderColor 
@@ -163,11 +164,11 @@ KeyboardSetUpScreen:
 	call PrintTitleBanner
 
 	ld hl,#0002
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 	call SetDefaultColors
 
 	ld hl,#0014
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 	ld hl,TxtKeyboard
 	call PrintString
 	call NewLine

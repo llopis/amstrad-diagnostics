@@ -1,5 +1,7 @@
  MODULE UPPERRAMTEST
 
+@RAMBankStart equ #4000
+
 @CheckUpperRAM:
 	call UpperRAMPrintTitle
 @CheckUpperRAMWithoutTitle:
@@ -15,6 +17,7 @@
 
 	
 UpperRAMPrintTitle:
+	ld d, 0
 	call ClearScreen
 	ld a,4
 	call SetBorderColor 
@@ -26,7 +29,7 @@ UpperRAMPrintTitle:
 
 UpperRAMSetUpScreen:
 	ld hl,#0002
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 	call SetDefaultColors
 
 	ld de,0
@@ -36,7 +39,7 @@ UpperRAMSetUpScreen:
 	ld a,(hl)
 	ld l,a
 	ld h,BankLabelXStart
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 	ld hl,TxtBank
 	call PrintString
 	ld a,' '
@@ -57,7 +60,7 @@ UpperRAMSetUpScreen:
 	ld a,(hl)
 	ld h,a
 	ld l,BankLabelYStart-2
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 	ld hl,TxtBlock
 	call PrintString
 	ld a,' '
@@ -74,7 +77,7 @@ UpperRAMSetUpScreen:
 
 PrintResult:
 	ld hl,#0014
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 	ld hl,TxtTotalMemory
 	call PrintString
 	ld a,(ValidBlockCount)
@@ -130,6 +133,7 @@ PrintResult:
 	call PrintChar
 	ld hl,TxtSupported
 	call PrintString
+	call NewLine
 	call SetDefaultColors
 	jr .printFinalResult	
 
@@ -158,8 +162,6 @@ BankLabelRows:  db BankLabelYStart, BankLabelYStart+2, BankLabelYStart+4, BankLa
 		db BankLabelYStart+8, BankLabelYStart+10, BankLabelYStart+12, BankLabelYStart+14
 BlockLabelCols: db BankLabelXStart+8, BankLabelXStart+17, BankLabelXStart+26, BankLabelXStart+35
 
-RAMBankStart equ #4000
-BankNumbers: db #C4, #C5, #C6, #C7
 
 
 ;; Go through every bank and block and clear the first word to 0
@@ -242,10 +244,10 @@ RunUpperRAMTests:
 	ld a,(hl)
 	ld d,a
 
-	ld (txt_coords),de
+	ld (TxtCoords),de
 	ld hl,TxtBlockTesting
 	call PrintString
-	ld (txt_coords),de
+	ld (TxtCoords),de
 	pop de				; Restore bank and block
 
 
@@ -327,7 +329,7 @@ RunUpperRAMTests:
 .failedBlock:
 	call SetErrorFound
 
-	ld iy,txt_coords
+	ld iy,TxtCoords
 	ld a,(iy+1)
 	sub 8
 	ld (iy+1),a
@@ -417,80 +419,6 @@ SetErrorFound:
 	ret
 
 
-ScreenPattern EQU #BE
-
-;; See if the X3 config is supported. When setting C3 we should get blocks 1 3 2 7
-CheckC3Config:
-	ld hl,C3ConfigFailed
-	ld (hl),0
-	ld ix,RAMBankStart
-	ld iy,#C000
-	ld (iy),ScreenPattern
-	; d = bank
-	ld d,0
-.ramLoop:
-	;; Get high nibble from bank
-	ld a,d
-	rrca
-	and #0F
-	rla
-	rla
-	rla
-	rla
-	add #C0
-	ld l,a
-	push hl
-
-	;; First try X4 and make sure this one exists
-	or #4
-	ld l,a
-	ld b,#7F
-	out (c),l
-
-	ld a,(ix)
-	cp l
-	pop hl
-	jr nz, .nextBank
-
-	;; Set up X3 config
-	ld a,l
-	and #F0
-	or #3
-	ld l,a
-	ld b,#7F
-	out (c),l
-
-	;; First byte of slot 3 should be block 7
-	ld a,l
-	and #F0
-	or #7
-	ld l,a
-	ld a,(iy)
-	cp l
-	jr nz, .noC3
-
-	;; First byte of slot 2 should be the screen
-	ld a,(ix)
-	cp ScreenPattern
-	jr nz, .noC3
-
-.nextBank:
-	ld e,0
-	inc d
-	ld a,d
-	cp d,8
-	jr nz,.ramLoop
-
-	ld bc,#7FC0
-	out (c),c
-	ret
-
-.noC3:
-	ld hl,C3ConfigFailed
-	ld (hl),1
-	ld bc,#7FC0
-	out (c),c
-	ret
 
 
  ENDMODULE

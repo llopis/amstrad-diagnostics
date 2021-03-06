@@ -14,8 +14,9 @@
 	ret
 
 ROMSetUpScreen:
+	ld d, 0
 	call ClearScreen
-	ld a,4
+	ld a, 4
 	call SetBorderColor 
 
 	ld hl,TxtROMTitle
@@ -23,7 +24,7 @@ ROMSetUpScreen:
 	call PrintTitleBanner
 
 	ld hl,#0002
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 	call SetDefaultColors
 	ret
 
@@ -45,23 +46,9 @@ TxtAmsDiagROM: db 'AMSTRAD DIAG (THIS ROM)',0
 
 CheckLowerROM:
 	IFDEF TRY_UNPAGING_LOW_ROM
-	call DandanatorPagingStop
+	call CanAccessLowROM
+	ret z
 
-	; Now check if the low RAM is still there
-	; Check if we see the mark DIAG, if not, skip low RAM test
-	ld ix,TxtROMMark
-	ld a,'D'
-	cp (ix)
-	ret nz
-	ld a,'I'
-	cp (ix+1)
-	ret nz
-	ld a,'A'
-	cp (ix+2)
-	ret nz
-	ld a,'G'
-	cp (ix+3)
-	ret nz
 	ENDIF
 
 	ld hl,TxtCheckingLowerROM
@@ -81,9 +68,8 @@ CheckLowerROM:
 
 	call PrintROMName
 .finishROM:
-	ld a,(txt_coords+1)
-	inc a
-	ld (txt_coords+1),a
+	ld hl, txt_x
+	inc (hl)
 	pop hl
 	call PrintCRC
 
@@ -98,25 +84,12 @@ CheckLowerROM:
 	jr .finishROM
 
 
-; OUT HL = CRC
-CRCLowerRom:
-	ld bc,#7F89                        ; GA select lower rom, and mode 1
-	out (c),c
-
-	ld ix,#0000
-	ld de,#4000	
-	call Crc16
-	
-	ld bc,#7F8D                        ; GA deselect lower rom, and mode 1
-	out (c),c
-	
-	ret
 
 //////////////////////////////////////
 
 
 CheckUpperROMs:
-	ld hl,TxtDetectingUpperROMs
+	ld hl, TxtDetectingUpperROMs
 	call PrintString
 	call NewLine
 	ld d,0
@@ -185,7 +158,7 @@ CheckUpperROM:
 .doIt:
 	push de				; Save ROM index for later
 	ld a, d
-	call CRCRom
+	call CRCUpperRom
 	pop de
 	push hl
 
@@ -199,9 +172,8 @@ CheckUpperROM:
 	call PrintROMName
 	pop de
 .finishROM:
-	ld a,(txt_coords+1)
-	inc a
-	ld (txt_coords+1),a
+	ld hl, txt_x
+	inc (hl)
 	pop hl
 	call PrintCRC
 	call NewLine
@@ -236,72 +208,6 @@ PrintCRC:
 	call PrintChar
 	ret
 
-
-; IN A = ROM number to read
-; OUT A = ROM Type
-GetUpperROMType:
-	ld bc,#7F85                        ; GA select upper rom, and mode 1
-	out (c),c
-
-	ld bc,#df00
-	out (c),a
-	
-	ld a,(#C000)
-	
-	ld bc,#7F8D                        ; GA deselect upper rom, and mode 1
-	out (c),c
-	
-	ret
-
-; IN A = ROM number to read
-; OUT HL = CRC
-;     A = ROM Type
-CRCRom:
-	ld bc,#7F85                        ; GA select upper rom, and mode 1
-	out (c),c
-
-	ld bc,#df00
-	out (c),a
-	
-	ld ix,#C000
-	ld de,#4000	
-	call Crc16
-	
-	ld a,(#C000)
-	
-	ld bc,#7F8D                        ; GA deselect upper rom, and mode 1
-	out (c),c
-	
-	ret
-
-
-; IN IX = Start address DE = Size
-; OUT HL = CRC
-; Based on code from from http //map.tni.nl/sources/external/z80bits.html#5.1
-Crc16:
-	ld hl,#FFFF
-.read:
-	ld	a,(ix)
-	inc	ix
-	xor	h
-	ld	h,a
-	ld	b,8
-.byte:
-	add	hl,hl
-	jr	nc,.next
-	ld	a,h
-	xor	#10
-	ld	h,a
-	ld	a,l
-	xor	#21
-	ld	l,a
-.next:
-	djnz .byte
-	dec de
-	ld a,e
-	or d
-	jr nz,.read
-	ret
 
 
 ; IN HL = CRC
@@ -344,29 +250,6 @@ PrintROMName:
 	call PrintString
 	ret
 
-
-; IN A = ROM number to read
-;    DE = Destination buffer
-GetROMString:
-	ld bc,#7F85                        ; GA select upper rom, and mode 1
-	out (c),c
-	ld bc,#df00
-	out (c),a
-	
-	ld ix, #C000
-	ld l, (ix+4)
-	ld h, (ix+5)
-.loop:
-	ld a,(hl)
-	ld (de),a
-	inc hl
-	inc de
-	bit 7,a
-	jr z, .loop
-	
-	ld bc,#7F8D                        ; GA deselect upper rom, and mode 1
-	out (c),c
-	ret
 
 
 ; IN HL = String

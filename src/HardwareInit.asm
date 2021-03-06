@@ -131,5 +131,8 @@ HwInit_GACLoop:
 	xor A
 	out (C), A
 
+	ld bc, RESTORE_ROM_CONFIG
+	out (c),c
+
 	ld sp, #BFFF
   

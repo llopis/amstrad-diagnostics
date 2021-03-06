@@ -18,6 +18,7 @@ CRTCDefaultTable:
 	db #00                ;R15
 CRTCDefaultTableEnd:
 
+; IN: D = Byte to clear to
 ClearScreen:
 	;; Initialize Display
 	ld hl, CRTCDefaultTableEnd
@@ -32,11 +33,24 @@ ClearScreen:
 	dec c
 	jp p,.crtcLoop
 
+	; More efficient clear routine, but we can't do that and have the upper ROM enabled
+	/*
 	ld hl,#C000
 	ld de,#C001
 	ld bc,#4000
 	ld (hl),0
 	ldir
+	*/
+
+	ld hl, #C000
+	ld bc, #4000
+.loop:
+	ld (hl),d
+	inc hl
+	dec bc
+	ld a, b
+	or c
+	jr nz, .loop
 	ret
 	
 
@@ -60,31 +74,31 @@ pen3 equ %10001000
 SetTitleColors:
 	ld h,pen2
 	ld l,pen0
-	call set_txt_colours
+	call SetTxtColors
 	ret
 
 SetDefaultColors:
 	ld h,pen0
 	ld l,pen1
-	call set_txt_colours
+	call SetTxtColors
 	ret
 
 SetInverseColors:
 	ld h,pen1
 	ld l,pen0
-	call set_txt_colours
+	call SetTxtColors
 	ret
 
 SetErrorColors:
 	ld h,pen0
 	ld l,pen3
-	call set_txt_colours
+	call SetTxtColors
 	ret
 
 SetSuccessColors:
 	ld h,pen0
 	ld l,pen2
-	call set_txt_colours
+	call SetTxtColors
 	ret
 	
 

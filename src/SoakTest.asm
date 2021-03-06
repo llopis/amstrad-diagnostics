@@ -77,6 +77,7 @@ SoakTestByte4 EQU 'K'
 
 
 SoakTestPrintTitle:
+	ld d, 0
 	call ClearScreen
 	ld a,4
 	call SetBorderColor 
@@ -87,13 +88,13 @@ SoakTestPrintTitle:
 
 	ld h, TitleStartX + TxtTitleLen + TxtSoakTestTitleLen + 1
 	ld l, 0
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 	ld a, (SoakTestCount)
 	call PrintADec
 
 	call SetDefaultColors
 	ld hl,#0002
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 
 	ret
 

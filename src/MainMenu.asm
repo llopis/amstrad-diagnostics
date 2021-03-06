@@ -1,9 +1,7 @@
 MainMenu:
 	di
-	ld bc,#7F8D                        ; GA deselect upper rom, and mode 1
-	out (c),c
 
-	call make_scr_table
+	call MakeScrTable
 
 	; Check if we're in the middle of a soak test
 	call IsSoakTestRunning
@@ -141,6 +139,7 @@ TestComplete:
 
 
 SetUpScreen:
+	ld d, 0
 	call ClearScreen
 	ld a,4
 	call SetBorderColor 
@@ -149,9 +148,8 @@ SetUpScreen:
  IFDEF UpperROMBuild
 	ld d, (ScreenCharsWidth-TxtTitleLen-7)/2
 	call PrintTitleBanner
- 	ld a,(txt_coords+1)
- 	inc a
- 	ld (txt_coords+1),a
+	ld hl, txt_x
+	inc (hl)
  	ld hl, TxtROM
  	call PrintString
  	ld a, (UpperROMConfig)
@@ -169,7 +167,7 @@ DrawMenuItems:
 	ld hl,#0403
 	ld b,0
 .itemLoop:
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 	push hl
 
 	call SetDefaultColors
@@ -205,7 +203,7 @@ PrintTitleBanner:
 	push hl
 	call SetTitleColors
 	ld hl,#0000
-	ld (txt_coords), hl
+	ld (TxtCoords), hl
 	ld b,ScreenCharsWidth
 .bannerLoop:
 	ld a,' '
@@ -213,7 +211,7 @@ PrintTitleBanner:
 	djnz .bannerLoop
 
 	ld e,0
-	ld (txt_coords), de
+	ld (TxtCoords), de
 	ld hl, TxtTitle
 	call PrintString
 	pop hl
@@ -255,16 +253,13 @@ TxtDisabled: db "(DISABLED)",0
 TxtROM: db 'ROM ',0
 
  INCLUDE "SoakTest.asm"
- IFDEF ROM_CHECK
-	INCLUDE "CheckROMs.asm"
- ENDIF
  INCLUDE "CheckUpperRAM.asm"
  INCLUDE "UtilsPrint.asm"
- INCLUDE "UtilsText.asm"
  INCLUDE "Screen.asm"
  INCLUDE "Keyboard.asm"
  INCLUDE "DetectCRTC.asm"
  INCLUDE "KeyboardTest.asm"
  INCLUDE "SystemInfo.asm"
- INCLUDE "Dandanator.asm"
- INCLUDE "Variables.asm"
+ IFDEF ROM_CHECK
+	INCLUDE "CheckROMs.asm"
+ ENDIF

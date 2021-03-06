@@ -7,5 +7,5 @@ sjasmplus --nologo --msg=war -DCartridgeBuild=1 --raw=build/AmstradDiag.cpr --ls
 sjasmplus --nologo --msg=war -DRAMBuild=1 --raw=build/diag.bin --lst=build/AmstradDiagDSK_list.txt src/Main.asm
 sjasmplus --nologo --msg=war -DLowerROMBuild=1 --raw=build/AmstradDiagLower.rom --lst=build/AmstradDiagLower_list.txt  src/Main.asm
 iDSK -n build/AmstradDiag.dsk > /dev/null 2>&1
-iDSK build/AmstradDiag.dsk -e 4000 -c 4000 -t 1 -i build/diag.bin > /dev/null 2>&1
+iDSK build/AmstradDiag.dsk -e 400 -c 400 -t 1 -i build/diag.bin > /dev/null 2>&1
 cd build; zip -q AmstradDiag.zip *.rom *.cpr *.dsk ; cd ..

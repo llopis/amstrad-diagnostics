@@ -18,6 +18,7 @@
 	
 
 SystemInfoSetUpScreen:
+	ld d, 0
 	call ClearScreen
 	ld a,4
 	call SetBorderColor 
@@ -27,7 +28,7 @@ SystemInfoSetUpScreen:
 	call PrintTitleBanner
 
 	ld hl,#0002
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 	call SetDefaultColors
 	ret
 

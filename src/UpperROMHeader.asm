@@ -8,7 +8,7 @@ RSXTable:
 
 
 RSXNames:
-	dc 'Ams DIAG'
+	dc 'Amstrad Diag'
 	dc 'DIAG'
 	db 0                     ;end of name table marker
 
@@ -35,15 +35,12 @@ StartDiagCommand:
 	; C contains the upper ROM the command was executed from
 	ld iyh,c		; Save it in iyh
 	; Clear screen just to give some feedback since the initial RAM does doesn't include screen area
-	ld hl, #C000
-	ld bc, #4000
-.loop:
-	ld (hl), #33
-	inc hl
-	dec bc
-	ld a,b
-	or c
-	jr nz, .loop
+	ld d, #33
+	call ClearScreen
+
+	ld bc, RESTORE_ROM_CONFIG
+	out (c),c
+
 	jp TestStart
 
 

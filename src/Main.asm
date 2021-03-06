@@ -39,8 +39,7 @@ ProgramStart:
 ;; RAM BUILD
  IFDEF RAMBuild
 	DISPLAY "RAM build"
- ORG #4000
-	nop				; Just to be able to set the first byte of the bank in the tests
+ ORG #400
  ENDIF
 
 
@@ -84,6 +83,7 @@ TestStart:
 	INCLUDE "LowerRAMTest.asm"
 RAMTestPassed:
 
+	;; Copy the part of the program that can't run from ROM into RAM
 	ld hl, MainBegin
 	ld de, MainProgramAddr
 	ld bc, ProgramEnd-MainBegin
@@ -112,6 +112,7 @@ RAMTestPassed:
 	jp MainMenu
 
 
+	INCLUDE "MainMenu.asm"
 
 
 TxtROMMark:
@@ -120,7 +121,11 @@ TxtROMMark:
 MainProgramAddr EQU #8000
 MainBegin:
  DISP MainProgramAddr
-	INCLUDE "MainMenu.asm"
+ 	INCLUDE "Variables.asm"
+ 	INCLUDE "ROMAccess.asm"
+ 	INCLUDE "PrintChar.asm"
+ 	INCLUDE "UpperRAMC3Check.asm"
+ 	INCLUDE "Dandanator.asm"
  ENT
 ProgramEnd:
  IFDEF PAD_TO_16K

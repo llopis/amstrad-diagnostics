@@ -1,3 +1,6 @@
+ MODULE UtilsText
+
+
 ;; By Kevin Thacker from http://cpctech.cpc-live.com/source/sixpix.asm
 ;; each char is 6 mode 1 pixels wide and 8 mode 1 pixels tall
 ;; in mode 1, each byte uses 4 pixels
@@ -18,13 +21,18 @@
 
 ;; even/odd x coord
 
-ScreenCharsWidth equ 53
+@ScreenCharsWidth equ 53
 
-PrintChar:
+@PrintChar:
 	push hl
 	push de
 	push bc
 
+ IFDEF UpperROMBuild	
+ 	; Disable upper ROM so we can read from the screen
+	ld bc, #7F00 + %10001101
+	out (c),c
+ ENDIF
 	;; work out location of pixel data
 	;; 1 bit per pixel font used here
 	sub ' '
@@ -70,9 +78,15 @@ PrintChar:
 	;; increment text coord position
 	ld hl,txt_x
 	inc (hl)
+
+ IFDEF UpperROMBuild
+	ld bc, RESTORE_ROM_CONFIG
+	out (c),c
+ ENDIF
 	pop bc
 	pop de
 	pop hl
+
 	ret
 
 display_char2:
@@ -82,19 +96,19 @@ display_char2:
 	jp display_char_even
 
 
-NewLine:
-	ld hl,(txt_coords)
+@NewLine:
+	ld hl,(TxtCoords)
 	inc l
 	ld h,0
-	ld (txt_coords),hl
+	ld (TxtCoords),hl
 	ret
 
 ;; set foreground and background colours
-set_txt_colours:
+@SetTxtColors:
 	ld a,h
-	ld (bk_color+1),a
+	ld (bk_color),a
 	ld a,l
-	ld (fg_color+1),a
+	ld (fg_color),a
 	ret
 
 ;; convert 1-bit per pixel into 2 bit per pixel
@@ -132,11 +146,15 @@ depack_pixel:
 depack_pix:
 	;; shift into carry
 	rlc c
-bk_color:
-	ld b,0
+	push af
+	ld a, (bk_color)
+	ld b, a
+	pop af
 	ret nc
-fg_color:
-	ld b,1
+	push af
+	ld a, (fg_color)
+	ld b, a
+	pop af
 	ret
 
 
@@ -171,7 +189,7 @@ get_scr_addr:
 	pop bc
 	ret
 
-make_scr_table:
+@MakeScrTable:
 	ld ix,scr_table
 	ld hl,#c000
 	ld b,200
@@ -285,6 +303,6 @@ dce1:
 	ret
 
 
-
  INCLUDE "Font.asm"
- 
+
+ ENDMODULE

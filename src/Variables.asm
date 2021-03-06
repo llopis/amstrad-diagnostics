@@ -41,8 +41,11 @@ SoakTestCount: db 0
 ;; Text utils
 scr_table: defs 200*2
 
-txt_coords:
+TxtCoords:
 txt_y: defb 0
 txt_x: defb 0
 char_depack_buffer: defs 16
+bk_color: db 0
+fg_color: db 0
+
 
