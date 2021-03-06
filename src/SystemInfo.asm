@@ -1,5 +1,7 @@
 
-SystemInfo:
+ MODULE SYSTEMINFO
+
+@SystemInfo:
 	call SystemInfoSetUpScreen
 
 	ld hl,TxtCRTC
@@ -34,3 +36,5 @@ TxtSystemInfoTitle: db ' - SYSTEM INFO',0
 TxtSystemInfoTitleLen EQU $-TxtSystemInfoTitle-1
 TxtCRTC: db 'CRTC TYPE ',0
 
+
+ ENDMODULE

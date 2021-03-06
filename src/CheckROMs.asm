@@ -1,10 +1,12 @@
+ MODULE ROMTEST
+
 ////// Variables
 ROMStringBuffer: ds 16
 
 
-CheckROMs:
+@CheckROMs:
 	call ROMSetUpScreen
-CheckROMsWithoutTitle:
+@CheckROMsWithoutTitle:
 	call CheckLowerROM
 	call CheckUpperROMs
 
@@ -36,7 +38,6 @@ TxtROMTitleLen EQU $-TxtROMTitle-1
 TxtCheckingLowerROM: db 'CHECKING LOWER ROM...',0
 TxtLowerROM: db 'LOWER ROM: ',0
 TxtDetectingUpperROMs: db 'DETECTING UPPER ROMS...',0
-TxtROM: db 'ROM ',0
 TxtColon: db ': ',0
 TxtDashes: db '----',0
 TxtUnknownROM: db 'UNKNOWN: ',0
@@ -389,3 +390,4 @@ ConvertToUpperCase7BitEnding:
 	
 	INCLUDE "ROMTable.asm"
 
+ ENDMODULE

@@ -1,7 +1,9 @@
 
+ MODULE KEYBOARDTEST
+
 KEYBOARD_Y EQU #06
 
-TestKeyboard:
+@TestKeyboard:
 	call KeyboardSetUpScreen
 	call PrintKeyboard
 	call ClearKeyboardBuffer
@@ -187,3 +189,5 @@ TxtKeyboardTitle: db ' - KEYBOARD TEST',0
 TxtKeyboardTitleLen EQU $-TxtKeyboardTitle-1
 
 TxtKeyboard:      db 'PRESS CONTROL+SHIFT+RETURN TO EXIT',0
+
+ ENDMODULE

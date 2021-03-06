@@ -257,6 +257,7 @@ TxtBlank: db 0
 TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 TxtDisabled: db "(DISABLED)",0
+TxtROM: db 'ROM ',0
 
  INCLUDE "SoakTest.asm"
  IFDEF ROM_CHECK

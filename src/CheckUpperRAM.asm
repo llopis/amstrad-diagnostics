@@ -1,6 +1,8 @@
-CheckUpperRAM:
+ MODULE UPPERRAMTEST
+
+@CheckUpperRAM:
 	call UpperRAMPrintTitle
-CheckUpperRAMWithoutTitle:
+@CheckUpperRAMWithoutTitle:
 	call UpperRAMSetUpScreen
 	call AddAllRAMMarkers
 	call RunUpperRAMTests
@@ -165,7 +167,7 @@ BankNumbers: db #C4, #C5, #C6, #C7
 //////////////////////////////
 // Variables
 ValidBlockCount: db 0
-FailingBits: db 0
+@FailingBits: db 0
 C3ConfigFailed: db 0
 
 
@@ -501,4 +503,4 @@ CheckC3Config:
 	ret
 
 
-
+ ENDMODULE
