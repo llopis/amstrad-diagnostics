@@ -1,8 +1,6 @@
 MainMenu:
 	di
 
-	call MakeScrTable
-
 	; Check if we're in the middle of a soak test
 	call IsSoakTestRunning
 	jp z, SoakTestSelected
@@ -131,7 +129,6 @@ SystemInfoSelected:
 
 
 TestComplete:
-	call NewLine
 .loop:
 	call WaitForVsync
 	call ReadFullKeyboard
@@ -227,6 +224,30 @@ PrintTitleBanner:
 	ret
 
 
+LowerRAMTestSuccess:
+	ld d, 0
+	call ClearScreen
+	ld a,4
+	call SetBorderColor 
+
+	ld hl,TxtLowerRAMTitle
+	ld d, (ScreenCharsWidth-TxtTitleLen-TxtLowerRAMTitleLen)/2
+	call PrintTitleBanner
+
+	call SetDefaultColors
+	ld hl, #0002
+	ld (TxtCoords), hl
+	ld hl, TxtLowerRAMSuccess
+	call PrintString
+	ld hl, #0004
+	ld (TxtCoords), hl
+	ld hl, TxtAnyKeyMainMenu
+	call PrintString
+
+	jp TestComplete
+
+
+
 /////// Constants
 TxtRAMTest: db "[1] UPPER RAM ",0
  IFDEF ROM_CHECK
@@ -257,6 +278,9 @@ TxtTitle: db 'AMSTRAD DIAGNOSTICS V', VERSION_STR, BUILD_STR,0
 TxtTitleLen EQU $-TxtTitle-1
 TxtBlank: db 0
 
+TxtLowerRAMTitle: db " - LOWER RAM TESTS",0
+TxtLowerRAMTitleLen equ $-TxtLowerRAMTitle-1
+TxtLowerRAMSuccess: db "LOWER RAM TESTS PASSED",0
 TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 TxtROM: db 'ROM ',0

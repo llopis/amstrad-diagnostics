@@ -124,7 +124,7 @@ RTB_L4OK:
 
 	ld a,d
 	or a
-	jp z,RAMTestPassed
+	jp z, RAMTestPassed
 
 
 	DEFINE SOUND_DURATION #F000

@@ -90,11 +90,7 @@ TestStart:
 	INCLUDE "LowerRAMTest.asm"
 RAMTestPassed:
 
-	;; Copy the part of the program that can't run from ROM into RAM
-	ld hl, RAMBegin
-	ld de, RAMProgramAddr
-	ld bc, ProgramEnd-RAMBegin
-	ldir
+	call RAMInitialize
 
  IFDEF UpperROMBuild
 	ld a,iyh			; Restore the upper ROM config to RAM
@@ -111,12 +107,23 @@ RAMTestPassed:
 	INCLUDE "PlaySound.asm"
 
 	INCLUDE "PlaySound.asm"
-	jp MainMenu
+	jp LowerRAMTestSuccess
 
 .soakTest:
 	ld (SoakTestCount),a
 	call MarkSoakTestActive
 	jp MainMenu
+
+
+RAMInitialize:
+	;; Copy the part of the program that can't run from ROM into RAM
+	ld hl, RAMBegin
+	ld de, RAMProgramAddr
+	ld bc, ProgramEnd-RAMBegin
+	ldir
+
+	call MakeScrTable
+	ret
 
 
 	INCLUDE "MainMenu.asm"
