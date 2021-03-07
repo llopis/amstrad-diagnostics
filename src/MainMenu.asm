@@ -12,13 +12,14 @@ MainMenuRepeat:
 MainMenuLoop:
 	call WaitForVsync
 	call ReadFullKeyboard
+	call UpdateKeyBuffers
 
 	;; Check if key keys for the items are pressed
 	ld ix, MenuTable
 	ld b, MenuItemCount
 .itemLoop:
 	; Get address of part of keyboard buffer to read
-	ld hl,KeyboardMatrixBuffer
+	ld hl,EdgeOnKeyboardMatrixBuffer
 	ld d,0
 	ld e,(ix)
 	add hl,de
@@ -37,29 +38,29 @@ MainMenuLoop:
 
 
 	;; Check if keys to move the selected item are pressed
-	ld a,(KeyboardMatrixBuffer)
+	ld a,(EdgeOnKeyboardMatrixBuffer)
 	bit 0,a					; Cursor down
 	jr nz, .selectionUp
 	bit 2,a					; Cursor up
 	jr nz, .selectionDown
 
-	ld a,(KeyboardMatrixBuffer+9)		
+	ld a,(EdgeOnKeyboardMatrixBuffer+9)		
 	bit 0,a					; Joystick up
 	jr nz, .selectionUp
 	bit 1,a					; Joystick down
 	jr nz, .selectionDown
 
 	;; Check if keys to activate selected item are pressed
-	ld a,(KeyboardMatrixBuffer+5)		
+	ld a,(EdgeOnKeyboardMatrixBuffer+5)		
 	bit 7,a					; Space
 	jr nz, .selectionChoose
-	ld a,(KeyboardMatrixBuffer+2)		
+	ld a,(EdgeOnKeyboardMatrixBuffer+2)		
 	bit 2,a					; Enter
 	jr nz, .selectionChoose
-	ld a,(KeyboardMatrixBuffer+0)		
+	ld a,(EdgeOnKeyboardMatrixBuffer+0)		
 	bit 6,a					; Return
 	jr nz, .selectionChoose
-	ld a,(KeyboardMatrixBuffer+9)		
+	ld a,(EdgeOnKeyboardMatrixBuffer+9)		
 	bit 4,a					; Joystick fire
 	jr nz, .selectionChoose
 
@@ -90,8 +91,14 @@ MainMenuLoop:
 	jr .selectionChanged
 
 .selectionChanged:
-	ld (SelectedMenuItem),a
-	call DrawMenuItems
+	push af
+	ld a, (SelectedMenuItem)
+	ld c, 0
+	call DrawMenuItemFromIndex
+	pop af
+	ld (SelectedMenuItem), a
+	ld c, 1
+	call DrawMenuItemFromIndex
 	jp MainMenuLoop
 
 .selectionChoose:
@@ -165,12 +172,14 @@ SetUpScreen:
 	call PrintString 	
  	ret
 
-DrawMenuItems:
-	; Menu items
+MenuItemX equ 6
+MenuItemY equ 5
+MenuItemStartPos equ (MenuItemX << 8) | MenuItemY
 
-	ld ix,MenuTable
-	ld hl,#0605
-	ld b,0
+DrawMenuItems:
+	ld ix, MenuTable
+	ld hl, MenuItemStartPos
+	ld b, 0
 .itemLoop:
 	ld (TxtCoords),hl
 	push hl
@@ -200,6 +209,46 @@ DrawMenuItems:
 
 	ret
 
+
+; IN: A menu item to draw
+;     C selected or not
+DrawMenuItemFromIndex:
+	; First find the item in the table
+	ld b, MenuItemY
+	ld hl, MenuTable
+	ld de, MenuItemSize
+.findLoop:
+	or a
+	jr z, .foundItem
+	add hl,de
+	dec a
+	inc b
+	inc b
+	jr .findLoop
+
+.foundItem:
+	ld ix, hl
+
+	; Set the position
+	ld d, MenuItemX
+	ld e, b
+	ld (TxtCoords), de
+
+	; Now set the color
+	ld a,c
+	or a
+	jr nz, .selectedItem
+	call SetDefaultColors
+.drawItem:
+	ld l,(ix+4)
+	ld h,(ix+5)
+	call PrintString
+
+	ret
+
+.selectedItem:
+	call SetInverseColors
+	jr .drawItem
 
 
 ; IN HL = Address of title

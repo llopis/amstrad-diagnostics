@@ -7,7 +7,10 @@
 ;; is pressed, '0' if the key is not pressed.
 
 KeyboardBufferSize equ 10
-KeyboardMatrixBuffer: defs KeyboardBufferSize
+KeyboardMatrixBuffer: 	     defs KeyboardBufferSize
+LastKeyboardMatrixBuffer:    defs KeyboardBufferSize
+EdgeOnKeyboardMatrixBuffer:  defs KeyboardBufferSize
+EdgeOffKeyboardMatrixBuffer: defs KeyboardBufferSize
 
 
 ;; Common
@@ -28,11 +31,6 @@ C3ConfigFailed: db 0
 ;; ROM test
 ROMStringBuffer: ds 16
 
-
-;; Keyboard test
-LastKeyboardMatrixBuffer:    defs KeyboardBufferSize
-EdgeOnKeyboardMatrixBuffer:  defs KeyboardBufferSize
-EdgeOffKeyboardMatrixBuffer: defs KeyboardBufferSize
 
 ;; Soak test
 SoakTestIndicator: ds 4				; Save 4 bytes

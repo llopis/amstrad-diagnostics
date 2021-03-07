@@ -119,39 +119,7 @@ ClearKeyboardBuffer:
 	djnz .loop
 	ret
 
-; Put bits for new keys in EdgeOnKeyboardMatrixBuffer and EdgeOffKeyboardMatrixBuffer
-; Save matris buffer to LastKeyboardMatrixBuffer
-UpdateKeyBuffers:
-	; First detect edge offs and copy last buffer
-	ld hl,KeyboardMatrixBuffer
-	ld de,LastKeyboardMatrixBuffer
-	ld ix,EdgeOffKeyboardMatrixBuffer
-	ld iy,EdgeOnKeyboardMatrixBuffer
-	ld b,KeyboardBufferSize
-.loop:
-	ld a,(de)	; Last pressed keys
-	ld c,a
-	ld a,(hl)	; Currently pressed keys
-	xor c
-	and c
-	ld (ix),a	; Off edges
 
-	ld c,(hl)	; Currently pressed keys
-	ld a,(de)       ; Last pressed keys
-	xor c
-	and c
-	ld (iy),a	; On edges
-
-	ld a,(hl)
-	ld (de),a	; Copy currently pressed keys
-
-	inc de
-	inc hl
-	inc ix
-	inc iy
-	djnz .loop
-
-	ret
 
 KeyboardSetUpScreen:
 	ld d, 0
