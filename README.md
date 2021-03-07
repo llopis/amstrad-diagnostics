@@ -1,14 +1,14 @@
 # amstrad-diagnostics
 A suite of diagnostic tests for the Amstrad CPC, Amstrad Plus and Amstrad GX4000.
 
-It performs several diagnostics:
+It performs several diagnostic tests:
 * Lower 64KB RAM
 * Upper RAM
 * System ROMs
-* Keyboard 
+* Keyboard
 * Detect CRTC model
 
-![image](/images/LowRAMTest.gif)
+![image](/images/MainMenu.png)
 
 [Check the Wiki for details](https://github.com/llopis/amstrad-diagnostics/wiki)
 
