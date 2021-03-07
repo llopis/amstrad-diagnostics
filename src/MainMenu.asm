@@ -80,8 +80,11 @@ MainMenuLoop:
 
 .selectionUp:
 	ld a,(SelectedMenuItem)
+	or a
+	jr z, .moveSelectionToTop
 	dec a
-	jr nc, .selectionChanged
+	jr .selectionChanged
+.moveSelectionToTop:
 	ld a, MenuItemCount
 	dec a
 	jr .selectionChanged
@@ -89,7 +92,7 @@ MainMenuLoop:
 .selectionChanged:
 	ld (SelectedMenuItem),a
 	call DrawMenuItems
-	jr MainMenuLoop
+	jp MainMenuLoop
 
 .selectionChoose:
 	ld ix, MenuTable
@@ -101,9 +104,6 @@ MainMenuLoop:
 	add ix,de
 	dec a
 	jr .loop
-
-
-
 
 
 UpperRAMTestSelected:
@@ -169,7 +169,7 @@ DrawMenuItems:
 	; Menu items
 
 	ld ix,MenuTable
-	ld hl,#0405
+	ld hl,#0605
 	ld b,0
 .itemLoop:
 	ld (TxtCoords),hl
@@ -249,26 +249,30 @@ LowerRAMTestSuccess:
 
 
 /////// Constants
-TxtRAMTest: db "[1] UPPER RAM ",0
+
+TxtLowerRAMTest: db "[1] LOWER RAM ",0
+TxtRAMTest: db "[2] UPPER RAM ",0
  IFDEF ROM_CHECK
-TxtROMTest: db "[2] ROM ",0
+TxtROMTest: db "[3] ROM ",0
  ELSE
-TxtROMTest: db "[2] ROM (DISABLED)",0
+TxtROMTest: db "[3] ROM (DISABLED)",0
  ENDIF
-TxtKeyboardTest: db "[3] KEYBOARD ",0
-TxtSystemInfo: db "[4] SYSTEM INFO ",0
-TxtSoakTest: db "[5] SOAK TEST ",0
+TxtKeyboardTest: db "[4] KEYBOARD ",0
+TxtSystemInfo: db "[5] SYSTEM INFO ",0
+TxtSoakTest: db "[6] SOAK TEST ",0
 MenuTable:
 	; Offset into keyboard buffer, bit mask, address to jump to, item text
-	db 8, %0001
+	db 8, %0001			; 1
+	dw TestStart, TxtLowerRAMTest
+	db 8, %0010			; 2
 	dw UpperRAMTestSelected, TxtRAMTest
-	db 8, %0010
+	db 7, %0010			; 3
 	dw ROMTestSelected, TxtROMTest
-	db 7, %0010
+	db 7, %0001			; 4
 	dw KeyboardTestSelected, TxtKeyboardTest
-	db 7, %0001
+	db 6, %0010			; 5
 	dw SystemInfoSelected, TxtSystemInfo
-	db 6, %0010
+	db 6, %0001			; 6
 	dw SoakTestSelected, TxtSoakTest
 MenuItemSize equ 1+1+2+2
 MenuItemCount equ ($-MenuTable)/MenuItemSize
