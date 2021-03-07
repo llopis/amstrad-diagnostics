@@ -52,7 +52,7 @@
 
 	ld bc,#F400 + %00000111 ;; << data
 	out (c),c
-	ld bc,#F680 ;; << write data to register
+	ld bc,#F6A0 ;; << write data to register
 	out (c),c
 	ld bc,#F600
 	out (c),c
