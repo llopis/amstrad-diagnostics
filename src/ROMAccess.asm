@@ -3,7 +3,8 @@
 
 ;; OUT: Z if we can access a low ROM other than diagnostics
 CanAccessLowROM:
-	call DandanatorPagingStop
+	call M4DisableLowerROM
+	call DandanatorDisableLowerROM
 
 	; Now check if the low RAM is still there
 	; Check if we see the mark DIAG, if not, skip low ROM test
@@ -22,7 +23,8 @@ CanAccessLowROM:
 
 .exit:
 	push af
-	call DandanatorPagingStart	
+	call M4EnableLowerROM
+	call DandanatorEnableLowerROM	
 	pop af
 	ret
 
@@ -30,7 +32,8 @@ CanAccessLowROM:
 
 ; OUT HL = CRC
 CRCLowerRom:
-	call DandanatorPagingStop
+	call M4DisableLowerROM
+	call DandanatorDisableLowerROM
 	ld bc,#7F89                        ; GA select lower rom, and mode 1
 	out (c),c
 
@@ -40,8 +43,12 @@ CRCLowerRom:
 	
 	ld bc, RESTORE_ROM_CONFIG
 	out (c),c
-	call DandanatorPagingStart	
-	
+
+	push hl
+	call M4EnableLowerROM
+	call DandanatorEnableLowerROM	
+	pop hl
+
 	ret
 
 

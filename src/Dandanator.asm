@@ -1,11 +1,12 @@
+ MODULE Dandanator
 
-DandanatorPagingStop:
-	; Stop paging mode in Dandanator so system lower ROM is accessible
+@DandanatorDisableLowerROM:
+	; Disable Dandanator lower ROM so system lower ROM is accessible
 	ld a, %10000011
 	jr DandanatorConfigCommandSequence
 
-DandanatorPagingStart:
-	; Start paging mode in Dandanator again to diag ROM is in 0x0000-0x3FFFF
+@DandanatorEnableLowerROM:
+	; Enable Dandanator lower ROM
 	ld a, %10000010
 	jr DandanatorConfigCommandSequence
 
@@ -14,3 +15,9 @@ DandanatorConfigCommandSequence:
 	db #FD, #FD
 	ld (iy+0), a
 	ret
+
+
+;; Variable, but this resides in RAM, so that's OK
+ScratchByte: db 0
+
+ ENDMODULE

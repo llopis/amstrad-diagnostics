@@ -137,6 +137,7 @@ RAMBegin:
  	INCLUDE "PrintChar.asm"
  	INCLUDE "UpperRAMC3Check.asm"
  	INCLUDE "Dandanator.asm"
+ 	INCLUDE "M4.asm"
  	INCLUDE "Variables.asm"
  ENT
 ProgramEnd:

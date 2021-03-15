@@ -52,18 +52,6 @@ SoakTestByte4 EQU 'K'
 	or l
 	jr nz, .delay
 
- IFDEF LowerROMBuild
-	call DandanatorPagingStart
-	ld bc,#7F89                        ; GA select lower rom, and mode 1
-	out (c),c
- ENDIF
- IFDEF UpperROMBuild
-	ld bc,#7F85                        ; GA select upper rom, and mode 1
-	out (c),c
- 	ld bc,#df00
- 	ld a,(UpperROMConfig)
-	out (c),a
- ENDIF
 	jp TestStart
 
 

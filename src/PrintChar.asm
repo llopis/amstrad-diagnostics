@@ -299,6 +299,19 @@ dce1:
 	ret
 
 
+
+;; Variables, but this resides in RAM, so that's fine
+@TxtCoords:
+@txt_y: defb 0
+@txt_x: defb 0
+
+@bk_color: db 0
+@fg_color: db 0
+
+scr_table: defs 200*2
+char_depack_buffer: defs 16
+
+
  INCLUDE "Font.asm"
 
  ENDMODULE
