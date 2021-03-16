@@ -2,11 +2,20 @@ MainMenu:
 	di
 
 	; Check if we're in the middle of a soak test
-	call IsSoakTestRunning
-	jp z, SoakTestSelected
+	call 	IsSoakTestRunning
+	jp 	z, SoakTestSelected
+
 
 MainMenuRepeat:
-	call SetUpScreen
+	call 	SetUpScreen
+	ld 	a, (LowRAMSuccess)
+	or	a
+	jr	z, .drawMenuItems
+	call 	LowerRAMTestSuccess
+	ld 	a, 0
+	ld	(LowRAMSuccess), a
+
+.drawMenuItems:
 	call DrawMenuItems
 
 MainMenuLoop:
@@ -145,42 +154,48 @@ TestComplete:
 	jp MainMenuRepeat
 
 
-SetUpScreen:
-	ld d, 0
-	call ClearScreen
-	ld a,4
-	call SetBorderColor 
+MENU_X EQU 16
+MENU_Y EQU 7
+MENU_ITEM_START_POS equ (MENU_X << 8) | MENU_Y
+SELECT_X EQU MENU_X - 2
+SELECT_Y EQU MENU_Y - 2
+SELECT_POS equ (SELECT_X << 8) | SELECT_Y
 
-	ld hl,TxtBlank
+
+SetUpScreen:
+	ld 	d, 0
+	call 	ClearScreen
+	ld 	a, 4
+	call 	SetBorderColor 
+
+	ld 	hl, TxtBlank
  IFDEF UpperROMBuild
-	ld d, (ScreenCharsWidth-TxtTitleLen-7)/2
-	call PrintTitleBanner
-	ld hl, txt_x
-	inc (hl)
- 	ld hl, TxtROM
- 	call PrintString
- 	ld a, (UpperROMConfig)
- 	call PrintAHex
+	ld 	d, (ScreenCharsWidth-TxtTitleLen-7)/2
+	call 	PrintTitleBanner
+	ld 	hl, txt_x
+	inc 	(hl)
+ 	ld 	hl, TxtROM
+ 	call 	PrintString
+ 	ld 	a, (UpperROMConfig)
+ 	call 	PrintAHex
  ELSE
-	ld d, (ScreenCharsWidth-TxtTitleLen)/2
-	call PrintTitleBanner
+	ld 	d, (ScreenCharsWidth-TxtTitleLen)/2
+	call 	PrintTitleBanner
  ENDIF
 
- 	call SetDefaultColors
- 	ld hl, #0403
- 	ld (TxtCoords), hl
- 	ld hl, TxtSelectTest
-	call PrintString 	
+ 	call 	SetDefaultColors
+ 	ld 	h, SELECT_X
+ 	ld	l, SELECT_Y
+ 	ld 	(TxtCoords), hl
+ 	ld 	hl, TxtSelectTest
+	call 	PrintString 	
  	ret
 
-MenuItemX equ 6
-MenuItemY equ 5
-MenuItemStartPos equ (MenuItemX << 8) | MenuItemY
 
 DrawMenuItems:
-	ld ix, MenuTable
-	ld hl, MenuItemStartPos
-	ld b, 0
+	ld 	ix, MenuTable
+	ld 	hl, MENU_ITEM_START_POS
+	ld 	b, 0
 .itemLoop:
 	ld (TxtCoords),hl
 	push hl
@@ -215,7 +230,7 @@ DrawMenuItems:
 ;     C selected or not
 DrawMenuItemFromIndex:
 	; First find the item in the table
-	ld b, MenuItemY
+	ld b, MENU_Y
 	ld hl, MenuTable
 	ld de, MenuItemSize
 .findLoop:
@@ -231,7 +246,7 @@ DrawMenuItemFromIndex:
 	ld ix, hl
 
 	; Set the position
-	ld d, MenuItemX
+	ld d, MENU_X
 	ld e, b
 	ld (TxtCoords), de
 
@@ -275,27 +290,12 @@ PrintTitleBanner:
 
 
 LowerRAMTestSuccess:
-	ld d, 0
-	call ClearScreen
-	ld a,4
-	call SetBorderColor 
-
-	ld hl,TxtLowerRAMTitle
-	ld d, (ScreenCharsWidth-TxtTitleLen-TxtLowerRAMTitleLen)/2
-	call PrintTitleBanner
-
-	call SetDefaultColors
-	ld hl, #0002
-	ld (TxtCoords), hl
-	ld hl, TxtLowerRAMSuccess
-	call PrintString
-	ld hl, #0004
-	ld (TxtCoords), hl
-	ld hl, TxtAnyKeyMainMenu
-	call PrintString
-
-	jp TestComplete
-
+	call 	SetSuccessColors
+	ld 	hl, #0002
+	ld 	(TxtCoords), hl
+	ld 	hl, TxtLowerRAMSuccess
+	call 	PrintString
+	ret
 
 
 /////// Constants

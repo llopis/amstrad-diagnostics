@@ -107,7 +107,9 @@ RAMTestPassed:
 	INCLUDE "PlaySound.asm"
 
 	INCLUDE "PlaySound.asm"
-	jp LowerRAMTestSuccess
+	ld 	a,1
+	ld 	(LowRAMSuccess), a
+	jp 	MainMenu
 
 .soakTest:
 	ld (SoakTestCount),a

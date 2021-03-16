@@ -14,6 +14,7 @@ EdgeOffKeyboardMatrixBuffer: defs KeyboardBufferSize
 
 
 ;; Main menu
+LowRAMSuccess: db 0
 SelectedMenuItem: db 0
  IFDEF UpperROMBuild
 UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
