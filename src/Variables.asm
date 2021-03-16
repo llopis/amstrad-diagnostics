@@ -34,4 +34,5 @@ ROMStringBuffer: ds 16
 SoakTestIndicator: ds 4				; Save 4 bytes
 SoakTestCount: db 0
 
-
+;; Keyboard test
+FramesESCPressed: db 0
