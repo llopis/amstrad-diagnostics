@@ -11,7 +11,7 @@ CheckC3Config:
 
 	ld hl, C3ConfigFailed
 	ld (hl),0
-	ld ix, RAMBankStart
+	ld ix, RAMBANKSTART
 	ld iy, #C000
 	ld (iy), ScreenPattern
 	; d = bank
@@ -79,6 +79,6 @@ CheckC3Config:
 	ret
 
 .noC3:
-	ld hl,C3ConfigFailed
-	ld (hl),1
-	jr .end
+	ld 	hl, C3ConfigFailed
+	ld 	(hl), 1
+	jr 	.end

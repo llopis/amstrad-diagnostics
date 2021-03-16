@@ -72,33 +72,43 @@ pen2 equ %10000000
 pen3 equ %10001000
 
 SetTitleColors:
-	ld h,pen2
-	ld l,pen0
-	call SetTxtColors
+	push	hl
+	ld 	h,pen2
+	ld 	l,pen0
+	call 	SetTxtColors
+	pop	hl
 	ret
 
 SetDefaultColors:
-	ld h,pen0
-	ld l,pen1
-	call SetTxtColors
+	push	hl
+	ld 	h,pen0
+	ld 	l,pen1
+	call 	SetTxtColors
+	pop	hl
 	ret
 
 SetInverseColors:
-	ld h,pen1
-	ld l,pen0
-	call SetTxtColors
+	push	hl
+	ld 	h,pen1
+	ld 	l,pen0
+	call 	SetTxtColors
+	pop	hl
 	ret
 
 SetErrorColors:
-	ld h,pen0
-	ld l,pen3
-	call SetTxtColors
+	push	hl
+	ld 	h,pen0
+	ld 	l,pen3
+	call 	SetTxtColors
+	pop	hl
 	ret
 
 SetSuccessColors:
-	ld h,pen0
-	ld l,pen2
-	call SetTxtColors
+	push	hl
+	ld 	h,pen0
+	ld 	l,pen2
+	call 	SetTxtColors
+	pop	hl
 	ret
 	
 

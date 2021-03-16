@@ -21,7 +21,7 @@ UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
 
 
 ;; Upper RAM test
-ValidBlockCount: db 0
+ValidBankCount: db 0
 FailingBits: db 0
 C3ConfigFailed: db 0
 

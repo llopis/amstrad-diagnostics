@@ -1,13 +1,13 @@
 IsAnyKeyPressed:
-	ld hl,KeyboardMatrixBuffer
-	ld a,0
-	ld b,10
+	ld 	hl, EdgeOnKeyboardMatrixBuffer
+	ld 	a, 0
+	ld 	b, 10
 .loop:
-	or (hl)
-	inc hl
-	djnz .loop
+	or 	(hl)
+	inc 	hl
+	djnz 	.loop
 
-	or a
+	or 	a
 	ret
 
 ReadFullKeyboard:

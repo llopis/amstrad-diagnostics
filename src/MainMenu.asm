@@ -139,6 +139,7 @@ TestComplete:
 .loop:
 	call WaitForVsync
 	call ReadFullKeyboard
+	call UpdateKeyBuffers
 	call IsAnyKeyPressed
 	jr z,.loop
 	jp MainMenuRepeat
