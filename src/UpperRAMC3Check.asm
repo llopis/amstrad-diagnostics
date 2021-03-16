@@ -9,11 +9,11 @@ CheckC3Config:
 	out (c),c
  ENDIF
 
-	ld hl, C3ConfigFailed
-	ld (hl),0
-	ld ix, RAMBANKSTART
-	ld iy, #C000
-	ld (iy), ScreenPattern
+	ld 	hl, C3ConfigFailed
+	ld 	(hl),0
+	ld 	ix, RAMBANKSTART + #7D0
+	ld 	iy, #C7D0
+	ld 	(iy), ScreenPattern
 	; d = bank
 	ld d,0
 .ramLoop:
