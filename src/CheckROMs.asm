@@ -47,14 +47,14 @@ TxtCantAccessLowerROM: db "CAN'T ACCESS SYSTEM LOWER ROM",0
 //////////////////////////////////////
 
 CheckLowerROM:
-	IFDEF TRY_UNPAGING_LOW_ROM
+ IFDEF TRY_UNPAGING_LOW_ROM
 	call CanAccessLowROM
 	jr nz, .continueLowerROM
 	ld hl,TxtCantAccessLowerROM
 	call PrintString
 	call NewLine
 	ret
-	ENDIF
+ ENDIF
 
 .continueLowerROM:
 	ld hl,TxtCheckingLowerROM
@@ -94,10 +94,11 @@ CheckLowerROM:
 
 
 CheckUpperROMs:
-	ld hl, TxtDetectingUpperROMs
-	call PrintString
-	call NewLine
-	ld d,0
+	call	SetDefaultColors
+	ld 	hl, TxtDetectingUpperROMs
+	call 	PrintString
+	call 	NewLine
+	ld 	d,0
 .romLoop:
 	call SetDefaultColors
 	push de

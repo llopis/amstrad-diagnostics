@@ -2,10 +2,10 @@
 ;; This code needs to be relocated to RAM. It will NOT work from ROM
 
 ;; OUT: Z if we can access a low ROM other than diagnostics
+ IFDEF TRY_UNPAGING_LOW_ROM
 CanAccessLowROM:
 	call M4DisableLowerROM
 	call DandanatorDisableLowerROM
-
 	; Now check if the low RAM is still there
 	; Check if we see the mark DIAG, if not, skip low ROM test
 	ld ix,TxtTitle
@@ -27,16 +27,18 @@ CanAccessLowROM:
 	call DandanatorEnableLowerROM	
 	pop af
 	ret
+ ENDIF
 
 
 
 ; OUT HL = CRC
 CRCLowerRom:
+ IFDEF TRY_UNPAGING_LOW_ROM
 	call M4DisableLowerROM
 	call DandanatorDisableLowerROM
+ ENDIF
 	ld bc,#7F89                        ; GA select lower rom, and mode 1
 	out (c),c
-
 	ld ix,#0000
 	ld de,#4000	
 	call Crc16
@@ -44,11 +46,12 @@ CRCLowerRom:
 	ld bc, RESTORE_ROM_CONFIG
 	out (c),c
 
+ IFDEF TRY_UNPAGING_LOW_ROM
 	push hl
 	call M4EnableLowerROM
 	call DandanatorEnableLowerROM	
 	pop hl
-
+ ENDIF
 	ret
 
 

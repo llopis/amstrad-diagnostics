@@ -138,8 +138,10 @@ RAMBegin:
  	INCLUDE "ROMAccess.asm"
  	INCLUDE "PrintChar.asm"
  	INCLUDE "UpperRAMC3Check.asm"
+ IFDEF TRY_UNPAGING_LOW_ROM
  	INCLUDE "Dandanator.asm"
  	INCLUDE "M4.asm"
+ ENDIF
  	INCLUDE "Variables.asm"
  ENT
 ProgramEnd:
