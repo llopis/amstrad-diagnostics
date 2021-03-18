@@ -1,7 +1,6 @@
 
  MODULE KEYBOARDTEST
 
-KEYBOARD_Y EQU #06
 
 @TestKeyboard:
 	call 	KeyboardSetUpScreen
@@ -112,27 +111,22 @@ ClearESCBar:
 
 
 ; IN: IX pointing to keyboard table for that key
-; Modifies DE
 DrawKey:
-	ld	d,(ix)   ; text column
-	dec	d
-	ld	e,(ix+1) ; text row
-	ld	a,KEYBOARD_Y
-	add	e
-	ld	e,a
-	ld	(TxtCoords),de
-
+	ld	a, (ix)   ; text column
+	ld	(txt_x), a
+	ld	a, (ix+1) ; text row in pixels
+	ld	(txt_pixels_y), a
 	ld 	a,(ix+2)
 	cp	' '
 	jr	z,.drawSpaceBar
-	call	PrintChar
+	call	PrintCharWithPixelsY
 	ret
 .drawSpaceBar:
 	push	bc
 	ld	b,19
 .loop:
 	ld	a,' '
-	call	PrintChar
+	call	PrintCharWithPixelsY
 	djnz	.loop
 	pop	bc
 	ret
@@ -187,7 +181,7 @@ ClearKeyboardBuffer:
 KeyboardSetUpScreen:
 	ld 	d, 0
 	call 	ClearScreen
-	ld 	a,4
+	ld 	a, 4
 	call 	SetBorderColor 
 
 	ld 	hl, TxtKeyboardTitle

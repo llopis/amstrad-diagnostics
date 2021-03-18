@@ -12,8 +12,8 @@
 
 ;; to work out screen address to draw char to
 ;; 
-;; byte 0  byte 2   byte 3    byte 4        byte 5
-;; 0 1 2 3 4 5 6 7  8 9 10 11 12 13 14 15   16 17 18 19
+;; byte 0   byte 2   byte 3     byte 4        byte 5
+;; 0 1 2 3  4 5 6 7  8 9 10 11  12 13 14 15   16 17 18 19
 
 ;; first char uses pixels 0,1,2,3,4,5
 ;; second char uses pixels 6,7,8,9,10,11
@@ -24,6 +24,18 @@
 @ScreenCharsWidth equ 53
 
 @PrintChar:
+	push	af
+	;; l == pixel row == text row * 8
+	ld 	a, (txt_y)
+	add 	a, a
+	add 	a, a
+	add 	a, a
+	ld 	(txt_pixels_y),	a
+	pop	af
+	jr	PrintCharWithPixelsY		;; Jump and return from there
+
+
+@PrintCharWithPixelsY:
 	push hl
 	push de
 	push bc
@@ -61,11 +73,9 @@
 	and 1
 	add a,c
 	ld h,a
-	ld a,(txt_y)
-	add a,a
-	add a,a
-	add a,a
-	ld l,a
+
+	ld 	a, (txt_pixels_y)
+	ld	l, a
 
 	call get_scr_addr
 
@@ -304,6 +314,7 @@ dce1:
 @TxtCoords:
 @txt_y: defb 0
 @txt_x: defb 0
+@txt_pixels_y: defb 0
 
 @bk_color: db 0
 @fg_color: db 0
