@@ -37,13 +37,13 @@
 
 PrintKeyboard:
 	call 	SetDefaultColors
-	ld 	b, 80
-	ld 	ix, KeyboardLocations
+	ld 	b, KEY_COUNT
+	ld	de, KEYB_TABLE_ROW_SIZE
+	ld 	hl, KeyboardLocations
 .printLoop:
+	ld	ix, hl
 	call 	DrawKey
-	inc 	ix
-	inc 	ix
-	inc 	ix
+	add	hl, de
 	djnz	.printLoop
 	ret
 
@@ -110,61 +110,110 @@ ClearESCBar:
 	ret
 
 
+TxtSpace: 	db '       SPACE        ',0
+TxtShift: 	db 'SHIFT',0
+TxtControl: 	db 'CTRL ',0
+TxtCopy: 	db 'COPY',0
+TxtCaps: 	db 'CAPS',0
+TxtEnter: 	db 'ENTER',0
+
+
 ; IN: IX pointing to keyboard table for that key
 DrawKey:
+	ld	a, 0
+	ld	(txt_right), a
 	ld	a, (ix)   ; text column
-	ld	(txt_x), a
+	ld	(txt_byte_x), a
 	ld	a, (ix+1) ; text row in pixels
 	ld	(txt_pixels_y), a
 	ld 	a,(ix+2)
+
+	push	hl
 	cp	' '
-	jr	z,.drawSpaceBar
-	call	PrintCharWithPixelsY
+	jr	z, .drawSpaceBar
+	cp	'm'
+	jr	z, .drawControl
+	cp	'o'
+	jr	z, .drawCopy
+	cp	'f'
+	jr	z, .drawEnter
+	cp	'k'
+	jr	z, .drawCapsLock
+	cp	'l'
+	jr	z, .drawShifts
+	pop	hl
+
+	call	PrintCharWithPixels
 	ret
+
+.drawString:
+	call	PrintStringWithPixels
+	pop	hl
+	ret	
+
 .drawSpaceBar:
-	push	bc
-	ld	b,19
-.loop:
-	ld	a,' '
-	call	PrintCharWithPixelsY
-	djnz	.loop
-	pop	bc
-	ret
+	ld	hl, TxtSpace
+	jr	.drawString
+.drawControl:
+	ld	hl, TxtControl
+	jr	.drawString
+.drawCopy:
+	ld	hl, TxtCopy
+	jr	.drawString
+.drawEnter:
+	ld	hl, TxtEnter
+	jr	.drawString
+.drawCapsLock:
+	ld	hl, TxtCaps
+	jr	.drawString
+.drawShifts:
+	ld	hl, TxtShift
+	call	PrintStringWithPixels
+	ld	a, (txt_byte_x)
+	add	44
+	ld	(txt_byte_x), a
+	ld	hl, TxtShift
+	jr	.drawString
 
 
 ; IN: HL - Keyboard buffer
 PrintOnKeysFromBuffer:
-	ld ix,KeyboardLocations
-	ld b,KeyboardBufferSize
+	ld	ix, KeyboardLocations
+	ld 	b, KeyboardBufferSize
 .byteLoop:
-	push bc
-	ld a,(hl)
-	ld d,a
-	ld b,1
+	push 	bc
+	ld 	a,(hl)
+	ld 	d,a
+	ld 	b,1
 .bitLoop:
-	ld a,d
-	and b
-	jr z,.nextBit
+	ld 	a,d
+	and 	b
+	jr 	z,.nextBit
 
 	; This one is pressed. Draw it.
-	push de
-	call DrawKey
-	pop de
+	push 	de
+	call 	DrawKey
+	pop 	de
 
 .nextBit:
-	inc ix
-	inc ix
-	inc ix
-	sla b
-	jr nc,.bitLoop
+	push	hl
+	push	de
+	ld	de, KEYB_TABLE_ROW_SIZE
+	ld	hl, ix
+	add	hl, de
+	ld	ix, hl
+	pop	de
+	pop	hl
+
+	sla 	b
+	jr 	nc,.bitLoop
 
 .nextByte:
-	inc hl
-	pop bc
-	djnz .byteLoop
-
-
+	inc 	hl
+	pop 	bc
+	djnz 	.byteLoop
 	ret
+
 
 
 ClearKeyboardBuffer:
@@ -192,7 +241,7 @@ KeyboardSetUpScreen:
 	ld 	(TxtCoords),hl
 	call 	SetDefaultColors
 
-	ld 	h, 0
+	ld 	h, TxtKeyboardX
 	ld	l, PRESSESC_Y
 	ld 	(TxtCoords),hl
 	ld 	hl, TxtKeyboard
@@ -201,7 +250,7 @@ KeyboardSetUpScreen:
 	ret
 
 
-PRESSESC_Y EQU #14
+PRESSESC_Y EQU #17
 ESCBAR_Y EQU PRESSESC_Y+1
 
 
@@ -209,5 +258,11 @@ TxtKeyboardTitle: db ' - KEYBOARD TEST',0
 TxtKeyboardTitleLen EQU $-TxtKeyboardTitle-1
 
 TxtKeyboard: db 'PRESS ESC OR FIRE FOR 2 SECONDS TO EXIT',0
+TxtKeyboardLen equ $-TxtKeyboard-1
+TxtKeyboardX equ (ScreenCharsWidth-TxtKeyboardLen)/2
+
+
+ INCLUDE "KeyboardLayout.asm"
 
  ENDMODULE
+

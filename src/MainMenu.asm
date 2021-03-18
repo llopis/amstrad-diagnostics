@@ -188,7 +188,8 @@ SetUpScreen:
  	ld	l, SELECT_Y
  	ld 	(TxtCoords), hl
  	ld 	hl, TxtSelectTest
-	call 	PrintString 	
+	call 	PrintString 
+
  	ret
 
 
@@ -332,8 +333,6 @@ TxtTitle: db 'AMSTRAD DIAGNOSTICS V', VERSION_STR, BUILD_STR,0
 TxtTitleLen EQU $-TxtTitle-1
 TxtBlank: db 0
 
-TxtLowerRAMTitle: db " - LOWER RAM TESTS",0
-TxtLowerRAMTitleLen equ $-TxtLowerRAMTitle-1
 TxtLowerRAMSuccess: db "LOWER RAM TESTS PASSED",0
 TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0

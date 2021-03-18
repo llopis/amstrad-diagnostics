@@ -4,12 +4,23 @@ CharLF equ 10
 
 ; IN HL = address of string
 PrintString:
-	ld a,(hl)
-	inc hl
-	or a
-	ret z
-	call PrintChar
-	jr PrintString
+	ld 	a,(hl)
+	inc 	hl
+	or 	a
+	ret 	z
+	call 	PrintChar
+	jr 	PrintString
+
+
+; IN HL = address of string
+PrintStringWithPixels:
+	ld 	a,(hl)
+	inc 	hl
+	or 	a
+	ret 	z
+	call 	PrintCharWithPixels
+	jr 	PrintStringWithPixels
+
 
 ; IN HL = address of string
 PrintString7BitEnding:

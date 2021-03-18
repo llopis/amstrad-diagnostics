@@ -23,19 +23,46 @@
 
 @ScreenCharsWidth equ 53
 
+;; IN: A character to print. 
+;; Location: txt_x and txt_y
 @PrintChar:
 	push	af
+
+	;; x coord, remove bit 0, and multiply by 3
+	;; 0->0
+	;; 1->0
+	;; 2->3
+	;; 3->3
+	;; 4->6
+	;; 5->6
+	;; 6->9
+	ld 	a, (txt_x)
+	srl 	a
+	ld 	c,a
+	add 	a,a ;; x2
+	add 	a,c ;; x3
+	ld 	c,a
+	ld 	a, (txt_x)
+	and 	1
+	add 	a, c
+	ld 	(txt_byte_x), a
+
+	ld 	a, (txt_x)
+	and	1
+	ld	(txt_right), a
+
 	;; l == pixel row == text row * 8
 	ld 	a, (txt_y)
 	add 	a, a
 	add 	a, a
 	add 	a, a
 	ld 	(txt_pixels_y),	a
+
 	pop	af
-	jr	PrintCharWithPixelsY		;; Jump and return from there
+	jr	PrintCharWithPixels		;; Jump and return from there
 
 
-@PrintCharWithPixelsY:
+@PrintCharWithPixels:
 	push hl
 	push de
 	push bc
@@ -58,36 +85,32 @@
 	;; convert from 1 bit per pixel to 2 bit per pixel
 	call depack_char
 
-	;; x coord, remove bit 0, and multiply by 3
-	;; 0->0
-	;; 2->3
-	;; 4->6
-
-	ld a,(txt_x)
-	srl a
-	ld c,a
-	add a,a	;; x2
-	add a,c ;; x3
-	ld c,a
-	ld a,(txt_x)
-	and 1
-	add a,c
-	ld h,a
-
+	ld	a, (txt_byte_x)
+	ld	h, a
 	ld 	a, (txt_pixels_y)
 	ld	l, a
 
-	call get_scr_addr
+	call 	get_scr_addr
 
 	;; now display char in appropiate location
-	ld de,char_depack_buffer
-	ex de,hl
+	ld 	de,char_depack_buffer
+	ex 	de,hl
 
-	call display_char2
+	call 	display_char2
 
 	;; increment text coord position
-	ld hl,txt_x
-	inc (hl)
+	ld 	hl, txt_x
+	inc 	(hl)
+	ld	a, (txt_right)
+	inc	a
+	and	1
+	ld	(txt_right), a
+	ld	hl, txt_byte_x
+	inc	(hl)
+	or	a
+	jr	nz, .sameByteGroup
+	inc	(hl)
+.sameByteGroup:
 
  IFDEF UpperROMBuild
 	ld bc, RESTORE_ROM_CONFIG
@@ -100,10 +123,10 @@
 	ret
 
 display_char2:
-	ld a,(txt_x)
-	and 1
-	jp nz,display_char_odd
-	jp display_char_even
+	ld	a,(txt_right)
+	or 	a
+	jp 	nz,display_char_odd
+	jp 	display_char_even
 
 
 @NewLine:
@@ -315,6 +338,8 @@ dce1:
 @txt_y: defb 0
 @txt_x: defb 0
 @txt_pixels_y: defb 0
+@txt_byte_x: defb 0
+@txt_right: db 0			; 0 = draw left char at that byte, 1 = draw right char
 
 @bk_color: db 0
 @fg_color: db 0
