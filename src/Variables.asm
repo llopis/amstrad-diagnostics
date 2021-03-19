@@ -37,3 +37,5 @@ SoakTestCount: db 0
 ;; Keyboard test
 FramesESCPressed: db 0
 FillKeyPattern: db 0
+KeyboardLocationTable: dw 0
+SpecialKeysTable: dw 0

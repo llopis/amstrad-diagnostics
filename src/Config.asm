@@ -9,7 +9,7 @@
 ;	DEFINE SkipLowerRAMTest
 ;	DEFINE LowerRAMFailure %00100011
 ;	DEFINE UpperRAMFailure #61
-
+;	DEFINE KEYB_LAYOUT_464
 
 	IFDEF LowerROMBuild
 		DEFINE BUILD_STR 'L'
@@ -48,3 +48,5 @@
 	ENDIF
 
 	DEFINE VERSION_STR '1.0'
+
+

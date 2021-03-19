@@ -3,6 +3,18 @@
 
 
 @TestKeyboard:
+ IFDEF KEYB_LAYOUT_464
+	ld	hl, KeyboardLocations464
+	ld 	(KeyboardLocationTable), hl
+	ld	hl, SpecialKeysTable464
+	ld 	(SpecialKeysTable), hl
+ ELSE
+	ld	hl, KeyboardLocations6128
+	ld 	(KeyboardLocationTable), hl
+	ld	hl, SpecialKeysTable6128
+	ld 	(SpecialKeysTable), hl
+ ENDIF
+
 	call 	KeyboardSetUpScreen
 	call 	PrintKeyboard
 	call 	ClearKeyboardBuffer
@@ -41,9 +53,11 @@
 
 PrintKeyboard:
 	call 	SetDefaultColors
+	ld	a, PATTERN_CLEAR
+	ld	(FillKeyPattern), a
 	ld 	b, KEY_COUNT
 	ld	de, KEYB_TABLE_ROW_SIZE
-	ld 	hl, KeyboardLocations
+	ld	hl, (KeyboardLocationTable)
 .printLoop:
 	ld	ix, hl
 	call 	DrawKey
@@ -160,7 +174,7 @@ DrawKey:
 	ld	b, a
 	ld	d, 0
 	ld	e, 3
-	ld	hl, SpecialKeysTable
+	ld	hl, (SpecialKeysTable)
 	or	a
 	jr	z, .found
 .loop:
@@ -183,8 +197,14 @@ DrawKey:
 	call 	.drawSpecialKey
 
 	;; Right shift
+	push	hl
+	ld	hl, (KeyboardLocationTable)
+	ld	de, RIGHTSHIFT_TABLE_OFFSET
+	add	hl, de
+	ld	a, (hl)
+	pop	hl
+
 	pop	de
-	ld	a, RIGHTSHIFT_X
 	ld	d, a
 	ld	(txt_byte_x), a
 	ld	a, SPECIALKEY_SHIFTR
@@ -194,9 +214,10 @@ DrawKey:
 
 
 .drawReturn:
-	ld	c, 23
+	ld	ix, (SpecialKeysTable)
+	ld	c, (ix)
 	call	DrawReturnOutline
-	ld	hl, TxtReturn
+	ld	hl, TxtKeyReturn
 	call	PrintStringWithPixels
 	jp	.exit
 
@@ -446,7 +467,7 @@ DrawReturnFill:
 
 ; IN: HL - Keyboard buffer
 PrintOnKeysFromBuffer:
-	ld	ix, KeyboardLocations
+	ld	ix, (KeyboardLocationTable)
 	ld 	b, KeyboardBufferSize
 .byteLoop:
 	push 	bc
@@ -516,6 +537,7 @@ KeyboardSetUpScreen:
 	call 	NewLine
 	ret
 
+PATTERN_CLEAR EQU %00000000
 PATTERN_YELLOW EQU %11110000
 PATTERN_BLUE EQU %00001111
 PATTERN_RED EQU %11111111
