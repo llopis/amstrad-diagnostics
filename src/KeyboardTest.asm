@@ -19,6 +19,8 @@
 
 
 	; Print edge on keys in blue
+	ld	a, PATTERN_BLUE
+	ld	(FillKeyPattern), a
 	ld 	h, pen2
 	ld 	l, pen0
 	call 	SetTxtColors	
@@ -26,6 +28,8 @@
 	call 	PrintOnKeysFromBuffer
 
 	; Print edge off keys in yellow
+	ld	a, PATTERN_YELLOW
+	ld	(FillKeyPattern), a
 	ld 	h, pen1
 	ld 	l, pen0
 	call 	SetTxtColors	
@@ -132,10 +136,13 @@ DrawKey:
 	cp	'e'
 	jp	z, .drawReturn
 
-	call	PrintCharWithPixels
-
+	push	af
 	ld	c, 15
 	call	DrawKeySquare
+	pop	af
+
+	call	PrintCharWithPixels
+
 .exit
 	pop	bc
 	pop	de
@@ -200,23 +207,18 @@ KEY_HEIGHT EQU 15
 ;; 	E - key y in pixels
 ;;	C - width in pixels
 DrawKeySquare:
-	dec	d
-	ld	h, 0
-	ld	l, d
-	sla	l
-	rl	h
-	sla	l			
-	rl	h			;; HL = left edge
+	ld	a, (FillKeyPattern)
+	or	a
+	jr	nz, DrawKeyFill
+
+	call	GetKeyTopLeftEdge
 	push	hl
-	dec	e
-	dec	e
-	dec	e
-	dec	e
-	push 	de			;; DE = top edge
+	push	de
 
 	;; Top line
 	push	bc
 	ld	b, c
+	ld	a, PATTERN_YELLOW
 	call	DrawHorizontalLine
 	pop	bc
 
@@ -256,9 +258,53 @@ DrawKeySquare:
 	ld	de, hl
 	pop	hl
 	ld	b, c
+	ld	a, PATTERN_YELLOW
 	call	DrawHorizontalLine
 
 	ret
+
+;; IN:	D - key x in bytes
+;; 	E - key y in pixels
+;; OUT: HL - left edge
+;;	E - top edge
+GetKeyTopLeftEdge:
+	dec	d
+	ld	h, 0
+	ld	l, d
+	sla	l
+	rl	h
+	sla	l			
+	rl	h			
+
+	dec	e
+	dec	e
+	dec	e
+	dec	e
+	ret
+
+;; IN:	D - key x in bytes
+;; 	E - key y in pixels
+;;	C - width in pixels
+DrawKeyFill:
+	call	GetKeyTopLeftEdge
+	ld	b, KEY_HEIGHT
+.loop:
+	push	hl
+	push	de
+	push	bc
+	ld	b, c
+	ld	a, (FillKeyPattern)
+	call	DrawHorizontalLine
+	pop	bc
+	pop	de
+	pop	hl
+	inc	e
+	djnz	.loop
+
+	ret
+
+
+RETURN_INSET EQU 4
 
 RETURN_HEIGHT EQU KEY_HEIGHT*2
 
@@ -266,23 +312,18 @@ RETURN_HEIGHT EQU KEY_HEIGHT*2
 ;; 	E - key y in pixels
 ;;	C - width in pixels
 DrawReturnOutline:
-	dec	d
-	ld	h, 0
-	ld	l, d
-	sla	l
-	rl	h
-	sla	l			
-	rl	h			;; HL = left edge
+	ld	a, (FillKeyPattern)
+	or	a
+	jr	nz, DrawReturnFill
+
+	call	GetKeyTopLeftEdge
 	push	hl
-	dec	e
-	dec	e
-	dec	e
-	dec	e
-	push 	de			;; DE = top edge
+	push	de
 
 	;; Top line
 	push	bc
 	ld	b, c
+	ld	a, PATTERN_YELLOW
 	call	DrawHorizontalLine
 	pop	bc
 
@@ -323,7 +364,8 @@ DrawReturnOutline:
 	pop	hl
 	push	hl
 	push	de
-	ld	b, 4
+	ld	b, RETURN_INSET
+	ld	a, PATTERN_YELLOW
 	call	DrawHorizontalLine
 
 
@@ -331,7 +373,7 @@ DrawReturnOutline:
 	pop	de
 	pop	hl
 	push	de
-	ld	de, 4
+	ld	de, RETURN_INSET
 	add	hl, de
 	pop	de
 	push	hl
@@ -350,12 +392,56 @@ DrawReturnOutline:
 	pop 	hl
 
 	ld	a, c
-	sub	4
+	sub	RETURN_INSET
 	ld	b, a
+	ld	a, PATTERN_YELLOW
 	call	DrawHorizontalLine
 
+	ret
+
+;; IN:	D - key x in bytes
+;; 	E - key y in pixels
+;;	C - width in pixels
+DrawReturnFill:
+	call	GetKeyTopLeftEdge
+	ld	b, KEY_HEIGHT
+.loop:
+	push	hl
+	push	de
+	push	bc
+	ld	b, c
+	ld	a, (FillKeyPattern)
+	call	DrawHorizontalLine
+	pop	bc
+	pop	de
+	pop	hl
+	inc	e
+	djnz	.loop
+
+	;; Bottom half of the key
+	push	de
+	ld	de, RETURN_INSET
+	add	hl, de
+	pop	de
+	ld	a, c
+	sub	RETURN_INSET
+	ld	c, a
+	ld	b, RETURN_HEIGHT-KEY_HEIGHT+1
+.loop2:
+	push	hl
+	push	de
+	push	bc
+	ld	b, c
+	ld	a, (FillKeyPattern)
+	call	DrawHorizontalLine
+	pop	bc
+	pop	de
+	pop	hl
+	inc	e
+	djnz	.loop2
 
 	ret
+
 
 
 ; IN: HL - Keyboard buffer
@@ -429,6 +515,10 @@ KeyboardSetUpScreen:
 	call 	PrintString
 	call 	NewLine
 	ret
+
+PATTERN_YELLOW EQU %11110000
+PATTERN_BLUE EQU %00001111
+PATTERN_RED EQU %11111111
 
 
 PRESSESC_Y EQU #17

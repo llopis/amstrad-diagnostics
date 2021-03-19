@@ -4,11 +4,13 @@
 LINE_PATTERN EQU %11110000
 
 
-;; IN: HL - x in pixels
-;;     E - y in pixels
-;;     B - width in pixels
+;; IN: 	HL - x in pixels
+;;     	E - y in pixels
+;;     	B - width in pixels
+;;	A - fill patter
 ;; Doesn't work for line smaller than 1 byte
 @DrawHorizontalLine:
+	ld	d, a				; D = fill pattern
 	ld	a, l
 	and	%00000011
 	or	a
@@ -26,7 +28,7 @@ LINE_PATTERN EQU %11110000
 	ld	c, a				; C = masked contents
 	ld	a, b				; A = pixel mask
 	xor	#FF				; A = inverse mask
-	ld	b, LINE_PATTERN
+	ld	b, d
 	and	b				; A = bits to add to screen
 	or	c				; A = combined bits and what was there before 
 	ld	(hl), a
@@ -34,7 +36,7 @@ LINE_PATTERN EQU %11110000
 	pop	bc
 
 .byteBoundary:
-	ld	a, LINE_PATTERN
+	ld	a, d
 	push	bc
 	srl	b				; B = number of bytes (pixels / 4)
 	srl	b
@@ -59,7 +61,7 @@ LINE_PATTERN EQU %11110000
 	ld	c, a				; C = masked contents
 	ld	a, b				; A = pixel mask
 	xor	#FF				; A = inverse mask
-	ld	b, LINE_PATTERN
+	ld	b, d
 	and	b				; A = bits to add to screen
 	or	c				; A = combined bits and what was there before 
 	ld	(hl), a
