@@ -71,20 +71,17 @@ CheckESCPressedLongEnough:
 	;; Check if it's time to exit to main menu
 	ld	hl, FramesESCPressed
 	ld	a, (hl)
-	cp	100
+	cp	52
 	ret
 
 .ESCPressed:
 	inc	(hl)
 	ld 	a, (hl)
-	and	%00000001
-	jr	nz, .continue
 
 	;; Draw a new character in the ESC bar
 	call	SetDefaultColors
 	ld 	a, (hl)
 	dec	a
-	rra	
 	ld	h, a
 	ld	l, ESCBAR_Y
 	ld	(TxtCoords), hl
@@ -111,24 +108,32 @@ ClearESCBar:
 
 
 TxtSpace: 	db '       SPACE        ',0
-TxtShift: 	db 'SHIFT',0
+TxtShiftL: 	db 'SHFT',0
+TxtShiftR: 	db 'SHF',0
 TxtControl: 	db 'CTRL ',0
 TxtCopy: 	db 'COPY',0
-TxtCaps: 	db 'CAPS',0
+TxtCaps: 	db 'CAP',0
+TxtTab: 	db '->',0
 TxtEnter: 	db 'ENTER',0
+TxtReturn: 	db ' e',0
 
 
 ; IN: IX pointing to keyboard table for that key
 DrawKey:
+	push	hl
+	push	de
+	push	bc
+
 	ld	a, 0
 	ld	(txt_right), a
-	ld	a, (ix)   ; text column
+	ld	a, (ix)   ; text column in bytes
 	ld	(txt_byte_x), a
 	ld	a, (ix+1) ; text row in pixels
 	ld	(txt_pixels_y), a
 	ld 	a,(ix+2)
 
-	push	hl
+	ld	d, (ix)
+	ld	e, (ix+1)
 	cp	' '
 	jr	z, .drawSpaceBar
 	cp	'm'
@@ -139,41 +144,249 @@ DrawKey:
 	jr	z, .drawEnter
 	cp	'k'
 	jr	z, .drawCapsLock
+	cp	'j'
+	jr	z, .drawTab
 	cp	'l'
-	jr	z, .drawShifts
-	pop	hl
+	jp	z, .drawShifts
+	cp	'e'
+	jp	z, .drawReturn
 
 	call	PrintCharWithPixels
+
+	ld	c, 15
+	call	DrawKeySquare
+.exit
+	pop	bc
+	pop	de
+	pop	hl
 	ret
 
-.drawString:
-	call	PrintStringWithPixels
-	pop	hl
-	ret	
 
 .drawSpaceBar:
+	ld	c, 127
+	call	DrawKeySquare
 	ld	hl, TxtSpace
-	jr	.drawString
+	call	PrintStringWithPixels
+	jr	.exit
 .drawControl:
+	ld	c, 35
+	call	DrawKeySquare
 	ld	hl, TxtControl
-	jr	.drawString
+	call	PrintStringWithPixels
+	jr	.exit
 .drawCopy:
+	ld	c, 35
+	call	DrawKeySquare
 	ld	hl, TxtCopy
-	jr	.drawString
+	call	PrintStringWithPixels
+	jr	.exit
 .drawEnter:
+	ld	c, 39
+	call	DrawKeySquare
 	ld	hl, TxtEnter
-	jr	.drawString
+	call	PrintStringWithPixels
+	jr	.exit
 .drawCapsLock:
+	ld	c, 27
+	call	DrawKeySquare
 	ld	hl, TxtCaps
-	jr	.drawString
+	call	PrintStringWithPixels
+	jr	.exit
+.drawTab:
+	ld	c, 23
+	call	DrawKeySquare
+	ld	hl, TxtTab
+	call	PrintStringWithPixels
+	jr	.exit
 .drawShifts:
-	ld	hl, TxtShift
+	ld	c, 35
+	call	DrawKeySquare
+
+	ld	a, (ix)
+	add	53
+	ld	d, a
+	ld	e, (ix+1)
+	ld	c, 27
+	call	DrawKeySquare
+
+	ld	hl, TxtShiftL
 	call	PrintStringWithPixels
 	ld	a, (txt_byte_x)
-	add	44
+	add	47
 	ld	(txt_byte_x), a
-	ld	hl, TxtShift
-	jr	.drawString
+	ld	hl, TxtShiftR
+	call	PrintStringWithPixels
+	jp	.exit
+.drawReturn:
+	ld	c, 23
+	call	DrawReturnOutline
+	ld	hl, TxtReturn
+	call	PrintStringWithPixels
+	jp	.exit
+
+
+KEY_HEIGHT EQU 15
+
+;; IN:	D - key x in bytes
+;; 	E - key y in pixels
+;;	C - width in pixels
+DrawKeySquare:
+	dec	d
+	ld	h, 0
+	ld	l, d
+	sla	l
+	rl	h
+	sla	l			
+	rl	h			;; HL = left edge
+	push	hl
+	dec	e
+	dec	e
+	dec	e
+	dec	e
+	push 	de			;; DE = top edge
+
+	;; Top line
+	push	bc
+	ld	b, c
+	call	DrawHorizontalLine
+	pop	bc
+
+
+	;; Left
+	pop	de
+	pop 	hl
+	push	hl
+	push	de
+	push	bc
+	ld	b, KEY_HEIGHT-1
+	call	DrawVerticalLine
+	pop	bc
+
+	;; Right
+	pop	de
+	pop	hl
+	push	hl
+	push	de
+	ld	d, 0
+	ld	e, c
+	dec	e
+	add	hl, de
+	pop	de
+	push 	de
+
+	push	bc
+	ld	b, KEY_HEIGHT-1
+	call	DrawVerticalLine
+	pop	bc
+
+
+	;; Bottom line
+	pop	de
+	ld	hl, KEY_HEIGHT-1
+	add	hl, de
+	ld	de, hl
+	pop	hl
+	ld	b, c
+	call	DrawHorizontalLine
+
+	ret
+
+RETURN_HEIGHT EQU KEY_HEIGHT*2
+
+;; IN:	D - key x in bytes
+;; 	E - key y in pixels
+;;	C - width in pixels
+DrawReturnOutline:
+	dec	d
+	ld	h, 0
+	ld	l, d
+	sla	l
+	rl	h
+	sla	l			
+	rl	h			;; HL = left edge
+	push	hl
+	dec	e
+	dec	e
+	dec	e
+	dec	e
+	push 	de			;; DE = top edge
+
+	;; Top line
+	push	bc
+	ld	b, c
+	call	DrawHorizontalLine
+	pop	bc
+
+
+	;; Left
+	pop	de
+	pop 	hl
+	push	hl
+	push	de
+	push	bc
+	ld	b, KEY_HEIGHT-1
+	call	DrawVerticalLine
+	pop	bc
+
+	;; Right
+	pop	de
+	pop	hl
+	push	hl
+	push	de
+	ld	d, 0
+	ld	e, c
+	dec	e
+	add	hl, de
+	pop	de
+	push 	de
+
+	push	bc
+	ld	b, RETURN_HEIGHT+1
+	call	DrawVerticalLine
+	pop	bc
+
+
+	;; Small horiz line
+	pop	de
+	ld	hl, KEY_HEIGHT-1
+	add	hl, de
+	ld	de, hl
+	pop	hl
+	push	hl
+	push	de
+	ld	b, 4
+	call	DrawHorizontalLine
+
+
+	;; Left vertical line
+	pop	de
+	pop	hl
+	push	de
+	ld	de, 4
+	add	hl, de
+	pop	de
+	push	hl
+	push	de
+	push	bc
+	ld	b, RETURN_HEIGHT-KEY_HEIGHT+1
+	call	DrawVerticalLine
+	pop	bc
+
+
+	;; Bottom line
+	pop	de
+	ld	hl, RETURN_HEIGHT-KEY_HEIGHT+1
+	add	hl, de
+	ld	de, hl
+	pop 	hl
+
+	ld	a, c
+	sub	4
+	ld	b, a
+	call	DrawHorizontalLine
+
+
+	ret
 
 
 ; IN: HL - Keyboard buffer
@@ -226,7 +439,6 @@ ClearKeyboardBuffer:
 	ret
 
 
-
 KeyboardSetUpScreen:
 	ld 	d, 0
 	call 	ClearScreen
@@ -257,7 +469,7 @@ ESCBAR_Y EQU PRESSESC_Y+1
 TxtKeyboardTitle: db ' - KEYBOARD TEST',0
 TxtKeyboardTitleLen EQU $-TxtKeyboardTitle-1
 
-TxtKeyboard: db 'PRESS ESC OR FIRE FOR 2 SECONDS TO EXIT',0
+TxtKeyboard: db 'PRESS ESC OR FIRE FOR 1 SECOND TO EXIT',0
 TxtKeyboardLen equ $-TxtKeyboard-1
 TxtKeyboardX equ (ScreenCharsWidth-TxtKeyboardLen)/2
 

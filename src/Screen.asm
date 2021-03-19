@@ -1,4 +1,7 @@
 
+SCREEN_START EQU #C000
+
+
 CRTCDefaultTable:
 	db 63                 ;* R0 = 63     : Horizontal Total
 	db 40                 ;* R1 = 40     : Horizontal Displayed
@@ -42,7 +45,7 @@ ClearScreen:
 	ldir
 	*/
 
-	ld hl, #C000
+	ld hl, SCREEN_START
 	ld bc, #4000
 .loop:
 	ld (hl),d
@@ -120,3 +123,4 @@ SetBorderColor:
 	add a,#40
 	out (c),a
 	ret
+

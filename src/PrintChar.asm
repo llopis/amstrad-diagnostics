@@ -90,7 +90,7 @@
 	ld 	a, (txt_pixels_y)
 	ld	l, a
 
-	call 	get_scr_addr
+	call 	GetScreenAddress
 
 	;; now display char in appropiate location
 	ld 	de,char_depack_buffer
@@ -200,22 +200,25 @@ scr_NewLine:
 	ld h,a
 	ret
 
-get_scr_addr:
-	push bc
-	push de
-	ld c,h
-	ld h,0
-	add hl,hl
-	ld de,scr_table
-	add hl,de
-	ld a,(hl)
-	inc hl
-	ld h,(hl)
-	ld l,a
-	ld b,0
-	add hl,bc
-	pop de
-	pop bc
+;; IN: H - x in bytes
+;;     L - y in pixels
+;; OUT: HL screen address
+GetScreenAddress:
+	push 	bc
+	push 	de
+	ld 	c, h
+	ld 	h, 0
+	add 	hl, hl
+	ld 	de, scr_table
+	add 	hl, de
+	ld 	a, (hl)
+	inc 	hl
+	ld 	h, (hl)
+	ld 	l, a
+	ld 	b, 0
+	add 	hl,bc
+	pop 	de
+	pop 	bc
 	ret
 
 @MakeScrTable:
@@ -344,7 +347,7 @@ dce1:
 @bk_color: db 0
 @fg_color: db 0
 
-scr_table: defs 200*2
+@scr_table: defs 200*2
 char_depack_buffer: defs 16
 
 

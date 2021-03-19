@@ -137,6 +137,7 @@ RAMBegin:
  DISP RAMProgramAddr
  	INCLUDE "ROMAccess.asm"
  	INCLUDE "PrintChar.asm"
+	INCLUDE "Draw.asm"
  	INCLUDE "UpperRAMC3Check.asm"
  IFDEF TRY_UNPAGING_LOW_ROM
  	INCLUDE "Dandanator.asm"
