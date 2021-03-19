@@ -10,6 +10,13 @@ LINE_PATTERN EQU %11110000
 ;;	A - fill patter
 ;; Doesn't work for line smaller than 1 byte
 @DrawHorizontalLine:
+ IFDEF UpperROMBuild	
+ 	; Disable upper ROM so we can read from the screen
+ 	push	bc
+	ld 	bc, #7F00 + %10001101
+	out 	(c),c
+	pop	bc
+ ENDIF
 	ld	d, a				; D = fill pattern
 	ld	a, l
 	and	%00000011
@@ -51,7 +58,7 @@ LINE_PATTERN EQU %11110000
 	ld	a, b
 	and	%00000011			; A = amount of pixels to draw to finish line
 	or	a
-	ret	z
+	jr	z, .end
 
 	;; Draw final tail of pixels between 1 and 3
 	call	GetHorizEndMask
@@ -66,6 +73,13 @@ LINE_PATTERN EQU %11110000
 	or	c				; A = combined bits and what was there before 
 	ld	(hl), a
 
+.end:
+ IFDEF UpperROMBuild
+ 	push	bc
+	ld 	bc, RESTORE_ROM_CONFIG
+	out 	(c),c
+	pop	bc
+ ENDIF
 	ret
 
 ;; IN: 	A - Pixel to start drawing line (1-3)
@@ -114,6 +128,13 @@ GetHorizEndMask:
 ;;     E - y in pixels
 ;;     B - width in bytes
 @DrawVerticalLine:
+ IFDEF UpperROMBuild	
+ 	; Disable upper ROM so we can read from the screen
+ 	push	bc
+	ld 	bc, #7F00 + %10001101
+	out 	(c),c
+	pop	bc
+ ENDIF
 	call	GetVerticalMask
 	ld	c, a			; C = mask for pixels on screen
 	xor	#FF
@@ -132,6 +153,12 @@ GetHorizEndMask:
 	inc	e
 	djnz 	.loop
 
+ IFDEF UpperROMBuild
+ 	push	bc
+	ld 	bc, RESTORE_ROM_CONFIG
+	out 	(c),c
+	pop	bc
+ ENDIF
 	ret
 
 

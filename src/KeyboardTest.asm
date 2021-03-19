@@ -411,7 +411,6 @@ DrawReturnOutline:
 	ld	a, PATTERN_YELLOW
 	call	DrawHorizontalLine
 
-
 	;; Left vertical line
 	pop	de
 	pop	hl
@@ -556,11 +555,6 @@ KeyboardSetUpScreen:
 	call 	PrintString
 	call 	NewLine
 	ret
-
-PATTERN_CLEAR EQU %00000000
-PATTERN_YELLOW EQU %11110000
-PATTERN_BLUE EQU %00001111
-PATTERN_RED EQU %11111111
 
 
 PRESSESC_Y EQU #17
