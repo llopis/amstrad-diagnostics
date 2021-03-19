@@ -107,16 +107,6 @@ ClearESCBar:
 	ret
 
 
-TxtSpace: 	db '       SPACE        ',0
-TxtShiftL: 	db 'SHFT',0
-TxtShiftR: 	db 'SHF',0
-TxtControl: 	db 'CTRL ',0
-TxtCopy: 	db 'COPY',0
-TxtCaps: 	db 'CAP',0
-TxtTab: 	db '->',0
-TxtEnter: 	db 'ENTER',0
-TxtReturn: 	db ' e',0
-
 
 ; IN: IX pointing to keyboard table for that key
 DrawKey:
@@ -134,20 +124,11 @@ DrawKey:
 
 	ld	d, (ix)
 	ld	e, (ix+1)
-	cp	' '
-	jr	z, .drawSpaceBar
-	cp	'm'
-	jr	z, .drawControl
-	cp	'o'
-	jr	z, .drawCopy
-	cp	'f'
-	jr	z, .drawEnter
-	cp	'k'
-	jr	z, .drawCapsLock
-	cp	'j'
-	jr	z, .drawTab
-	cp	'l'
-	jp	z, .drawShifts
+	cp	SPECIALKEY_SHIFTL
+	jr	z, .drawShifts
+	bit	7, a
+	jr	nz, .specialKey
+
 	cp	'e'
 	jp	z, .drawReturn
 
@@ -161,62 +142,50 @@ DrawKey:
 	pop	hl
 	ret
 
+.specialKey:
+	call 	.drawSpecialKey
+	jr	.exit
 
-.drawSpaceBar:
-	ld	c, 127
+
+.drawSpecialKey:
+	push	de
+	and	%01111111
+	ld	b, a
+	ld	d, 0
+	ld	e, 3
+	ld	hl, SpecialKeysTable
+	or	a
+	jr	z, .found
+.loop:
+	add	hl, de
+	djnz	.loop
+.found:
+	ld	c, (hl)
+	pop	de
+	push	hl
 	call	DrawKeySquare
-	ld	hl, TxtSpace
+	pop	ix
+	ld	l, (ix+1)
+	ld	h, (ix+2)
 	call	PrintStringWithPixels
-	jr	.exit
-.drawControl:
-	ld	c, 35
-	call	DrawKeySquare
-	ld	hl, TxtControl
-	call	PrintStringWithPixels
-	jr	.exit
-.drawCopy:
-	ld	c, 35
-	call	DrawKeySquare
-	ld	hl, TxtCopy
-	call	PrintStringWithPixels
-	jr	.exit
-.drawEnter:
-	ld	c, 39
-	call	DrawKeySquare
-	ld	hl, TxtEnter
-	call	PrintStringWithPixels
-	jr	.exit
-.drawCapsLock:
-	ld	c, 27
-	call	DrawKeySquare
-	ld	hl, TxtCaps
-	call	PrintStringWithPixels
-	jr	.exit
-.drawTab:
-	ld	c, 23
-	call	DrawKeySquare
-	ld	hl, TxtTab
-	call	PrintStringWithPixels
-	jr	.exit
+	ret
+
 .drawShifts:
-	ld	c, 35
-	call	DrawKeySquare
+	;; Left shift
+	push	de
+	call 	.drawSpecialKey
 
-	ld	a, (ix)
-	add	53
+	;; Right shift
+	pop	de
+	ld	a, RIGHTSHIFT_X
 	ld	d, a
-	ld	e, (ix+1)
-	ld	c, 27
-	call	DrawKeySquare
-
-	ld	hl, TxtShiftL
-	call	PrintStringWithPixels
-	ld	a, (txt_byte_x)
-	add	47
 	ld	(txt_byte_x), a
-	ld	hl, TxtShiftR
-	call	PrintStringWithPixels
-	jp	.exit
+	ld	a, SPECIALKEY_SHIFTR
+	call 	.drawSpecialKey
+
+	jr 	.exit
+
+
 .drawReturn:
 	ld	c, 23
 	call	DrawReturnOutline

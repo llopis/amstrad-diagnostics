@@ -49,12 +49,12 @@ KeyboardLocationSecondRow:
 	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_1,	'9' ; # Key number 03 : f9
 	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_2,	'6' ; # Key number 04 : f6
 	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_3,	'3' ; # Key number 05 : f3
-	defb	52+KEYB_X,				KEYB_ROW_5,	'f' ; # Key number 06 : ENTER
+	defb	52+KEYB_X,				KEYB_ROW_5,	SPECIALKEY_ENTER ; # Key number 06 : ENTER
 	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_4,	'.' ; # Key number 07 : .
 
 	;; 1
 	defb	KEYB_NUMPAD_X,				KEYB_ROW_5,	'c' ; # Key number 08 : ←
-	defb	KEYB_Z_X,				KEYB_ROW_5,	'o' ; # Key number 09 : COPY
+	defb	KEYB_Z_X,				KEYB_ROW_5,	SPECIALKEY_COPY ; # Key number 09 : COPY
 	defb	KEYB_NUMPAD_X,				KEYB_ROW_1,	'7' ; # Key number 10 : f7
 	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_1,	'8' ; # Key number 11 : f8
 	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_2,	'5' ; # Key number 12 : f5
@@ -68,10 +68,9 @@ KeyboardLocationSecondRow:
 	defb	56+KEYB_X,				KEYB_ROW_2,	'e' ; # Key number 18 : RETURN
 	defb	KEYB_A_X+KEYB_COL_SPACING*11,		KEYB_ROW_3,	']' ; # Key number 19 : }]
 	defb	62+KEYB_X,				KEYB_ROW_2,	'4' ; # Key number 20 : f4
-	defb	2+KEYB_X,				KEYB_ROW_4,	'l' ; # Key number 21 : SHIFT
-	;defb	50+KEYB_X,				KEYB_ROW_4,	'l' ; # Key number 21 : SHIFT
+	defb	2+KEYB_X,				KEYB_ROW_4,	SPECIALKEY_SHIFTL ; # Key number 21 : SHIFT
 	defb	KEYB_Z_X+KEYB_COL_SPACING*10,		KEYB_ROW_4,	'\' ; # Key number 22 : `\		
-	defb	2+KEYB_X,				KEYB_ROW_5,	'm' ; # Key number 23 : CONTROL
+	defb	2+KEYB_X,				KEYB_ROW_5,	SPECIALKEY_CONTROL ; # Key number 23 : CONTROL
 
 	;; 3
 	defb	KEYB_ESC_X+KEYB_COL_SPACING*12,	KEYB_ROW_1,	'^' ; # Key number 24 : £^
@@ -101,7 +100,7 @@ KeyboardLocationSecondRow:
 	defb	KEYB_A_X+KEYB_COL_SPACING*5,	KEYB_ROW_3,	'H' ; # Key number 44 : H
 	defb	KEYB_A_X+KEYB_COL_SPACING*6,	KEYB_ROW_3,	'J' ; # Key number 45 : J
 	defb	KEYB_Z_X+KEYB_COL_SPACING*5,	KEYB_ROW_4,	'N' ; # Key number 46 : N
-	defb	20+KEYB_X,			KEYB_ROW_5,	' ' ; # Key number 47 : SPACE
+	defb	20+KEYB_X,			KEYB_ROW_5,	SPECIALKEY_SPACE ; # Key number 47 : SPACE
 
 	;; 6
 	defb	KEYB_ESC_X+KEYB_COL_SPACING*6,	KEYB_ROW_1,	'6' ; # Key number 48 : &6
@@ -128,9 +127,9 @@ KeyboardLocationSecondRow:
 	defb	KEYB_ESC_X+KEYB_COL_SPACING*2,	KEYB_ROW_1,	'2' ; # Key number 65 : "2
 	defb	KEYB_ESC_X,			KEYB_ROW_1,	'g' ; # Key number 66 : ESC
 	defb	KEYB_Q_X,			KEYB_ROW_2,	'Q' ; # Key number 67 : Q
-	defb	2+KEYB_X,			KEYB_ROW_2,	'j' ; # Key number 68 : TAB
+	defb	2+KEYB_X,			KEYB_ROW_2,	SPECIALKEY_TAB ; # Key number 68 : TAB
 	defb	KEYB_A_X,			KEYB_ROW_3,	'A' ; # Key number 69 : A
-	defb	2+KEYB_X,			KEYB_ROW_3,	'k' ; # Key number 70 : CAPSLOCK
+	defb	2+KEYB_X,			KEYB_ROW_3,	SPECIALKEY_CAPS ; # Key number 70 : CAPSLOCK
 	defb	KEYB_Z_X,			KEYB_ROW_4,	'Z' ; # Key number 71 : Z
 
 	;; 9
@@ -143,7 +142,7 @@ KeyboardLocationSecondRow:
 	defb	22+JOY_X,			15+JOY_Y,	'3' ; # Key number 78 : Joystick Fire 3
 	defb	KEYB_ESC_X+KEYB_COL_SPACING*14,	KEYB_ROW_1,	'i' ; # Key number 79 : DEL
 
-
+RIGHTSHIFT_X EQU KEYB_Z_X+KEYB_COL_SPACING*11
 /*
 E 1 2 3 4 5 6 7 8 9 0 - ^ C D
 T Q W E R T Y U I O P @ [
@@ -151,4 +150,44 @@ C  A S D F G H J K L ; : ] RET
 SH  Z X C V B N M , . / \   SH
 CTL CP      SPACE        ENTER
 */
+
+
+TxtKeySpace: 	db '       SPACE        ',0
+TxtKeyShiftL: 	db 'SHFT',0
+TxtKeyShiftR: 	db 'SHF',0
+TxtKeyControl: 	db 'CTRL ',0
+TxtKeyCopy: 	db 'COPY',0
+TxtKeyCaps: 	db 'CAP',0
+TxtKeyTab: 	db '->',0
+TxtKeyEnter: 	db 'ENTER',0
+TxtReturn: 	db ' e',0
+
+
+SPECIALKEY_SPACE 	EQU 0 + #80
+SPECIALKEY_CONTROL 	EQU 1 + #80
+SPECIALKEY_COPY		EQU 2 + #80
+SPECIALKEY_CAPS		EQU 3 + #80
+SPECIALKEY_TAB		EQU 4 + #80
+SPECIALKEY_ENTER	EQU 5 + #80
+SPECIALKEY_SHIFTL	EQU 6 + #80
+SPECIALKEY_SHIFTR	EQU 7 + #80
+
+SpecialKeysTable:
+	db 127				; SPACE
+	dw TxtKeySpace
+	db 35				; CONTROL
+	dw TxtKeyControl
+	db 35				; COPY
+	dw TxtKeyCopy
+	db 27				; CAPS LOCK
+	dw TxtKeyCaps
+	db 23				; TAB
+	dw TxtKeyTab
+	db 39				; ENTER
+	dw TxtKeyEnter
+	db 35				; LEFT SHIFT
+	dw TxtKeyShiftL
+	db 27				; RIGHT SHIFT
+	dw TxtKeyShiftR
+
 
