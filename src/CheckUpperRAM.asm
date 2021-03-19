@@ -405,7 +405,7 @@ RunUpperRAMTests4MB:
 	call 	TestRAM
 	pop 	bc
 	or 	c
-	ld 	c,a
+	ld 	c,a			; C = bad bit pattern so far
 
 	push 	af
 	call 	SetSuccessColors
@@ -414,11 +414,12 @@ RunUpperRAMTests4MB:
 	pop 	af
 
 	djnz 	.dotLoop
+
 	pop 	de
 	pop	bc
 
 	or a
-	jr nz,.failedBlock
+	jr nz,	.failedBlock
 
 .nextBlock:
 	;; Next block
@@ -510,27 +511,27 @@ CheckESC:
 ; IN HL = Start, DE = length
 ; OUT A = 0 if good, otherwise failing bits
 TestRAM:
-	ld a, 1
-	ld b, 8     ; test 8 bits
-	or a        ; ensure carry is cleared
+	ld 	a, 1
+	ld 	b, 8     ; test 8 bits
+	or 	a        ; ensure carry is cleared
 
 .bits:
-	ld (hl), a
-	ld c, a     ; for compare
-	ld a, (hl)
-	cp c
-	jr nz,.bad
+	ld 	(hl), a
+	ld 	c, a     ; for compare
+	ld 	a, (hl)
+	cp 	c
+	jr 	nz,.bad
 	rla
-	djnz .bits
-	inc hl
-	dec de
-	ld a, d     ; does de=0?
-	or e
-	jp z, .done
-	jr TestRAM
+	djnz 	.bits
+	inc 	hl
+	dec 	de
+	ld 	a, d     ; does de=0?
+	or 	e
+	jp 	z, .done
+	jr 	TestRAM
 
 .done:
-	ld a,0
+	ld 	a, 0
 	IFDEF UpperRAMFailure
 		DISPLAY "Simulating upper RAM failure."
 		ld a, UpperRAMFailure
@@ -538,7 +539,7 @@ TestRAM:
 	ret
 
 .bad:
-	xor c	; a contains failing bits
+	xor 	c	; a contains failing bits
 	ret
 
 

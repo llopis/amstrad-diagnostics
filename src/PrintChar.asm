@@ -27,6 +27,7 @@
 ;; Location: txt_x and txt_y
 @PrintChar:
 	push	af
+	push	bc
 
 	;; x coord, remove bit 0, and multiply by 3
 	;; 0->0
@@ -58,32 +59,33 @@
 	add 	a, a
 	ld 	(txt_pixels_y),	a
 
+	pop	bc
 	pop	af
 	jr	PrintCharWithPixels		;; Jump and return from there
 
 
 @PrintCharWithPixels:
-	push hl
-	push de
-	push bc
+	push 	hl
+	push 	de
+	push 	bc
 
  IFDEF UpperROMBuild	
  	; Disable upper ROM so we can read from the screen
-	ld bc, #7F00 + %10001101
-	out (c),c
+	ld 	bc, #7F00 + %10001101
+	out 	(c),c
  ENDIF
 	;; work out location of pixel data
 	;; 1 bit per pixel font used here
-	sub ' '
-	ld l,a
-	ld h,0
-	add hl,hl
-	add hl,hl
-	add hl,hl
-	ld de,font
-	add hl,de
+	sub 	' '
+	ld 	l,a
+	ld 	h,0
+	add 	hl,hl
+	add 	hl,hl
+	add 	hl,hl
+	ld 	de,font
+	add 	hl,de
 	;; convert from 1 bit per pixel to 2 bit per pixel
-	call depack_char
+	call 	depack_char
 
 	ld	a, (txt_byte_x)
 	ld	h, a
