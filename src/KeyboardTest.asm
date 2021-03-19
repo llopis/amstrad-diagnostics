@@ -3,18 +3,7 @@
 
 
 @TestKeyboard:
- IFDEF KEYB_LAYOUT_464
-	ld	hl, KeyboardLocations464
-	ld 	(KeyboardLocationTable), hl
-	ld	hl, SpecialKeysTable464
-	ld 	(SpecialKeysTable), hl
- ELSE
-	ld	hl, KeyboardLocations6128
-	ld 	(KeyboardLocationTable), hl
-	ld	hl, SpecialKeysTable6128
-	ld 	(SpecialKeysTable), hl
- ENDIF
-
+	call	SetKeyboardTables
 	call 	KeyboardSetUpScreen
 	call 	PrintKeyboard
 	call 	ClearKeyboardBuffer
@@ -27,9 +16,20 @@
 	call 	UpdateKeyBuffers
 
 	call	CheckESCPressedLongEnough
-	ret	z
+	jr	nz, .continue
 
+	;; Something was pressed long enough
+	ld 	a, (KeyboardMatrixBuffer+8)
+	bit 	4, a					; TAB
+	ret 	z				; If it wasn't tab, it was ESC or fire, so exit
 
+	;; Toggle the keyboard layout
+	ld	a, (KeyboardLayout)
+	xor	1
+	ld	(KeyboardLayout), a
+	jr	TestKeyboard
+
+.continue:
 	; Print edge on keys in blue
 	ld	a, PATTERN_BLUE
 	ld	(FillKeyPattern), a
@@ -66,6 +66,25 @@ PrintKeyboard:
 	ret
 
 
+SetKeyboardTables:
+	ld	a, (KeyboardLayout)
+	or	a
+	jr	nz, .layout464
+
+	;; Layout 6128
+	ld	hl, KeyboardLocations6128
+	ld 	(KeyboardLocationTable), hl
+	ld	hl, SpecialKeysTable6128
+	ld 	(SpecialKeysTable), hl
+	ret
+
+.layout464:
+	ld	hl, KeyboardLocations464
+	ld 	(KeyboardLocationTable), hl
+	ld	hl, SpecialKeysTable464
+	ld 	(SpecialKeysTable), hl
+	ret
+
 
 CheckESCPressedLongEnough:
 	ld	hl, FramesESCPressed
@@ -73,6 +92,8 @@ CheckESCPressedLongEnough:
 
 	ld 	a, (KeyboardMatrixBuffer+8)
 	bit 	2, a					; ESC
+	jr 	nz, .ESCPressed
+	bit 	4, a					; TAB
 	jr 	nz, .ESCPressed
 	ld 	a, (KeyboardMatrixBuffer+9)
 	bit 	4, a					; Fire
@@ -116,7 +137,6 @@ ClearESCBar:
 	ld	l, ESCBAR_Y
 	ld	(TxtCoords), hl
 	pop	af
-	rra
 	ld	b, a
 .loop:
 	ld	a, ' '
@@ -550,7 +570,7 @@ ESCBAR_Y EQU PRESSESC_Y+1
 TxtKeyboardTitle: db ' - KEYBOARD TEST',0
 TxtKeyboardTitleLen EQU $-TxtKeyboardTitle-1
 
-TxtKeyboard: db 'PRESS ESC OR FIRE FOR 1 SECOND TO EXIT',0
+TxtKeyboard: db 'HOLD ESC OR FIRE TO EXIT. HOLD TAB TO CHANGE LAYOUT.',0
 TxtKeyboardLen equ $-TxtKeyboard-1
 TxtKeyboardX equ (ScreenCharsWidth-TxtKeyboardLen)/2
 

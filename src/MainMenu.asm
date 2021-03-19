@@ -5,6 +5,9 @@ MainMenu:
 	call 	IsSoakTestRunning
 	jp 	z, SoakTestSelected
 
+	;; TODO: Try to detect keyboard layout
+	ld	a, 0
+	ld	(KeyboardLayout), a
 
 MainMenuRepeat:
 	call 	SetUpScreen
@@ -189,6 +192,39 @@ SetUpScreen:
  	ld 	(TxtCoords), hl
  	ld 	hl, TxtSelectTest
 	call 	PrintString 
+
+	/*
+	ld	h, 0
+	ld	l, 1
+	ld	e, 15
+	ld	b, 16
+	call	DrawHorizontalLine
+	*/
+	/*
+	ld	h, 0
+	ld	l, 0
+	ld	e, 100
+	ld	b, 16
+	call	DrawVerticalLine
+
+	ld	h, 0
+	ld	l, 2
+	ld	e, 100
+	ld	b, 16
+	call	DrawVerticalLine
+
+	ld	h, 0
+	ld	l, 0
+	ld	e, 120
+	ld	b, 16
+	call	DrawVerticalLine
+
+	ld	h, 0
+	ld	l, 4
+	ld	e, 120
+	ld	b, 16
+	call	DrawVerticalLine
+	*/
 
  	ret
 

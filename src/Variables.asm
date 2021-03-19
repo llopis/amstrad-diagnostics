@@ -35,6 +35,7 @@ SoakTestIndicator: ds 4				; Save 4 bytes
 SoakTestCount: db 0
 
 ;; Keyboard test
+KeyboardLayout: db 0				; 0: 6128, 1: 464
 FramesESCPressed: db 0
 FillKeyPattern: db 0
 KeyboardLocationTable: dw 0
