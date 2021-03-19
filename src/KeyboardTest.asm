@@ -151,6 +151,7 @@ DrawKey:
 	push	hl
 	push	de
 	push	bc
+	push	ix
 
 	ld	a, 0
 	ld	(txt_right), a
@@ -178,6 +179,7 @@ DrawKey:
 	call	PrintCharWithPixels
 
 .exit
+	pop	ix
 	pop	bc
 	pop	de
 	pop	hl
@@ -500,9 +502,7 @@ PrintOnKeysFromBuffer:
 	jr 	z,.nextBit
 
 	; This one is pressed. Draw it.
-	push 	de
 	call 	DrawKey
-	pop 	de
 
 .nextBit:
 	push	hl
