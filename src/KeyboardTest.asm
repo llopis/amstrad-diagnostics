@@ -69,7 +69,7 @@ PrintKeyboard:
 SetKeyboardTables:
 	ld	a, (KeyboardLayout)
 	or	a
-	jr	nz, .layout464
+	jr	z, .layout464
 
 	;; Layout 6128
 	ld	hl, KeyboardLocations6128

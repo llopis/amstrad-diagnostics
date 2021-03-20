@@ -1,9 +1,11 @@
 
+ MODULE ROMACCESS
+
 ;; This code needs to be relocated to RAM. It will NOT work from ROM
 
 ;; OUT: Z if we can access a low ROM other than diagnostics
  IFDEF TRY_UNPAGING_LOW_ROM
-CanAccessLowROM:
+@CanAccessLowROM:
 	call M4DisableLowerROM
 	call DandanatorDisableLowerROM
 	; Now check if the low RAM is still there
@@ -32,7 +34,7 @@ CanAccessLowROM:
 
 
 ; OUT HL = CRC
-CRCLowerRom:
+@CRCLowerRom:
  IFDEF TRY_UNPAGING_LOW_ROM
 	call M4DisableLowerROM
 	call DandanatorDisableLowerROM
@@ -55,9 +57,34 @@ CRCLowerRom:
 	ret
 
 
+;; IN  - Address to read
+;; OUT - HL: Contents of address
+@ReadFromLowerROM:
+ IFDEF TRY_UNPAGING_LOW_ROM
+	call 	M4DisableLowerROM
+	call 	DandanatorDisableLowerROM
+ ENDIF
+	ld 	bc, #7F00 | %10001001                        ; GA select lower rom, and mode 1
+	out 	(c),c
+	ld	l, (ix)
+	ld	h, (ix+1)
+	ld 	bc, RESTORE_ROM_CONFIG
+	out 	(c),c
+
+ IFDEF TRY_UNPAGING_LOW_ROM
+	push hl
+	call M4EnableLowerROM
+	call DandanatorEnableLowerROM	
+	pop hl
+ ENDIF
+	ret
+
+
+
+
 ; IN A = ROM number to read
 ; OUT HL = CRC
-CRCUpperRom:
+@CRCUpperRom:
 	ld bc,#7F85                        ; GA select upper rom, and mode 1
 	out (c),c
 
@@ -104,7 +131,7 @@ Crc16:
 
 ; IN A = ROM number to read
 ; OUT A = ROM Type
-GetUpperROMType:
+@GetUpperROMType:
 	ld bc,#7F85                        ; GA select upper rom, and mode 1
 	out (c),c
 	ld bc,#df00
@@ -118,7 +145,7 @@ GetUpperROMType:
 
 ; IN A = ROM number to read
 ;    DE = Destination buffer
-GetROMString:
+@GetROMString:
 	ld bc,#7F85                        ; GA select upper rom, and mode 1
 	out (c),c
 	ld bc,#df00
@@ -139,7 +166,7 @@ GetROMString:
 	ret
 
 
-RestoreROMState:
+@RestoreROMState:
 	ld bc, RESTORE_ROM_CONFIG
 	out (c),c
  IFDEF UpperROMBuild
@@ -150,3 +177,23 @@ RestoreROMState:
 	pop af
  ENDIF
  	ret
+
+
+
+ASIC_SPRITE_MEM EQU #4000
+
+;; OUT:	z - Not Plus
+@CanAccessPlusASIC:
+	ld	bc, #7F00 + %10111000
+      	out 	(c), c
+
+      	ld	a, #FF
+      	ld	(ASIC_SPRITE_MEM), a
+      	ld	a, (ASIC_SPRITE_MEM)
+      	cp	a, #FF
+
+	ld	bc, RESTORE_ROM_CONFIG
+      	out 	(c), c
+      	ret
+
+ ENDMODULE

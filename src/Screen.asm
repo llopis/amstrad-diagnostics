@@ -26,7 +26,7 @@ CRTCDefaultTable:
 CRTCDefaultTableEnd:
 
 ; IN: D = Byte to clear to
-ClearScreen:
+InitializeCRTC:
 	;; Initialize Display
 	ld hl, CRTCDefaultTableEnd
 	ld bc, #BC0F      ;; CRTC select 0F
@@ -39,7 +39,9 @@ ClearScreen:
 	dec b
 	dec c
 	jp p,.crtcLoop
+	ret
 
+ClearScreen:
 	; More efficient clear routine, but we can't do that and have the upper ROM enabled
 	/*
 	ld hl,#C000

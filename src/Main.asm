@@ -119,12 +119,13 @@ RAMTestPassed:
 
 RAMInitialize:
 	;; Copy the part of the program that can't run from ROM into RAM
-	ld hl, RAMBegin
-	ld de, RAMProgramAddr
-	ld bc, ProgramEnd-RAMBegin
+	ld 	hl, RAMBegin
+	ld 	de, RAMProgramAddr
+	ld 	bc, ProgramEnd-RAMBegin
 	ldir
 
-	call MakeScrTable
+	call	InitializeCRTC
+	call 	MakeScrTable
 	ret
 
 
@@ -136,9 +137,11 @@ RAMProgramAddr EQU #8000
 RAMBegin:
  DISP RAMProgramAddr
  	INCLUDE "ROMAccess.asm"
- 	INCLUDE "PrintChar.asm"
-	INCLUDE "Draw.asm"
  	INCLUDE "UpperRAMC3Check.asm"
+ IFDEF UpperROMBuild
+ 	INCLUDE "PrintChar.asm"
+ 	INCLUDE "Draw.asm"
+ ENDIF
  IFDEF TRY_UNPAGING_LOW_ROM
  	INCLUDE "Dandanator.asm"
  	INCLUDE "M4.asm"

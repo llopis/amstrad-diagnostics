@@ -139,12 +139,11 @@ display_char2:
 	ret
 
 ;; set foreground and background colours
-;; Watch out for self-modifying code!
 @SetTxtColors:
-	ld a,h
-	ld (bk_color+1),a
-	ld a,l
-	ld (fg_color+1),a
+	ld 	a,h
+	ld 	(bk_color),a
+	ld 	a,l
+	ld 	(fg_color),a
 	ret
 
 ;; convert 1-bit per pixel into 2 bit per pixel
@@ -165,10 +164,12 @@ depack_char2:
 
 depack_byte:
 	xor a
+	push	de
 	call depack_pixel
 	call depack_pixel
 	call depack_pixel
 	call depack_pixel
+	pop	de
 	ld (de),a
 	inc de
 	ret
@@ -181,12 +182,16 @@ depack_pixel:
 
 depack_pix:
 	;; shift into carry
-	rlc c
-bk_color:
-	ld b,0
-	ret nc
-fg_color:
-	ld b,1
+	rlc 	c
+	ld	d, a
+	ld 	a, (bk_color)
+	ld	b, a
+	ld	a, d
+	ret 	nc
+	ld	d, a
+	ld 	a, (fg_color)
+	ld	b, a
+	ld 	a, d
 	ret
 
 scr_NewLine:
@@ -336,21 +341,6 @@ dce1:
 	djnz dce1
 	ret
 
-
-
-;; Variables, but this resides in RAM, so that's fine
-@TxtCoords:
-@txt_y: defb 0
-@txt_x: defb 0
-@txt_pixels_y: defb 0
-@txt_byte_x: defb 0
-@txt_right: db 0			; 0 = draw left char at that byte, 1 = draw right char
-
-@bk_color: db 0
-@fg_color: db 0
-
-@scr_table: defs 200*2
-char_depack_buffer: defs 16
 
 
  INCLUDE "Font.asm"

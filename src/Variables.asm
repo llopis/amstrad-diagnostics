@@ -14,6 +14,7 @@ EdgeOffKeyboardMatrixBuffer: defs KeyboardBufferSize
 
 
 ;; Main menu
+ModelType: db 0
 LowRAMSuccess: db 0
 SelectedMenuItem: db 0
  IFDEF UpperROMBuild
@@ -40,3 +41,17 @@ FramesESCPressed: db 0
 FillKeyPattern: db 0
 KeyboardLocationTable: dw 0
 SpecialKeysTable: dw 0
+
+;; Print char
+@TxtCoords:
+@txt_y: defb 0
+@txt_x: defb 0
+@txt_pixels_y: defb 0
+@txt_byte_x: defb 0
+@txt_right: db 0			; 0 = draw left char at that byte, 1 = draw right char
+
+@bk_color: db 0
+@fg_color: db 0
+
+@scr_table: defs 200*2
+char_depack_buffer: defs 16

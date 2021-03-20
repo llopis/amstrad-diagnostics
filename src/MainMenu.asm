@@ -5,8 +5,16 @@ MainMenu:
 	call 	IsSoakTestRunning
 	jp 	z, SoakTestSelected
 
-	;; TODO: Try to detect keyboard layout
+	;; Try to detect keyboard layout
+	call	DetectModel
+	ld	(ModelType), a
+	cp	MODEL_CPC6128
+	jr	c, .set464Layout
+	ld	a, 1
+	jr	.setLayout
+.set464Layout:
 	ld	a, 0
+.setLayout:
 	ld	(KeyboardLayout), a
 
 MainMenuRepeat:
@@ -374,6 +382,7 @@ TxtSelectTest: db "SELECT WHICH TEST TO RUN:",0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 TxtROM: db 'ROM ',0
 
+ INCLUDE "Model.asm"
  INCLUDE "SoakTest.asm"
  INCLUDE "CheckUpperRAM.asm"
  INCLUDE "UtilsPrint.asm"
@@ -382,6 +391,10 @@ TxtROM: db 'ROM ',0
  INCLUDE "DetectCRTC.asm"
  INCLUDE "KeyboardTest.asm"
  INCLUDE "SystemInfo.asm"
+ IFNDEF UpperROMBuild
+ 	INCLUDE "PrintChar.asm"
+	INCLUDE "Draw.asm"
+ ENDIF
  IFDEF ROM_CHECK
 	INCLUDE "CheckROMs.asm"
  ENDIF

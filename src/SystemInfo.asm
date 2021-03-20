@@ -2,8 +2,25 @@
  MODULE SYSTEMINFO
 
 @SystemInfo:
-	call SystemInfoSetUpScreen
+	call 	SystemInfoSetUpScreen
 
+	;; Model
+	ld	hl, TxtModel
+	call	PrintString
+	ld	a, (ModelType)
+	ld	e, a
+	ld	d, 0
+	ld	hl, ModelNameTableOffset
+	add	hl, de
+	ld	a, (hl)
+	ld	e, a
+	ld	hl, ModelNames
+	add	hl, de
+
+	call	PrintString
+	call 	NewLine
+
+	;; CRTC yype
 	ld hl,TxtCRTC
 	call PrintString
 	call GetCRTCType
@@ -35,6 +52,7 @@ SystemInfoSetUpScreen:
 
 TxtSystemInfoTitle: db ' - SYSTEM INFO',0
 TxtSystemInfoTitleLen EQU $-TxtSystemInfoTitle-1
+TxtModel: db 'MODEL: ',0
 TxtCRTC: db 'CRTC TYPE ',0
 
 
