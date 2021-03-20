@@ -1,5 +1,10 @@
  INCLUDE "Config.asm"
 
+ ;OUTPUT "build/AmstradDiag.rom"
+  OUTPUT OutFile
+; IFDEF PAD_TO_16K
+	SIZE #4000					;; Round it up to 16 KB
+; ENDIF
 
 ;; *******************************
 ;; LOWER ROM BUILD
@@ -119,9 +124,9 @@ RAMTestPassed:
 
 RAMInitialize:
 	;; Copy the part of the program that can't run from ROM into RAM
-	ld 	hl, RAMBegin
+	ld 	hl, RAMBlockBegin
 	ld 	de, RAMProgramAddr
-	ld 	bc, ProgramEnd-RAMBegin
+	ld 	bc, RAMDataEnd-RAMBegin
 	ldir
 
 	call	InitializeCRTC
@@ -134,8 +139,9 @@ RAMInitialize:
 
 ;; This is the code that needs to be in RAM to function
 RAMProgramAddr EQU #8000
-RAMBegin:
+RAMBlockBegin:
  DISP RAMProgramAddr
+RAMBegin:
  	INCLUDE "ROMAccess.asm"
  	INCLUDE "UpperRAMC3Check.asm"
  IFDEF UpperROMBuild
@@ -146,14 +152,16 @@ RAMBegin:
  	INCLUDE "Dandanator.asm"
  	INCLUDE "M4.asm"
  ENDIF
+RAMDataEnd:
+ 	;; This is just saving room in RAM, but it's not taking up any of the ROM size
+ 	OUTEND
  	INCLUDE "Variables.asm"
+RAMEnd:
  ENT
 ProgramEnd:
- IFDEF PAD_TO_16K
-	ds (ProgramStart+#4000)-ProgramEnd		;; Round it up to 16 KB
- ENDIF
 
+ 
  IFDEF PRINT_PROGRAM_SIZE
-	DISPLAY "Total size: ", ProgramEnd - ProgramStart
-	DISPLAY "RAM size: ", ProgramEnd - RAMBegin
+	DISPLAY "Total size: ", ProgramEnd - ProgramStart - (RAMEnd - RAMDataEnd)
+	DISPLAY "RAM size: ", RAMEnd - RAMBegin
  ENDIF
