@@ -58,10 +58,12 @@ PrintKeyboard:
 	ld 	b, KEY_COUNT
 	ld	de, KEYB_TABLE_ROW_SIZE
 	ld	hl, (KeyboardLocationTable)
+	ld	iy, KeyboardLabels
 .printLoop:
 	ld	ix, hl
 	call 	DrawKey
 	add	hl, de
+	inc	iy
 	djnz	.printLoop
 	ret
 
@@ -146,7 +148,8 @@ ClearESCBar:
 
 
 
-; IN: IX pointing to keyboard table for that key
+; IN: 	IX - keyboard table for that key
+;	IY - keyboard label
 DrawKey:
 	push	hl
 	push	de
@@ -159,7 +162,7 @@ DrawKey:
 	ld	(txt_byte_x), a
 	ld	a, (ix+1) ; text row in pixels
 	ld	(txt_pixels_y), a
-	ld 	a,(ix+2)
+	ld 	a,(iy)
 
 	ld	d, (ix)
 	ld	e, (ix+1)
@@ -490,6 +493,7 @@ DrawReturnFill:
 PrintOnKeysFromBuffer:
 	ld	ix, (KeyboardLocationTable)
 	ld 	b, KeyboardBufferSize
+	ld	iy, KeyboardLabels
 .byteLoop:
 	push 	bc
 	ld 	a,(hl)
@@ -510,6 +514,7 @@ PrintOnKeysFromBuffer:
 	ld	hl, ix
 	add	hl, de
 	ld	ix, hl
+	inc	iy
 	pop	de
 	pop	hl
 
@@ -570,6 +575,7 @@ TxtKeyboardX equ (ScreenCharsWidth-TxtKeyboardLen)/2
 
 
  INCLUDE "KeyboardLayout.asm"
+ INCLUDE "KeyboardLabels.asm"
 
  ENDMODULE
 

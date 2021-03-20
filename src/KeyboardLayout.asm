@@ -19,7 +19,7 @@
 KEY_COUNT EQU 80
 
 
-KEYB_TABLE_ROW_SIZE EQU 3
+KEYB_TABLE_ROW_SIZE EQU 2
 RIGHTSHIFT_TABLE_OFFSET EQU KEY_COUNT*KEYB_TABLE_ROW_SIZE
 
 
@@ -80,106 +80,106 @@ CTL CP      SPACE        ENTER
 KeyboardLocations6128:
 	;; Column, row, char
 	;; 0
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_4,	'a' ; # Key number 00 : ↑
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_5,	'd' ; # Key number 01 : →
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_5,	'b' ; # Key number 02 : ↓
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_1,	'9' ; # Key number 03 : f9
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_2,	'6' ; # Key number 04 : f6
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_3,	'3' ; # Key number 05 : f3
-	defb	50+KEYB_X,				KEYB_ROW_5,	SPECIALKEY_ENTER ; # Key number 06 : ENTER
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_4,	'.' ; # Key number 07 : .
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_4 ; # Key number 00 : ↑
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_5 ; # Key number 01 : →
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_5 ; # Key number 02 : ↓
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_1 ; # Key number 03 : f9
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_2 ; # Key number 04 : f6
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_3 ; # Key number 05 : f3
+	db 50+KEYB_X,				KEYB_ROW_5 ; # Key number 06 : ENTER
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_4 ; # Key number 07 : .
 
 	;; 1
-	defb	KEYB_NUMPAD_X,				KEYB_ROW_5,	'c' ; # Key number 08 : ←
-	defb	KEYB_Z_X,				KEYB_ROW_5,	SPECIALKEY_COPY ; # Key number 09 : COPY
-	defb	KEYB_NUMPAD_X,				KEYB_ROW_1,	'7' ; # Key number 10 : f7
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_1,	'8' ; # Key number 11 : f8
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_2,	'5' ; # Key number 12 : f5
-	defb	KEYB_NUMPAD_X,				KEYB_ROW_3,	'1' ; # Key number 13 : f1
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_3,	'2' ; # Key number 14 : f2
-	defb	KEYB_NUMPAD_X,				KEYB_ROW_4,	'0' ; # Key number 15 : f0
+	db KEYB_NUMPAD_X,			KEYB_ROW_5 ; # Key number 08 : ←
+	db KEYB_Z_X,				KEYB_ROW_5 ; # Key number 09 : COPY
+	db KEYB_NUMPAD_X,			KEYB_ROW_1 ; # Key number 10 : f7
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_1 ; # Key number 11 : f8
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_2 ; # Key number 12 : f5
+	db KEYB_NUMPAD_X,			KEYB_ROW_3 ; # Key number 13 : f1
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_3 ; # Key number 14 : f2
+	db KEYB_NUMPAD_X,			KEYB_ROW_4 ; # Key number 15 : f0
 
 	;; 20
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*13,		KEYB_ROW_1,	'h' ; # Key number 16 : CLR
-	defb	KEYB_Q_X+KEYB_COL_SPACING*11,		KEYB_ROW_2,	'[' ; # Key number 17 : {[
-	defb	54+KEYB_X,				KEYB_ROW_2,	'e' ; # Key number 18 : RETURN
-	defb	KEYB_A_X+KEYB_COL_SPACING*11,		KEYB_ROW_3,	']' ; # Key number 19 : }]
-	defb	KEYB_NUMPAD_X,				KEYB_ROW_2,	'4' ; # Key number 20 : f4
-	defb	KEYB_X,					KEYB_ROW_4,	SPECIALKEY_SHIFTL ; # Key number 21 : SHIFT
-	defb	KEYB_Z_X+KEYB_COL_SPACING*10,		KEYB_ROW_4,	'\' ; # Key number 22 : `\		
-	defb	KEYB_X,					KEYB_ROW_5,	SPECIALKEY_CONTROL ; # Key number 23 : CONTROL
+	db KEYB_ESC_X+KEYB_COL_SPACING*13,	KEYB_ROW_1 ; # Key number 16 : CLR
+	db KEYB_Q_X+KEYB_COL_SPACING*11,	KEYB_ROW_2 ; # Key number 17 : {[
+	db 54+KEYB_X,				KEYB_ROW_2 ; # Key number 18 : RETURN
+	db KEYB_A_X+KEYB_COL_SPACING*11,	KEYB_ROW_3 ; # Key number 19 : }]
+	db KEYB_NUMPAD_X,			KEYB_ROW_2 ; # Key number 20 : f4
+	db KEYB_X,				KEYB_ROW_4 ; # Key number 21 : SHIFT
+	db KEYB_Z_X+KEYB_COL_SPACING*10,	KEYB_ROW_4 ; # Key number 22 : `\		
+	db KEYB_X,				KEYB_ROW_5 ; # Key number 23 : CONTROL
 
 	;; 3
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*12,	KEYB_ROW_1,	'^' ; # Key number 24 : £^
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*11,	KEYB_ROW_1,	'-' ; # Key number 25 : =-
-	defb	KEYB_Q_X+KEYB_COL_SPACING*10,	KEYB_ROW_2,	'@' ; # Key number 26 : ¦@
-	defb	KEYB_Q_X+KEYB_COL_SPACING*9,	KEYB_ROW_2,	'P' ; # Key number 27 : P
-	defb	KEYB_A_X+KEYB_COL_SPACING*10,	KEYB_ROW_3,	'+' ; # Key number 28 : +;
-	defb	KEYB_A_X+KEYB_COL_SPACING*9,	KEYB_ROW_3,	'*' ; # Key number 29 : *:
-	defb	KEYB_Z_X+KEYB_COL_SPACING*9,	KEYB_ROW_4,	'/' ; # Key number 30 : ?/
-	defb	KEYB_Z_X+KEYB_COL_SPACING*8,	KEYB_ROW_4,	'.' ; # Key number 31 : >.
+	db KEYB_ESC_X+KEYB_COL_SPACING*12,	KEYB_ROW_1 ; # Key number 24 : £^
+	db KEYB_ESC_X+KEYB_COL_SPACING*11,	KEYB_ROW_1 ; # Key number 25 : =-
+	db KEYB_Q_X+KEYB_COL_SPACING*10,	KEYB_ROW_2 ; # Key number 26 : ¦@
+	db KEYB_Q_X+KEYB_COL_SPACING*9,		KEYB_ROW_2 ; # Key number 27 : P
+	db KEYB_A_X+KEYB_COL_SPACING*10,	KEYB_ROW_3 ; # Key number 28 : +;
+	db KEYB_A_X+KEYB_COL_SPACING*9,		KEYB_ROW_3 ; # Key number 29 : *:
+	db KEYB_Z_X+KEYB_COL_SPACING*9,		KEYB_ROW_4 ; # Key number 30 : ?/
+	db KEYB_Z_X+KEYB_COL_SPACING*8,		KEYB_ROW_4 ; # Key number 31 : >.
 
 	;; 4
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*10,	KEYB_ROW_1,	'0' ; # Key number 32 : _0
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*9,	KEYB_ROW_1,	'9' ; # Key number 33 : )9
-	defb	KEYB_Q_X+KEYB_COL_SPACING*8,	KEYB_ROW_2,	'O' ; # Key number 34 : O
-	defb	KEYB_Q_X+KEYB_COL_SPACING*7,	KEYB_ROW_2,	'I' ; # Key number 35 : I
-	defb	KEYB_A_X+KEYB_COL_SPACING*8,	KEYB_ROW_3,	'L' ; # Key number 36 : L
-	defb	KEYB_A_X+KEYB_COL_SPACING*7,	KEYB_ROW_3,	'K' ; # Key number 37 : K
-	defb	KEYB_Z_X+KEYB_COL_SPACING*6,	KEYB_ROW_4,	'M' ; # Key number 38 : M
-	defb	KEYB_Z_X+KEYB_COL_SPACING*7,	KEYB_ROW_4,	',' ; # Key number 39 : <,
+	db KEYB_ESC_X+KEYB_COL_SPACING*10,	KEYB_ROW_1 ; # Key number 32 : _0
+	db KEYB_ESC_X+KEYB_COL_SPACING*9,	KEYB_ROW_1 ; # Key number 33 : )9
+	db KEYB_Q_X+KEYB_COL_SPACING*8,		KEYB_ROW_2 ; # Key number 34 : O
+	db KEYB_Q_X+KEYB_COL_SPACING*7,		KEYB_ROW_2 ; # Key number 35 : I
+	db KEYB_A_X+KEYB_COL_SPACING*8,		KEYB_ROW_3 ; # Key number 36 : L
+	db KEYB_A_X+KEYB_COL_SPACING*7,		KEYB_ROW_3 ; # Key number 37 : K
+	db KEYB_Z_X+KEYB_COL_SPACING*6,		KEYB_ROW_4 ; # Key number 38 : M
+	db KEYB_Z_X+KEYB_COL_SPACING*7,		KEYB_ROW_4 ; # Key number 39 : <,
 
 	;; 5
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*8,	KEYB_ROW_1,	'8' ; # Key number 40 : (8
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*7,	KEYB_ROW_1,	'7' ; # Key number 41 : '7
-	defb	KEYB_Q_X+KEYB_COL_SPACING*6,	KEYB_ROW_2,	'U' ; # Key number 42 : U
-	defb	KEYB_Q_X+KEYB_COL_SPACING*5,	KEYB_ROW_2,	'Y' ; # Key number 43 : Y
-	defb	KEYB_A_X+KEYB_COL_SPACING*5,	KEYB_ROW_3,	'H' ; # Key number 44 : H
-	defb	KEYB_A_X+KEYB_COL_SPACING*6,	KEYB_ROW_3,	'J' ; # Key number 45 : J
-	defb	KEYB_Z_X+KEYB_COL_SPACING*5,	KEYB_ROW_4,	'N' ; # Key number 46 : N
-	defb	18+KEYB_X,			KEYB_ROW_5,	SPECIALKEY_SPACE ; # Key number 47 : SPACE
+	db KEYB_ESC_X+KEYB_COL_SPACING*8,	KEYB_ROW_1 ; # Key number 40 : (8
+	db KEYB_ESC_X+KEYB_COL_SPACING*7,	KEYB_ROW_1 ; # Key number 41 : '7
+	db KEYB_Q_X+KEYB_COL_SPACING*6,		KEYB_ROW_2 ; # Key number 42 : U
+	db KEYB_Q_X+KEYB_COL_SPACING*5,		KEYB_ROW_2 ; # Key number 43 : Y
+	db KEYB_A_X+KEYB_COL_SPACING*5,		KEYB_ROW_3 ; # Key number 44 : H
+	db KEYB_A_X+KEYB_COL_SPACING*6,		KEYB_ROW_3 ; # Key number 45 : J
+	db KEYB_Z_X+KEYB_COL_SPACING*5,		KEYB_ROW_4 ; # Key number 46 : N
+	db 18+KEYB_X,				KEYB_ROW_5 ; # Key number 47 : SPACE
 
 	;; 6
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*6,	KEYB_ROW_1,	'6' ; # Key number 48 : &6
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*5,	KEYB_ROW_1,	'5' ; # Key number 49 : %5
-	defb	KEYB_Q_X+KEYB_COL_SPACING*3,	KEYB_ROW_2,	'R' ; # Key number 50 : R
-	defb	KEYB_Q_X+KEYB_COL_SPACING*4,	KEYB_ROW_2,	'T' ; # Key number 51 : T
-	defb	KEYB_A_X+KEYB_COL_SPACING*4,	KEYB_ROW_3,	'G' ; # Key number 52 : G
-	defb	KEYB_A_X+KEYB_COL_SPACING*3,	KEYB_ROW_3,	'F' ; # Key number 53 : F
-	defb	KEYB_Z_X+KEYB_COL_SPACING*4,	KEYB_ROW_4,	'B' ; # Key number 54 : B
-	defb	KEYB_Z_X+KEYB_COL_SPACING*3,	KEYB_ROW_4,	'V' ; # Key number 55 : V
+	db KEYB_ESC_X+KEYB_COL_SPACING*6,	KEYB_ROW_1 ; # Key number 48 : &6
+	db KEYB_ESC_X+KEYB_COL_SPACING*5,	KEYB_ROW_1 ; # Key number 49 : %5
+	db KEYB_Q_X+KEYB_COL_SPACING*3,		KEYB_ROW_2 ; # Key number 50 : R
+	db KEYB_Q_X+KEYB_COL_SPACING*4,		KEYB_ROW_2 ; # Key number 51 : T
+	db KEYB_A_X+KEYB_COL_SPACING*4,		KEYB_ROW_3 ; # Key number 52 : G
+	db KEYB_A_X+KEYB_COL_SPACING*3,		KEYB_ROW_3 ; # Key number 53 : F
+	db KEYB_Z_X+KEYB_COL_SPACING*4,		KEYB_ROW_4 ; # Key number 54 : B
+	db KEYB_Z_X+KEYB_COL_SPACING*3,		KEYB_ROW_4 ; # Key number 55 : V
 
 	;; 7
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*4,	KEYB_ROW_1,	'4' ; # Key number 56 : $4
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*3,	KEYB_ROW_1,	'3' ; # Key number 57 : #3
-	defb	KEYB_Q_X+KEYB_COL_SPACING*2,	KEYB_ROW_2,	'E' ; # Key number 58 : E
-	defb	KEYB_Q_X+KEYB_COL_SPACING*1,	KEYB_ROW_2,	'W' ; # Key number 59 : W
-	defb	KEYB_A_X+KEYB_COL_SPACING*1,	KEYB_ROW_3,	'S' ; # Key number 60 : S
-	defb	KEYB_A_X+KEYB_COL_SPACING*2,	KEYB_ROW_3,	'D' ; # Key number 61 : D
-	defb	KEYB_Z_X+KEYB_COL_SPACING*2,	KEYB_ROW_4,	'C' ; # Key number 62 : C
-	defb	KEYB_Z_X+KEYB_COL_SPACING*1,	KEYB_ROW_4,	'X' ; # Key number 63 : X
+	db KEYB_ESC_X+KEYB_COL_SPACING*4,	KEYB_ROW_1 ; # Key number 56 : $4
+	db KEYB_ESC_X+KEYB_COL_SPACING*3,	KEYB_ROW_1 ; # Key number 57 : #3
+	db KEYB_Q_X+KEYB_COL_SPACING*2,		KEYB_ROW_2 ; # Key number 58 : E
+	db KEYB_Q_X+KEYB_COL_SPACING*1,		KEYB_ROW_2 ; # Key number 59 : W
+	db KEYB_A_X+KEYB_COL_SPACING*1,		KEYB_ROW_3 ; # Key number 60 : S
+	db KEYB_A_X+KEYB_COL_SPACING*2,		KEYB_ROW_3 ; # Key number 61 : D
+	db KEYB_Z_X+KEYB_COL_SPACING*2,		KEYB_ROW_4 ; # Key number 62 : C
+	db KEYB_Z_X+KEYB_COL_SPACING*1,		KEYB_ROW_4 ; # Key number 63 : X
 
 	;; 8
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*1,	KEYB_ROW_1,	'1' ; # Key number 64 : !1
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*2,	KEYB_ROW_1,	'2' ; # Key number 65 : "2
-	defb	KEYB_ESC_X,			KEYB_ROW_1,	'g' ; # Key number 66 : ESC
-	defb	KEYB_Q_X,			KEYB_ROW_2,	'Q' ; # Key number 67 : Q
-	defb	KEYB_X,				KEYB_ROW_2,	SPECIALKEY_TAB ; # Key number 68 : TAB
-	defb	KEYB_A_X,			KEYB_ROW_3,	'A' ; # Key number 69 : A
-	defb	KEYB_X,				KEYB_ROW_3,	SPECIALKEY_CAPS ; # Key number 70 : CAPSLOCK
-	defb	KEYB_Z_X,			KEYB_ROW_4,	'Z' ; # Key number 71 : Z
+	db KEYB_ESC_X+KEYB_COL_SPACING*1,	KEYB_ROW_1 ; # Key number 64 : !1
+	db KEYB_ESC_X+KEYB_COL_SPACING*2,	KEYB_ROW_1 ; # Key number 65 : "2
+	db KEYB_ESC_X,				KEYB_ROW_1 ; # Key number 66 : ESC
+	db KEYB_Q_X,				KEYB_ROW_2 ; # Key number 67 : Q
+	db KEYB_X,				KEYB_ROW_2 ; # Key number 68 : TAB
+	db KEYB_A_X,				KEYB_ROW_3 ; # Key number 69 : A
+	db KEYB_X,				KEYB_ROW_3 ; # Key number 70 : CAPSLOCK
+	db KEYB_Z_X,				KEYB_ROW_4 ; # Key number 71 : Z
 
 	;; 9
-	defb	04+JOY_X,			00+JOY_Y,	'a' ; # Key number 72 : Joystick Up
-	defb	04+JOY_X,			30+JOY_Y,	'b' ; # Key number 73 : Joystick Down
-	defb	00+JOY_X,			15+JOY_Y,	'c' ; # Key number 74 : Joystick Left
-	defb	08+JOY_X,			15+JOY_Y,	'd' ; # Key number 75 : Joystick Right
-	defb	14+JOY_X,			15+JOY_Y,	'1' ; # Key number 76 : Joystick Fire 1
-	defb	18+JOY_X,			15+JOY_Y,	'2' ; # Key number 77 : Joystick Fire 2
-	defb	22+JOY_X,			15+JOY_Y,	'3' ; # Key number 78 : Joystick Fire 3
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*14,	KEYB_ROW_1,	'i' ; # Key number 79 : DEL
+	db 04+JOY_X,				00+JOY_Y ; # Key number 72 : Joystick Up
+	db 04+JOY_X,				30+JOY_Y ; # Key number 73 : Joystick Down
+	db 00+JOY_X,				15+JOY_Y ; # Key number 74 : Joystick Left
+	db 08+JOY_X,				15+JOY_Y ; # Key number 75 : Joystick Right
+	db 14+JOY_X,				15+JOY_Y ; # Key number 76 : Joystick Fire 1
+	db 18+JOY_X,				15+JOY_Y ; # Key number 77 : Joystick Fire 2
+	db 22+JOY_X,				15+JOY_Y ; # Key number 78 : Joystick Fire 3
+	db KEYB_ESC_X+KEYB_COL_SPACING*14,	KEYB_ROW_1 ; # Key number 79 : DEL
 
-	defb	KEYB_Z_X+KEYB_COL_SPACING*11,	KEYB_ROW_4,	SPECIALKEY_SHIFTR ; # Key number 21 : SHIFT
+	db KEYB_Z_X+KEYB_COL_SPACING*11,	KEYB_ROW_4,	SPECIALKEY_SHIFTR ; # Key number 21 : SHIFT
 
 
 SpecialKeysTable6128:
@@ -232,106 +232,106 @@ SH  Z X C V B N M , . / \   SH
 KeyboardLocations464:
 	;; Column, row, char
 	;; 0
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_M2-5,	'a' ; # Key number 00 : ↑
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_M1-5,	'd' ; # Key number 01 : →
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_1-5,	'b' ; # Key number 02 : ↓
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_2,	'9' ; # Key number 03 : f9
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_3,	'6' ; # Key number 04 : f6
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_4,	'3' ; # Key number 05 : f3
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_5,	'f' ; # Key number 06 : ENTER
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_5,	'.' ; # Key number 07 : .
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_M2-5 ; # Key number 00 : ↑
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_M1-5 ; # Key number 01 : →
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_1-5 ; # Key number 02 : ↓
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_2 ; # Key number 03 : f9
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_3 ; # Key number 04 : f6
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_4 ; # Key number 05 : f3
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*2,	KEYB_ROW_5 ; # Key number 06 : ENTER
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_5 ; # Key number 07 : .
 
 	;; 1
-	defb	KEYB_NUMPAD_X,				KEYB_ROW_M1-5,	'c' ; # Key number 08 : ←
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_M1-5,	'o' ; # Key number 09 : COPY
-	defb	KEYB_NUMPAD_X,				KEYB_ROW_2,	'7' ; # Key number 10 : f7
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_2,	'8' ; # Key number 11 : f8
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_3,	'5' ; # Key number 12 : f5
-	defb	KEYB_NUMPAD_X,				KEYB_ROW_4,	'1' ; # Key number 13 : f1
-	defb	KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_4,	'2' ; # Key number 14 : f2
-	defb	KEYB_NUMPAD_X,				KEYB_ROW_5,	'0' ; # Key number 15 : f0
+	db KEYB_NUMPAD_X,			KEYB_ROW_M1-5 ; # Key number 08 : ←
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_M1-5 ; # Key number 09 : COPY
+	db KEYB_NUMPAD_X,			KEYB_ROW_2 ; # Key number 10 : f7
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_2 ; # Key number 11 : f8
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_3 ; # Key number 12 : f5
+	db KEYB_NUMPAD_X,			KEYB_ROW_4 ; # Key number 13 : f1
+	db KEYB_NUMPAD_X+KEYB_COL_SPACING*1,	KEYB_ROW_4 ; # Key number 14 : f2
+	db KEYB_NUMPAD_X,			KEYB_ROW_5 ; # Key number 15 : f0
 
 	;; 20
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*13,		KEYB_ROW_1,	'h' ; # Key number 16 : CLR
-	defb	KEYB_Q_X+KEYB_COL_SPACING*11,		KEYB_ROW_2,	'[' ; # Key number 17 : {[
-	defb	54+KEYB_X,				KEYB_ROW_2,	'e' ; # Key number 18 : RETURN
-	defb	KEYB_A_X+KEYB_COL_SPACING*11,		KEYB_ROW_3,	']' ; # Key number 19 : }]
-	defb	KEYB_NUMPAD_X,				KEYB_ROW_3,	'4' ; # Key number 20 : f4
-	defb	KEYB_X,					KEYB_ROW_4,	SPECIALKEY_SHIFTL ; # Key number 21 : SHIFT
-	defb	KEYB_Z_X+KEYB_COL_SPACING*10,		KEYB_ROW_4,	'\' ; # Key number 22 : `\		
-	defb	KEYB_Z_X+KEYB_COL_SPACING*10,		KEYB_ROW_5,	'm' ; # Key number 23 : CONTROL
+	db KEYB_ESC_X+KEYB_COL_SPACING*13,	KEYB_ROW_1 ; # Key number 16 : CLR
+	db KEYB_Q_X+KEYB_COL_SPACING*11,	KEYB_ROW_2 ; # Key number 17 : {[
+	db 54+KEYB_X,				KEYB_ROW_2 ; # Key number 18 : RETURN
+	db KEYB_A_X+KEYB_COL_SPACING*11,	KEYB_ROW_3 ; # Key number 19 : }]
+	db KEYB_NUMPAD_X,			KEYB_ROW_3 ; # Key number 20 : f4
+	db KEYB_X,				KEYB_ROW_4 ; # Key number 21 : SHIFT
+	db KEYB_Z_X+KEYB_COL_SPACING*10,	KEYB_ROW_4 ; # Key number 22 : `\		
+	db KEYB_Z_X+KEYB_COL_SPACING*10,	KEYB_ROW_5 ; # Key number 23 : CONTROL
 
 	;; 3
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*12,	KEYB_ROW_1,	'^' ; # Key number 24 : £^
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*11,	KEYB_ROW_1,	'-' ; # Key number 25 : =-
-	defb	KEYB_Q_X+KEYB_COL_SPACING*10,	KEYB_ROW_2,	'@' ; # Key number 26 : ¦@
-	defb	KEYB_Q_X+KEYB_COL_SPACING*9,	KEYB_ROW_2,	'P' ; # Key number 27 : P
-	defb	KEYB_A_X+KEYB_COL_SPACING*10,	KEYB_ROW_3,	'+' ; # Key number 28 : +;
-	defb	KEYB_A_X+KEYB_COL_SPACING*9,	KEYB_ROW_3,	'*' ; # Key number 29 : *:
-	defb	KEYB_Z_X+KEYB_COL_SPACING*9,	KEYB_ROW_4,	'/' ; # Key number 30 : ?/
-	defb	KEYB_Z_X+KEYB_COL_SPACING*8,	KEYB_ROW_4,	'.' ; # Key number 31 : >.
+	db KEYB_ESC_X+KEYB_COL_SPACING*12,	KEYB_ROW_1 ; # Key number 24 : £^
+	db KEYB_ESC_X+KEYB_COL_SPACING*11,	KEYB_ROW_1 ; # Key number 25 : =-
+	db KEYB_Q_X+KEYB_COL_SPACING*10,	KEYB_ROW_2 ; # Key number 26 : ¦@
+	db KEYB_Q_X+KEYB_COL_SPACING*9,		KEYB_ROW_2 ; # Key number 27 : P
+	db KEYB_A_X+KEYB_COL_SPACING*10,	KEYB_ROW_3 ; # Key number 28 : +;
+	db KEYB_A_X+KEYB_COL_SPACING*9,		KEYB_ROW_3 ; # Key number 29 : *:
+	db KEYB_Z_X+KEYB_COL_SPACING*9,		KEYB_ROW_4 ; # Key number 30 : ?/
+	db KEYB_Z_X+KEYB_COL_SPACING*8,		KEYB_ROW_4 ; # Key number 31 : >.
 
 	;; 4
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*10,	KEYB_ROW_1,	'0' ; # Key number 32 : _0
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*9,	KEYB_ROW_1,	'9' ; # Key number 33 : )9
-	defb	KEYB_Q_X+KEYB_COL_SPACING*8,	KEYB_ROW_2,	'O' ; # Key number 34 : O
-	defb	KEYB_Q_X+KEYB_COL_SPACING*7,	KEYB_ROW_2,	'I' ; # Key number 35 : I
-	defb	KEYB_A_X+KEYB_COL_SPACING*8,	KEYB_ROW_3,	'L' ; # Key number 36 : L
-	defb	KEYB_A_X+KEYB_COL_SPACING*7,	KEYB_ROW_3,	'K' ; # Key number 37 : K
-	defb	KEYB_Z_X+KEYB_COL_SPACING*6,	KEYB_ROW_4,	'M' ; # Key number 38 : M
-	defb	KEYB_Z_X+KEYB_COL_SPACING*7,	KEYB_ROW_4,	',' ; # Key number 39 : <,
+	db KEYB_ESC_X+KEYB_COL_SPACING*10,	KEYB_ROW_1 ; # Key number 32 : _0
+	db KEYB_ESC_X+KEYB_COL_SPACING*9,	KEYB_ROW_1 ; # Key number 33 : )9
+	db KEYB_Q_X+KEYB_COL_SPACING*8,		KEYB_ROW_2 ; # Key number 34 : O
+	db KEYB_Q_X+KEYB_COL_SPACING*7,		KEYB_ROW_2 ; # Key number 35 : I
+	db KEYB_A_X+KEYB_COL_SPACING*8,		KEYB_ROW_3 ; # Key number 36 : L
+	db KEYB_A_X+KEYB_COL_SPACING*7,		KEYB_ROW_3 ; # Key number 37 : K
+	db KEYB_Z_X+KEYB_COL_SPACING*6,		KEYB_ROW_4 ; # Key number 38 : M
+	db KEYB_Z_X+KEYB_COL_SPACING*7,		KEYB_ROW_4 ; # Key number 39 : <,
 
 	;; 5
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*8,	KEYB_ROW_1,	'8' ; # Key number 40 : (8
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*7,	KEYB_ROW_1,	'7' ; # Key number 41 : '7
-	defb	KEYB_Q_X+KEYB_COL_SPACING*6,	KEYB_ROW_2,	'U' ; # Key number 42 : U
-	defb	KEYB_Q_X+KEYB_COL_SPACING*5,	KEYB_ROW_2,	'Y' ; # Key number 43 : Y
-	defb	KEYB_A_X+KEYB_COL_SPACING*5,	KEYB_ROW_3,	'H' ; # Key number 44 : H
-	defb	KEYB_A_X+KEYB_COL_SPACING*6,	KEYB_ROW_3,	'J' ; # Key number 45 : J
-	defb	KEYB_Z_X+KEYB_COL_SPACING*5,	KEYB_ROW_4,	'N' ; # Key number 46 : N
-	defb	13+KEYB_X,			KEYB_ROW_5,	SPECIALKEY_SPACE ; # Key number 47 : SPACE
+	db KEYB_ESC_X+KEYB_COL_SPACING*8,	KEYB_ROW_1 ; # Key number 40 : (8
+	db KEYB_ESC_X+KEYB_COL_SPACING*7,	KEYB_ROW_1 ; # Key number 41 : '7
+	db KEYB_Q_X+KEYB_COL_SPACING*6,		KEYB_ROW_2 ; # Key number 42 : U
+	db KEYB_Q_X+KEYB_COL_SPACING*5,		KEYB_ROW_2 ; # Key number 43 : Y
+	db KEYB_A_X+KEYB_COL_SPACING*5,		KEYB_ROW_3 ; # Key number 44 : H
+	db KEYB_A_X+KEYB_COL_SPACING*6,		KEYB_ROW_3 ; # Key number 45 : J
+	db KEYB_Z_X+KEYB_COL_SPACING*5,		KEYB_ROW_4 ; # Key number 46 : N
+	db 13+KEYB_X,				KEYB_ROW_5 ; # Key number 47 : SPACE
 
 	;; 6
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*6,	KEYB_ROW_1,	'6' ; # Key number 48 : &6
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*5,	KEYB_ROW_1,	'5' ; # Key number 49 : %5
-	defb	KEYB_Q_X+KEYB_COL_SPACING*3,	KEYB_ROW_2,	'R' ; # Key number 50 : R
-	defb	KEYB_Q_X+KEYB_COL_SPACING*4,	KEYB_ROW_2,	'T' ; # Key number 51 : T
-	defb	KEYB_A_X+KEYB_COL_SPACING*4,	KEYB_ROW_3,	'G' ; # Key number 52 : G
-	defb	KEYB_A_X+KEYB_COL_SPACING*3,	KEYB_ROW_3,	'F' ; # Key number 53 : F
-	defb	KEYB_Z_X+KEYB_COL_SPACING*4,	KEYB_ROW_4,	'B' ; # Key number 54 : B
-	defb	KEYB_Z_X+KEYB_COL_SPACING*3,	KEYB_ROW_4,	'V' ; # Key number 55 : V
+	db KEYB_ESC_X+KEYB_COL_SPACING*6,	KEYB_ROW_1 ; # Key number 48 : &6
+	db KEYB_ESC_X+KEYB_COL_SPACING*5,	KEYB_ROW_1 ; # Key number 49 : %5
+	db KEYB_Q_X+KEYB_COL_SPACING*3,		KEYB_ROW_2 ; # Key number 50 : R
+	db KEYB_Q_X+KEYB_COL_SPACING*4,		KEYB_ROW_2 ; # Key number 51 : T
+	db KEYB_A_X+KEYB_COL_SPACING*4,		KEYB_ROW_3 ; # Key number 52 : G
+	db KEYB_A_X+KEYB_COL_SPACING*3,		KEYB_ROW_3 ; # Key number 53 : F
+	db KEYB_Z_X+KEYB_COL_SPACING*4,		KEYB_ROW_4 ; # Key number 54 : B
+	db KEYB_Z_X+KEYB_COL_SPACING*3,		KEYB_ROW_4 ; # Key number 55 : V
 
 	;; 7
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*4,	KEYB_ROW_1,	'4' ; # Key number 56 : $4
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*3,	KEYB_ROW_1,	'3' ; # Key number 57 : #3
-	defb	KEYB_Q_X+KEYB_COL_SPACING*2,	KEYB_ROW_2,	'E' ; # Key number 58 : E
-	defb	KEYB_Q_X+KEYB_COL_SPACING*1,	KEYB_ROW_2,	'W' ; # Key number 59 : W
-	defb	KEYB_A_X+KEYB_COL_SPACING*1,	KEYB_ROW_3,	'S' ; # Key number 60 : S
-	defb	KEYB_A_X+KEYB_COL_SPACING*2,	KEYB_ROW_3,	'D' ; # Key number 61 : D
-	defb	KEYB_Z_X+KEYB_COL_SPACING*2,	KEYB_ROW_4,	'C' ; # Key number 62 : C
-	defb	KEYB_Z_X+KEYB_COL_SPACING*1,	KEYB_ROW_4,	'X' ; # Key number 63 : X
+	db KEYB_ESC_X+KEYB_COL_SPACING*4,	KEYB_ROW_1 ; # Key number 56 : $4
+	db KEYB_ESC_X+KEYB_COL_SPACING*3,	KEYB_ROW_1 ; # Key number 57 : #3
+	db KEYB_Q_X+KEYB_COL_SPACING*2,		KEYB_ROW_2 ; # Key number 58 : E
+	db KEYB_Q_X+KEYB_COL_SPACING*1,		KEYB_ROW_2 ; # Key number 59 : W
+	db KEYB_A_X+KEYB_COL_SPACING*1,		KEYB_ROW_3 ; # Key number 60 : S
+	db KEYB_A_X+KEYB_COL_SPACING*2,		KEYB_ROW_3 ; # Key number 61 : D
+	db KEYB_Z_X+KEYB_COL_SPACING*2,		KEYB_ROW_4 ; # Key number 62 : C
+	db KEYB_Z_X+KEYB_COL_SPACING*1,		KEYB_ROW_4 ; # Key number 63 : X
 
 	;; 8
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*1,	KEYB_ROW_1,	'1' ; # Key number 64 : !1
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*2,	KEYB_ROW_1,	'2' ; # Key number 65 : "2
-	defb	KEYB_ESC_X,			KEYB_ROW_1,	'g' ; # Key number 66 : ESC
-	defb	KEYB_Q_X,			KEYB_ROW_2,	'Q' ; # Key number 67 : Q
-	defb	KEYB_X,				KEYB_ROW_2,	SPECIALKEY_TAB ; # Key number 68 : TAB
-	defb	KEYB_A_X,			KEYB_ROW_3,	'A' ; # Key number 69 : A
-	defb	KEYB_X,				KEYB_ROW_3,	SPECIALKEY_CAPS ; # Key number 70 : CAPSLOCK
-	defb	KEYB_Z_X,			KEYB_ROW_4,	'Z' ; # Key number 71 : Z
+	db KEYB_ESC_X+KEYB_COL_SPACING*1,	KEYB_ROW_1 ; # Key number 64 : !1
+	db KEYB_ESC_X+KEYB_COL_SPACING*2,	KEYB_ROW_1 ; # Key number 65 : "2
+	db KEYB_ESC_X,				KEYB_ROW_1 ; # Key number 66 : ESC
+	db KEYB_Q_X,				KEYB_ROW_2 ; # Key number 67 : Q
+	db KEYB_X,				KEYB_ROW_2 ; # Key number 68 : TAB
+	db KEYB_A_X,				KEYB_ROW_3 ; # Key number 69 : A
+	db KEYB_X,				KEYB_ROW_3 ; # Key number 70 : CAPSLOCK
+	db KEYB_Z_X,				KEYB_ROW_4 ; # Key number 71 : Z
 
 	;; 9
-	defb	04+JOY_X,			00+JOY_Y,	'a' ; # Key number 72 : Joystick Up
-	defb	04+JOY_X,			30+JOY_Y,	'b' ; # Key number 73 : Joystick Down
-	defb	00+JOY_X,			15+JOY_Y,	'c' ; # Key number 74 : Joystick Left
-	defb	08+JOY_X,			15+JOY_Y,	'd' ; # Key number 75 : Joystick Right
-	defb	14+JOY_X,			15+JOY_Y,	'1' ; # Key number 76 : Joystick Fire 1
-	defb	18+JOY_X,			15+JOY_Y,	'2' ; # Key number 77 : Joystick Fire 2
-	defb	22+JOY_X,			15+JOY_Y,	'3' ; # Key number 78 : Joystick Fire 3
-	defb	KEYB_ESC_X+KEYB_COL_SPACING*14,	KEYB_ROW_1,	SPECIALKEY_DEL ; # Key number 79 : DEL
+	db 04+JOY_X,				00+JOY_Y ; # Key number 72 : Joystick Up
+	db 04+JOY_X,				30+JOY_Y ; # Key number 73 : Joystick Down
+	db 00+JOY_X,				15+JOY_Y ; # Key number 74 : Joystick Left
+	db 08+JOY_X,				15+JOY_Y ; # Key number 75 : Joystick Right
+	db 14+JOY_X,				15+JOY_Y ; # Key number 76 : Joystick Fire 1
+	db 18+JOY_X,				15+JOY_Y ; # Key number 77 : Joystick Fire 2
+	db 22+JOY_X,				15+JOY_Y ; # Key number 78 : Joystick Fire 3
+	db KEYB_ESC_X+KEYB_COL_SPACING*14,	KEYB_ROW_1 ; # Key number 79 : DEL
 
-	defb	KEYB_Z_X+KEYB_COL_SPACING*11,	KEYB_ROW_4,	SPECIALKEY_SHIFTR ; # Key number 21 : SHIFT
+	db KEYB_Z_X+KEYB_COL_SPACING*11,	KEYB_ROW_4 ; # Key number 21 : SHIFT
 
 
 SpecialKeysTable464:
