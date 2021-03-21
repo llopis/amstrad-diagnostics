@@ -30,8 +30,8 @@
 	cp	KEYBOARD_LAYOUT_MATRIX+1
 	call	z, .clearA
 	ld	(KeyboardLayout), a
-	call	ClearKeyboardArea
 	call	ClearESCBar
+	call	ClearKeyboardArea
 	jr	.afterScreenDraw
 
 .continue:
@@ -133,7 +133,7 @@ CheckESCPressedLongEnough:
 	;; Check if it's time to exit to main menu
 	ld	hl, FramesESCPressed
 	ld	a, (hl)
-	cp	52
+	cp	53
 	ret
 
 .ESCPressed:

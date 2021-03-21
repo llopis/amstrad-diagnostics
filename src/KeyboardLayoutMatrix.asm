@@ -117,7 +117,7 @@ KeyboardLocationsMatrix:
 	db KEYB_X+KEYB_COL_SPACING*5,	KEYB_ROW_1 ; # Key number 76 : Joystick Fire 1
 	db KEYB_X+KEYB_COL_SPACING*6,	KEYB_ROW_1 ; # Key number 77 : Joystick Fire 2
 	db KEYB_X+KEYB_COL_SPACING*7,	KEYB_ROW_1 ; # Key number 78 : Joystick Fire 3
-	db KEYB_X+KEYB_COL_SPACING*0,	KEYB_ROW_1 ; # Key number 79 : DEL
+	db KEYB_X+KEYB_COL_SPACING*8,	KEYB_ROW_1 ; # Key number 79 : DEL
 
 	db KEYB_Z_X+KEYB_COL_SPACING*11,	KEYB_ROW_4,	SPECIALKEY_SHIFTR ; # Key number 21 : SHIFT
 
