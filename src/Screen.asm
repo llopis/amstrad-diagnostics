@@ -51,15 +51,16 @@ ClearScreen:
 	ldir
 	*/
 
-	ld hl, SCREEN_START
-	ld bc, #4000
+	ld 	hl, SCREEN_START
+	ld 	bc, #4000
+	ld	d, 0
 .loop:
-	ld (hl),d
-	inc hl
-	dec bc
-	ld a, b
-	or c
-	jr nz, .loop
+	ld 	(hl),d
+	inc 	hl
+	dec 	bc
+	ld 	a, b
+	or 	c
+	jr 	nz, .loop
 	ret
 	
 

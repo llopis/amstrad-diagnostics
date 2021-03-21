@@ -3,8 +3,9 @@
 
 
 @TestKeyboard:
-	call	SetKeyboardTables
 	call 	KeyboardSetUpScreen
+.afterScreenDraw:
+	call	SetKeyboardTables
 	call 	PrintKeyboard
 	call 	ClearKeyboardBuffer
 	ld	a, 0
@@ -27,7 +28,10 @@
 	ld	a, (KeyboardLayout)
 	xor	1
 	ld	(KeyboardLayout), a
-	jr	TestKeyboard
+	call	ClearKeyboardArea
+	ld	a, ScreenCharsWidth
+	call	ClearESCBar
+	jr	.afterScreenDraw
 
 .continue:
 	; Print edge on keys in blue
@@ -50,6 +54,30 @@
 
 	jr .keyboardLoop
 
+
+ClearKeyboardArea:
+	ld 	hl, SCREEN_START+#50
+	ld	b, 8
+
+.outerloop:
+	push	bc
+	push	hl
+	ld 	bc, #6E0
+	ld	d, 0
+.loop:
+	ld 	(hl),d
+	inc 	hl
+	dec 	bc
+	ld 	a, b
+	or 	c
+	jr 	nz, .loop
+	pop	hl
+	pop	bc
+	ld	de, #800
+	add	hl, de
+	djnz	.outerloop
+
+	ret
 
 PrintKeyboard:
 	call 	SetDefaultColors
