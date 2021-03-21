@@ -26,7 +26,9 @@
 
 	;; Toggle the keyboard layout
 	ld	a, (KeyboardLayout)
-	xor	1
+	inc	a
+	cp	KEYBOARD_LAYOUT_MATRIX+1
+	call	z, .clearA
 	ld	(KeyboardLayout), a
 	call	ClearKeyboardArea
 	ld	a, ScreenCharsWidth
@@ -54,6 +56,10 @@
 
 	jr .keyboardLoop
 
+.clearA:
+	ld	a, 0
+	ret
+
 
 ClearKeyboardArea:
 	ld 	hl, SCREEN_START+#50
@@ -62,7 +68,7 @@ ClearKeyboardArea:
 .outerloop:
 	push	bc
 	push	hl
-	ld 	bc, #6E0
+	ld 	bc, #6D0
  IFNDEF UpperROMBuild
  	ld	(hl), 0
  	ld	de, hl
@@ -101,26 +107,6 @@ PrintKeyboard:
 	add	hl, de
 	inc	iy
 	djnz	.printLoop
-	ret
-
-
-SetKeyboardTables:
-	ld	a, (KeyboardLayout)
-	or	a
-	jr	z, .layout464
-
-	;; Layout 6128
-	ld	hl, KeyboardLocations6128
-	ld 	(KeyboardLocationTable), hl
-	ld	hl, SpecialKeysTable6128
-	ld 	(SpecialKeysTable), hl
-	ret
-
-.layout464:
-	ld	hl, KeyboardLocations464
-	ld 	(KeyboardLocationTable), hl
-	ld	hl, SpecialKeysTable464
-	ld 	(SpecialKeysTable), hl
 	ret
 
 
@@ -198,18 +184,24 @@ DrawKey:
 	ld	(txt_byte_x), a
 	ld	a, (ix+1) ; text row in pixels
 	ld	(txt_pixels_y), a
-	ld 	a,(iy)
 
 	ld	d, (ix)
 	ld	e, (ix+1)
+
+	ld	a, (KeyboardLayout)
+	cp	KEYBOARD_LAYOUT_MATRIX
+	jr	z, .drawKeyNormal
+
+	ld 	a,(iy)
 	cp	SPECIALKEY_SHIFTL
 	jr	z, .drawShifts
-	bit	7, a
-	jr	nz, .specialKey
-
 	cp	'e'
 	jp	z, .drawReturn
 
+.drawKeyNormal:
+	ld 	a,(iy)	
+	bit	7, a
+	jr	nz, .specialKey
 	push	af
 	ld	c, 15
 	call	DrawKeySquare
@@ -283,7 +275,6 @@ DrawKey:
 	jp	.exit
 
 
-KEY_HEIGHT EQU 15
 
 ;; IN:	D - key x in bytes
 ;; 	E - key y in pixels

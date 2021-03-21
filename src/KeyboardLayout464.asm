@@ -127,15 +127,15 @@ SpecialKeysTable464:
 	dw TxtKeyReturn
 	db 143				; SPACE
 	dw TxtKeySpace
-	db 16				; CONTROL
+	db KEY_HEIGHT			; CONTROL
 	dw TxtKeyControlShort
-	db 16				; COPY
+	db KEY_HEIGHT			; COPY
 	dw TxtKeyCopyShort
 	db 27				; CAPS LOCK
 	dw TxtKeyCaps
 	db 23				; TAB
 	dw TxtKeyTab
-	db 16				; ENTER
+	db KEY_HEIGHT			; ENTER
 	dw TxtKeyEnterShort
 	db 35				; LEFT SHIFT
 	dw TxtKeyShiftL

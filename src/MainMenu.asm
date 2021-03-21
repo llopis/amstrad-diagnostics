@@ -10,10 +10,10 @@ MainMenu:
 	ld	(ModelType), a
 	cp	MODEL_CPC6128
 	jr	c, .set464Layout
-	ld	a, 1
+	ld	a, KEYBOARD_LAYOUT_6128
 	jr	.setLayout
 .set464Layout:
-	ld	a, 0
+	ld	a, KEYBOARD_LAYOUT_464
 .setLayout:
 	ld	(KeyboardLayout), a
 
