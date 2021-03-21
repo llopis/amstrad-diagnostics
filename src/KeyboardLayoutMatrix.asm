@@ -14,7 +14,7 @@ D
 
 
  DEFINE KEYB_X 21
- DEFINE KEYB_Y 22
+ DEFINE KEYB_Y 25
 
 
 KeyboardLocationsMatrix:

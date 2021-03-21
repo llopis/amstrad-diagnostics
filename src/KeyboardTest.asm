@@ -31,7 +31,6 @@
 	call	z, .clearA
 	ld	(KeyboardLayout), a
 	call	ClearKeyboardArea
-	ld	a, ScreenCharsWidth
 	call	ClearESCBar
 	jr	.afterScreenDraw
 
@@ -142,30 +141,28 @@ CheckESCPressedLongEnough:
 	ld 	a, (hl)
 
 	;; Draw a new character in the ESC bar
-	call	SetDefaultColors
+	call	SetInverseColors
 	ld 	a, (hl)
 	dec	a
 	ld	h, a
 	ld	l, ESCBAR_Y
 	ld	(TxtCoords), hl
-	ld	a, '~'
+	ld	d, 0
+	ld	e, a
+	ld	hl, TxtKeyboardOptions
+	add	hl, de
+	ld	a, (hl)
 	call	PrintChar
 	jr	.continue
 
 
-;; IN: A current width
 ClearESCBar:
-	push	af
 	call	SetDefaultColors
-	ld	h, 0
-	ld	l, ESCBAR_Y
-	ld	(TxtCoords), hl
-	pop	af
-	ld	b, a
-.loop:
-	ld	a, ' '
-	call	PrintChar
-	djnz	.loop
+	ld 	h, 0
+	ld	l, PRESSESC_Y
+	ld 	(TxtCoords),hl
+	ld 	hl, TxtKeyboardOptions
+	call 	PrintString
 	ret
 
 
@@ -580,25 +577,18 @@ KeyboardSetUpScreen:
 	ld 	(TxtCoords),hl
 	call 	SetDefaultColors
 
-	ld 	h, TxtKeyboardX
-	ld	l, PRESSESC_Y
-	ld 	(TxtCoords),hl
-	ld 	hl, TxtKeyboard
-	call 	PrintString
-	call 	NewLine
+	call	ClearESCBar
 	ret
 
 
-PRESSESC_Y EQU #17
-ESCBAR_Y EQU PRESSESC_Y+1
+PRESSESC_Y EQU #18
+ESCBAR_Y EQU PRESSESC_Y
 
 
 TxtKeyboardTitle: db ' - KEYBOARD TEST',0
 TxtKeyboardTitleLen EQU $-TxtKeyboardTitle-1
 
-TxtKeyboard: db 'HOLD ESC OR FIRE TO EXIT. HOLD TAB TO CHANGE LAYOUT.',0
-TxtKeyboardLen equ $-TxtKeyboard-1
-TxtKeyboardX equ (ScreenCharsWidth-TxtKeyboardLen)/2
+TxtKeyboardOptions: db ' HOLD ESC OR FIRE TO EXIT. HOLD TAB TO CHANGE LAYOUT.',0
 
 
  INCLUDE "KeyboardLayout.asm"
