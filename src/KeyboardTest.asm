@@ -63,6 +63,13 @@ ClearKeyboardArea:
 	push	bc
 	push	hl
 	ld 	bc, #6E0
+ IFNDEF UpperROMBuild
+ 	ld	(hl), 0
+ 	ld	de, hl
+ 	inc	de
+ 	ldir
+ ELSE
+
 	ld	d, 0
 .loop:
 	ld 	(hl),d
@@ -71,6 +78,7 @@ ClearKeyboardArea:
 	ld 	a, b
 	or 	c
 	jr 	nz, .loop
+ ENDIF
 	pop	hl
 	pop	bc
 	ld	de, #800

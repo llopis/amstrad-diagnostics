@@ -42,15 +42,14 @@ InitializeCRTC:
 	ret
 
 ClearScreen:
+ IFNDEF UpperROMBuild
 	; More efficient clear routine, but we can't do that and have the upper ROM enabled
-	/*
 	ld hl,#C000
 	ld de,#C001
 	ld bc,#4000
 	ld (hl),0
 	ldir
-	*/
-
+ ELSE
 	ld 	hl, SCREEN_START
 	ld 	bc, #4000
 	ld	d, 0
@@ -62,7 +61,7 @@ ClearScreen:
 	or 	c
 	jr 	nz, .loop
 	ret
-	
+ ENDIF	
 
 WaitForVsync:
         ; Wait for Vsync
