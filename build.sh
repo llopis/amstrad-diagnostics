@@ -1,5 +1,5 @@
 #!/bin/sh
-
+set -e			# Stop on any failure
 rm -rf build
 mkdir -p build
 
