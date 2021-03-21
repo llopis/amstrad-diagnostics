@@ -41,6 +41,7 @@ FramesESCPressed: db 0
 FillKeyPattern: db 0
 KeyboardLocationTable: dw 0
 SpecialKeysTable: dw 0
+KeyboardLabels: ds KeyboardLabelsTableSize	; Copy of the labels, patched up with correct language variations
 
 ;; Print char
 @TxtCoords:

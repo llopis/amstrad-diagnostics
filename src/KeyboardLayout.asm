@@ -21,21 +21,60 @@ SetKeyboardTables:
 	ld 	(KeyboardLocationTable), hl
 	ld	hl, SpecialKeysTableMatrix
 	ld 	(SpecialKeysTable), hl
+
+.setLabels:
+
+	ld	hl, KeyboardLabelsEnglish
+	ld	de, KeyboardLabels
+	ld	bc, KeyboardLabelsTableSize
+	ldir
+
+	;;ld	ix, KeyboardLabels
+	;;jr	.patchFrenchLabels
+
 	ret
+
+.patchSpanishLabels:
+	ld	(ix+29), 'n'
+	ret
+
+.patchFrenchLabels:
+	ld	(ix+25), ')'
+	ld	(ix+24), '-'
+
+	ld	(ix+67), 'A'
+	ld	(ix+59), 'Z'
+	ld	(ix+26), '^'
+	ld	(ix+17), '*'
+
+	ld	(ix+69), 'Q'
+	ld	(ix+29), 'M'
+	ld	(ix+28), '%'
+	ld	(ix+19), '#'
+
+	ld	(ix+71), 'W'
+	ld	(ix+38), ','
+	ld	(ix+39), ';'
+	ld	(ix+31), ':'
+	ld	(ix+30), '='
+	ld	(ix+22), '$'
+
+	ret
+
 
 .layout6128:
 	ld	hl, KeyboardLocations6128
 	ld 	(KeyboardLocationTable), hl
 	ld	hl, SpecialKeysTable6128
 	ld 	(SpecialKeysTable), hl
-	ret
+	jr	.setLabels
 
 .layout464:
 	ld	hl, KeyboardLocations464
 	ld 	(KeyboardLocationTable), hl
 	ld	hl, SpecialKeysTable464
 	ld 	(SpecialKeysTable), hl
-	ret
+	jr	.setLabels
 
 
 

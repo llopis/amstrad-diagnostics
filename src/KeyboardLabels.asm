@@ -1,5 +1,5 @@
 
-KeyboardLabels:
+KeyboardLabelsEnglish:
 	db 'a' ; 00 : ↑
 	db 'd' ; 01 : →
 	db 'b' ; 02 : ↓
@@ -34,8 +34,8 @@ KeyboardLabels:
 	db '-' ; # Key number 25 : =-
 	db '@' ; # Key number 26 : ¦@
 	db 'P' ; # Key number 27 : P
-	db '+' ; # Key number 28 : +;
-	db '*' ; # Key number 29 : *:
+	db ';' ; # Key number 28 : +;
+	db ':' ; # Key number 29 : *:
 	db '/' ; # Key number 30 : ?/
 	db '.' ; # Key number 31 : >.
 
@@ -99,3 +99,4 @@ KeyboardLabels:
 	db '3' ; # Key number 78 : Joystick Fire 3
 	db 'i' ; # Key number 79 : DEL
 
+@KeyboardLabelsTableSize EQU $-KeyboardLabelsEnglish
