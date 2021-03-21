@@ -4,33 +4,57 @@
 @KEYBOARD_LAYOUT_6128	EQU 1
 @KEYBOARD_LAYOUT_MATRIX	EQU 2
 
+@KEYBOARD_LANGUAGE_ENGLISH EQU 0
+@KEYBOARD_LANGUAGE_SPANISH EQU 1
+@KEYBOARD_LANGUAGE_FRENCH EQU 2
+
+
 KEY_HEIGHT EQU 15
 
 
 ; IN	KeyboardLayout - Layout to set
 SetKeyboardTables:
 	ld	a, (KeyboardLayout)
-	or	a
-	jr	z, .layout464
+	cp	KEYBOARD_LAYOUT_MATRIX
+	jr	z, .layoutMatrix
 
-	cp	1
+	cp	KEYBOARD_LAYOUT_6128
 	jr	z, .layout6128
 
-	;; Layout matrix
+.layout464:
+	ld	hl, KeyboardLocations464
+	ld 	(KeyboardLocationTable), hl
+	ld	hl, SpecialKeysTable464
+	ld 	(SpecialKeysTable), hl
+	jr	.setLabels
+
+.layout6128:
+	ld	hl, KeyboardLocations6128
+	ld 	(KeyboardLocationTable), hl
+	ld	hl, SpecialKeysTable6128
+	ld 	(SpecialKeysTable), hl
+	jr	.setLabels
+
+.layoutMatrix:
 	ld	hl, KeyboardLocationsMatrix
 	ld 	(KeyboardLocationTable), hl
 	ld	hl, SpecialKeysTableMatrix
 	ld 	(SpecialKeysTable), hl
+	jr	.setLabels
 
 .setLabels:
-
 	ld	hl, KeyboardLabelsEnglish
 	ld	de, KeyboardLabels
 	ld	bc, KeyboardLabelsTableSize
 	ldir
 
-	;;ld	ix, KeyboardLabels
-	;;jr	.patchFrenchLabels
+	ld	ix, KeyboardLabels
+	ld	a, (KeyboardLanguage)
+	cp	KEYBOARD_LANGUAGE_SPANISH
+	jr	z, .patchSpanishLabels
+
+	cp	KEYBOARD_LANGUAGE_FRENCH
+	jr	z, .patchFrenchLabels
 
 	ret
 
@@ -60,21 +84,6 @@ SetKeyboardTables:
 	ld	(ix+22), '$'
 
 	ret
-
-
-.layout6128:
-	ld	hl, KeyboardLocations6128
-	ld 	(KeyboardLocationTable), hl
-	ld	hl, SpecialKeysTable6128
-	ld 	(SpecialKeysTable), hl
-	jr	.setLabels
-
-.layout464:
-	ld	hl, KeyboardLocations464
-	ld 	(KeyboardLocationTable), hl
-	ld	hl, SpecialKeysTable464
-	ld 	(SpecialKeysTable), hl
-	jr	.setLabels
 
 
 

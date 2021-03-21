@@ -5,9 +5,11 @@ MainMenu:
 	call 	IsSoakTestRunning
 	jp 	z, SoakTestSelected
 
-	;; Try to detect keyboard layout
+	;; Try to detect the model and language
 	call	DetectModel
-	ld	(ModelType), a
+
+	;; From the model, determine the keyboard layout
+	ld	a, (ModelType)
 	cp	MODEL_CPC6128
 	jr	c, .set464Layout
 	ld	a, KEYBOARD_LAYOUT_6128

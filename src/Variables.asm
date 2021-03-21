@@ -15,6 +15,7 @@ EdgeOffKeyboardMatrixBuffer: defs KeyboardBufferSize
 
 ;; Main menu
 ModelType: db 0
+KeyboardLanguage: db 0
 LowRAMSuccess: db 0
 SelectedMenuItem: db 0
  IFDEF UpperROMBuild
