@@ -209,6 +209,8 @@ TxtSupported: db 'SUPPORTED',0
 TxtNot: db 'NOT',0
 TxtPressESCToCancel: db 'PRESS ESC TO CANCEL TEST',0
 TxtTestAborted: db 'TEST ABORTED PRESS ANY KEY FOR MAIN MENU',0
+TxtInvalidBank: db '________',0
+TxtValidBank: 	db '........',0
 
 
 BANKLABELXSTART4MB EQU 1
@@ -255,12 +257,12 @@ GetPortForBankAndBlock:
 	ret
 
 
-;; Go through every bank and block and clear the first word to 0
+;; Go through every bank and set the first word to the port and the bank
 AddAllRAMMarkers:
 	;; In this case we want to iterate through the banks backwards because if a bank doesn't exit, we'll get the default one
 	;; so we want to leave that one for last
 	ld 	ix, RAMBANKSTART
-	ld 	b, #78
+	ld 	bc, #78FF
 
 .loop512K:
 	ld 	d, 7
@@ -269,7 +271,7 @@ AddAllRAMMarkers:
 	ld 	e, 0
 
 .blockLoop:
-	call GetPortForBankAndBlock
+	call 	GetPortForBankAndBlock
 
 	;; Set first byte to full block byte
 	out 	(c),l
@@ -277,10 +279,10 @@ AddAllRAMMarkers:
 	ld 	(ix+1),b
 
 	;; Next block
-	inc 	e
-	ld 	a, e
-	cp 	4
-	jr 	nz, .blockLoop
+	;inc 	e
+	;ld 	a, e
+	;cp 	4
+	;jr 	nz, .blockLoop
 
 	;; Next bank
 	ld 	a, d
@@ -304,13 +306,13 @@ AddAllRAMMarkers:
 
 
 
-;; Find all available upper RAM checking if each block works
+;; Find all available upper RAM checking if each bank works
 ;; Updates ValidBankCount
 DetectAvailableUpperRAM:
 	ld 	a, 0
 	ld 	(ValidBankCount), a
 	ld 	ix, RAMBANKSTART
-	ld 	b, #7F
+	ld 	bc, #7FFF
 	; d = bank
 	; e = block
 .loop512K:
@@ -356,40 +358,41 @@ RunUpperRAMTests4MB:
 	ld	l, BANKLABELYSTART4MB
 	ld	(TxtCoords), hl
 
-	ld 	b, #7F
+	ld 	bc, #7FFF
 .loop512K:
 	ld 	d, 0
 
 .bankLoop:
 	ld 	e, 0
 
-.blockLoop:
-	push	bc
-	push 	de				; Save the bank and block
-
-	call 	SetDefaultColors
-	ld	a, '.'
-	call	PrintChar
-	ld	a, '.'
-	call	PrintChar
-	ld	hl, txt_x
-	dec	(hl)
-	dec	(hl)
-
-	pop 	de				; Restore bank and block
-	pop	bc
-
 	call 	GetPortForBankAndBlock
-
 	out 	(c), l
 
 	ld 	ix, RAMBANKSTART
 	ld 	a, (ix)
 	cp 	l
-	jr 	nz, .invalidBlock
+	jr 	nz, .invalidBank
 	ld 	a, (ix+1)
 	cp 	b
-	jr 	nz, .invalidBlock
+	jr 	nz, .invalidBank
+
+	push	bc
+	push 	de				; Save the bank and block
+
+	call 	SetDefaultColors
+	ld	hl, TxtValidBank
+	call	PrintString
+	ld	a, (txt_x)
+	sub	8
+	ld	(txt_x), a
+
+	pop 	de				; Restore bank and block
+	pop	bc
+
+.blockLoop:
+	call 	GetPortForBankAndBlock
+
+	out 	(c), l
 
 	push	bc
 	push 	de
@@ -428,6 +431,7 @@ RunUpperRAMTests4MB:
 	cp 	4
 	jr 	nz, .blockLoop
 
+.nextBank:
 	;; Next bank
 	ld	a, (txt_x)
 	add	4
@@ -459,12 +463,11 @@ RunUpperRAMTests4MB:
 	ld	a,0
 	ret
 
-.invalidBlock:
-	ld 	a, '_'
-	call 	PrintChar
-	ld 	a, '_'
-	call 	PrintChar
-	jr 	.nextBlock
+.invalidBank:
+	call	SetDefaultColors
+	ld 	hl, TxtInvalidBank
+	call 	PrintString
+	jr 	.nextBank
 
 .failedBlock:
 	call 	SetErrorFound
