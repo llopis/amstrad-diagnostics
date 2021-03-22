@@ -73,7 +73,7 @@ SetKeyboardTables:
 
 	ld	(ix+69), 'Q'
 	ld	(ix+29), 'M'
-	ld	(ix+28), '%'
+	ld	(ix+28), 'u'
 	ld	(ix+19), '#'
 
 	ld	(ix+71), 'W'
