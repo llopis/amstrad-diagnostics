@@ -121,7 +121,6 @@ PrintResult:
 	call	PrintChar
 	djnz	.loop
 
-
 	ld	h, 0
 	ld	l, RESULT_Y
 	ld	(TxtCoords), hl
@@ -130,6 +129,7 @@ PrintResult:
 	or 	a
 	jr 	z, .printFinalResult
 
+	call	SetDefaultColors
 	ld 	hl,TxtC3Config
 	call 	PrintString
 	ld 	hl,C3ConfigFailed
