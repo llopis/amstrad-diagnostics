@@ -184,6 +184,7 @@ ASIC_SPRITE_MEM EQU #4000
 
 ;; OUT:	z - Not Plus
 @CanAccessPlusASIC:
+	;; Page ASIC registers into #4000 bank
 	ld	bc, #7F00 + %10111000
       	out 	(c), c
 
@@ -192,7 +193,8 @@ ASIC_SPRITE_MEM EQU #4000
       	ld	a, (ASIC_SPRITE_MEM)
       	cp	a, #FF
 
-	ld	bc, RESTORE_ROM_CONFIG
+	;; Page out ASIC registers
+	ld	bc, #7F00 + %10100000
       	out 	(c), c
       	ret
 
