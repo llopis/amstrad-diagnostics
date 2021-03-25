@@ -9,9 +9,10 @@ TxtUnknown: db "UNKNOWN", 0
 TxtModelCPC464: db "CPC 464", 0 
 TxtModelCPC664: db "CPC 664", 0 
 TxtModelCPC6128: db "CPC 6128", 0 
-TxtModel464Plus: db "464 PLUS", 0 
-TxtModel6128PLUS: db "6128 PLUS", 0 
-TxtModelGX4000: db "GX4000", 0 
+;;TxtModel464Plus: db "464 PLUS", 0 
+;;TxtModel6128PLUS: db "6128 PLUS", 0 
+;;TxtModelGX4000: db "GX4000", 0 
+TxtModelPlusRange: db "PLUS/GX4000", 0 
 
 ;; Offsets from ModelNames
 
@@ -20,9 +21,9 @@ TxtModelGX4000: db "GX4000", 0
 	db TxtModelCPC464 - TxtUnknown
 	db TxtModelCPC664 - TxtUnknown
 	db TxtModelCPC6128 - TxtUnknown
-	db TxtModel464Plus - TxtUnknown
-	db TxtModel6128PLUS - TxtUnknown
-	db TxtModelGX4000 - TxtUnknown
+	db TxtModelPlusRange - TxtUnknown
+	db TxtModelPlusRange - TxtUnknown
+	db TxtModelPlusRange - TxtUnknown
 
 @MODEL_UNKNOWN 		EQU 0
 @MODEL_CPC464 		EQU 1
@@ -75,7 +76,16 @@ TxtModelGX4000: db "GX4000", 0
 
 .not6128::
 	;; 464 or 664
-	;; TODO: Detect 664. Maybe look at FDC presence.
+	cp	#7B
+	jr	nz, .not664
+
+	;; 664
+      	ld	a, MODEL_CPC664
+	ld	(ModelType), a
+	jr	.englishKeyboard
+
+	;; 464
+.not664:
       	ld	a, MODEL_CPC464
 	ld	(ModelType), a
 
