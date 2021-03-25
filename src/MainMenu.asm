@@ -191,14 +191,14 @@ TxtUntested: db "UNTESTED",0
 TxtPassed: db "PASSED",0
 TxtFailed: db "FAILED",0
 TxtAborted: db "ABORTED",0
-TxtInconclusive: db "INCONCLUSIVE",0
+TxtNotAvailable: db "NOT AVAILABLE",0
 
 ResultTextTable:
 	dw TxtUntested
 	dw TxtPassed
 	dw TxtFailed
 	dw TxtAborted
-	dw TxtInconclusive
+	dw TxtNotAvailable
 
 
 RESULTS_X 		EQU 12

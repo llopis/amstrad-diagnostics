@@ -52,7 +52,7 @@ CheckLowerROM:
 	jr 	nz, .continueLowerROM
 
 	;; Remember failure
-	ld	a, TESTRESULT_INCONCLUSIVE
+	ld	a, TESTRESULT_NOTAVAILABLE
 	ld	(TestResultTableLowerROM), a
 
 	ld 	hl,TxtCantAccessLowerROM
