@@ -1,26 +1,12 @@
-;; Keyboard
-;; This buffer has one byte per keyboard line. 
-;; Each byte defines a single keyboard line, which defines 
-;; the state for up to 8 keys.
-;;
-;; A bit in a byte will be '1' if the corresponding key 
-;; is pressed, '0' if the key is not pressed.
 
-KeyboardBufferSize equ 10
-KeyboardMatrixBuffer: 	     defs KeyboardBufferSize
-LastKeyboardMatrixBuffer:    defs KeyboardBufferSize
-EdgeOnKeyboardMatrixBuffer:  defs KeyboardBufferSize
-EdgeOffKeyboardMatrixBuffer: defs KeyboardBufferSize
 
+ IFDEF UpperROMBuild
+UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
+ ENDIF
 
 ;; Main menu
 ModelType: db 0
 KeyboardLanguage: db 0
-LowRAMSuccess: db 0
-SelectedMenuItem: db 0
- IFDEF UpperROMBuild
-UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
- ENDIF
 
 
 ;; Upper RAM test
@@ -43,6 +29,22 @@ FillKeyPattern: db 0
 KeyboardLocationTable: dw 0
 SpecialKeysTable: dw 0
 KeyboardLabels: ds KeyboardLabelsTableSize	; Copy of the labels, patched up with correct language variations
+;;KeyboardResult: ds 
+
+;; Keyboard
+;; This buffer has one byte per keyboard line. 
+;; Each byte defines a single keyboard line, which defines 
+;; the state for up to 8 keys.
+;;
+;; A bit in a byte will be '1' if the corresponding key 
+;; is pressed, '0' if the key is not pressed.
+
+KeyboardBufferSize equ 10
+KeyboardMatrixBuffer: 	     defs KeyboardBufferSize
+LastKeyboardMatrixBuffer:    defs KeyboardBufferSize
+EdgeOnKeyboardMatrixBuffer:  defs KeyboardBufferSize
+EdgeOffKeyboardMatrixBuffer: defs KeyboardBufferSize
+PresseddMatrixBuffer: 	     defs KeyboardBufferSize
 
 ;; Print char
 @TxtCoords:
@@ -57,3 +59,4 @@ KeyboardLabels: ds KeyboardLabelsTableSize	; Copy of the labels, patched up with
 
 @scr_table: defs 200*2
 char_depack_buffer: defs 16
+

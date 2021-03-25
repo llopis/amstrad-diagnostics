@@ -97,33 +97,49 @@ ScanKey:
 ; Save matris buffer to LastKeyboardMatrixBuffer
 UpdateKeyBuffers:
 	; First detect edge offs and copy last buffer
-	ld hl,KeyboardMatrixBuffer
-	ld de,LastKeyboardMatrixBuffer
-	ld ix,EdgeOffKeyboardMatrixBuffer
-	ld iy,EdgeOnKeyboardMatrixBuffer
-	ld b,KeyboardBufferSize
+	ld 	hl, KeyboardMatrixBuffer
+	ld 	de, LastKeyboardMatrixBuffer
+	ld 	ix, EdgeOffKeyboardMatrixBuffer
+	ld 	iy, EdgeOnKeyboardMatrixBuffer
+	ld 	b, KeyboardBufferSize
 .loop:
-	ld a,(de)	; Last pressed keys
-	ld c,a
-	ld a,(hl)	; Currently pressed keys
-	xor c
-	and c
-	ld (ix),a	; Off edges
+	ld 	a,(de)	; Last pressed keys
+	ld 	c,a
+	ld 	a,(hl)	; Currently pressed keys
+	xor 	c
+	and 	c
+	ld 	(ix),a	; Off edges
 
-	ld c,(hl)	; Currently pressed keys
-	ld a,(de)       ; Last pressed keys
-	xor c
-	and c
-	ld (iy),a	; On edges
+	ld 	c,(hl)	; Currently pressed keys
+	ld 	a,(de)       ; Last pressed keys
+	xor 	c
+	and 	c
+	ld 	(iy),a	; On edges
 
-	ld a,(hl)
-	ld (de),a	; Copy currently pressed keys
+	ld 	a,(hl)
+	ld 	(de),a	; Copy currently pressed keys
 
-	inc de
-	inc hl
-	inc ix
-	inc iy
-	djnz .loop
+	inc 	de
+	inc 	hl
+	inc 	ix
+	inc 	iy
+	djnz 	.loop
+
+	; First detect edge offs and copy last buffer
+	ld 	hl, KeyboardMatrixBuffer
+	ld 	de, PresseddMatrixBuffer
+	ld 	b, KeyboardBufferSize
+.loopSoFar:
+	ld 	a,(de)	; Pressed keys so far
+	ld 	c,a
+	ld 	a,(hl)	; Currently pressed keys
+	or 	c
+	ld 	(de),a	; Save them
+
+	inc 	de
+	inc 	hl
+	djnz 	.loopSoFar
+
 
 	ret
 

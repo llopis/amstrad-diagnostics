@@ -1,0 +1,26 @@
+
+
+
+TESTRESULT_UNTESTED 	EQU 0
+TESTRESULT_PASSED 	EQU 1
+TESTRESULT_FAILED 	EQU 2
+TESTRESULT_ABORTED 	EQU 3
+TESTRESULT_INCONCLUSIVE EQU 4
+
+SelectedMenuItem: db 0
+TestResultTable:
+;; 0 - status 
+;; 1,2: pointer to string
+TestResultTableLowerRAM:
+	db TESTRESULT_PASSED
+TestResultTableUpperRAM:
+	db TESTRESULT_UNTESTED
+TestResultTableLowerROM:
+	db TESTRESULT_UNTESTED
+TestResultTableUpperROM:
+	db TESTRESULT_UNTESTED
+TestResultTableKeyboard:
+	db TESTRESULT_UNTESTED
+TestResultTableJoystick:
+	db TESTRESULT_UNTESTED
+

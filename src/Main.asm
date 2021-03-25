@@ -112,8 +112,6 @@ RAMTestPassed:
 	INCLUDE "PlaySound.asm"
 
 	INCLUDE "PlaySound.asm"
-	ld 	a,1
-	ld 	(LowRAMSuccess), a
 	jp 	MainMenu
 
 .soakTest:
@@ -152,6 +150,7 @@ RAMBegin:
  	INCLUDE "Dandanator.asm"
  	INCLUDE "M4.asm"
  ENDIF
+ 	INCLUDE "VariablesInitialized.asm"
 RAMDataEnd:
  	;; This is just saving room in RAM, but it's not taking up any of the ROM size
  	OUTEND

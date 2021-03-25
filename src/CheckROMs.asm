@@ -48,11 +48,16 @@ TxtCantAccessLowerROM: db "CAN'T ACCESS SYSTEM LOWER ROM",0
 
 CheckLowerROM:
  IFDEF TRY_UNPAGING_LOW_ROM
-	call CanAccessLowROM
-	jr nz, .continueLowerROM
-	ld hl,TxtCantAccessLowerROM
-	call PrintString
-	call NewLine
+	call 	CanAccessLowROM
+	jr 	nz, .continueLowerROM
+
+	;; Remember failure
+	ld	a, TESTRESULT_INCONCLUSIVE
+	ld	(TestResultTableLowerROM), a
+
+	ld 	hl,TxtCantAccessLowerROM
+	call 	PrintString
+	call 	NewLine
 	ret
  ENDIF
 
@@ -73,6 +78,11 @@ CheckLowerROM:
 	jr z, .unknownROM
 
 	call PrintROMName
+
+	;; Remember success
+	ld	a, TESTRESULT_PASSED
+	ld	(TestResultTableLowerROM), a
+
 .finishROM:
 	ld hl, txt_x
 	inc (hl)
@@ -83,10 +93,14 @@ CheckLowerROM:
 	ret
 
 .unknownROM:
-	call SetErrorColors
-	ld hl,TxtUnknownROM
-	call PrintString
-	jr .finishROM
+	;; Remember failure
+	ld	a, TESTRESULT_FAILED
+	ld	(TestResultTableLowerROM), a
+
+	call 	SetErrorColors
+	ld 	hl,TxtUnknownROM
+	call 	PrintString
+	jr 	.finishROM
 
 
 
@@ -100,21 +114,41 @@ CheckUpperROMs:
 	call 	NewLine
 	ld 	d,0
 .romLoop:
-	call SetDefaultColors
-	push de
+	call 	SetDefaultColors
+	push 	de
  IFDEF UpperROMBuild
-	ld a,(UpperROMConfig)
-	cp d
-	jr z, .thisROM
+	ld 	a,(UpperROMConfig)
+	cp 	d
+	jr 	z, .thisROM
  ENDIF
-	call CheckUpperROM
+	call 	CheckUpperROM
+	pop	de
+	push	de
+	push	af		;; A = result
+	ld	a, d		;; A = ROM number
+	or	a
+	pop	de
+	jr	nz, .nextROM
 
-.finishLoop
-	pop de
-	inc d
-	ld a,d
-	cp #10
-	jr nz, .romLoop
+	;; Check success or failure of ROM 0
+	ld	a, d
+	or	a		;; A = result
+	jr	nz, .successROM0
+
+	ld	a, TESTRESULT_FAILED
+	ld	(TestResultTableUpperROM), a
+	jr	.nextROM
+
+.successROM0:
+	ld	a, TESTRESULT_PASSED
+	ld	(TestResultTableUpperROM), a
+
+.nextROM:
+	pop 	de
+	inc 	d
+	ld 	a,d
+	cp 	#10
+	jr 	nz, .romLoop
 
 	ret
 
@@ -130,74 +164,82 @@ CheckUpperROMs:
 	ld hl,TxtAmsDiagROM
 	call PrintString
 	call NewLine
-	jr .finishLoop
+	jr .nextROM
  ENDIF
 
 
-; IN D = ROM to check
+;; IN 	D = ROM to check
+;; OUT	A = 1 known, 0 unknown
 CheckUpperROM:
-	push de
+	push 	de
 
-	ld hl,TxtROM
-	call PrintString
-	ld a,d
-	call PrintAHex
-	ld hl,TxtColon
-	call PrintString	
+	ld 	hl,TxtROM
+	call 	PrintString
+	ld 	a,d
+	call 	PrintAHex
+	ld 	hl,TxtColon
+	call 	PrintString	
 
-	pop de
-	ld a,d
+	pop 	de
+	ld 	a,d
 	; Always do the 0 ROM
-	or a
-	jr z,.doIt
-	call GetUpperROMType
+	or 	a
+	jr 	z,.doIt
+	call 	GetUpperROMType
 	
 	; Skip any roms of type #80 (because that's the BASIC ROM repeated in other places)
-	cp #80
-	jr nz, .doIt
+	cp 	#80
+	jr 	nz, .doIt
 
-	ld hl,TxtDashes
-	call PrintString	
-	call NewLine
+	ld 	hl, TxtDashes
+	call 	PrintString	
+	call 	NewLine
 	ret
 	
 .doIt:
-	push de				; Save ROM index for later
-	ld a, d
-	call CRCUpperRom
-	pop de
-	push hl
+	push 	de				; Save ROM index for later
+	ld 	a, d
+	call 	CRCUpperRom
+	pop 	de
+	push 	hl
 
-	push de
-	call GetROMAddrFromCRC
+	push 	de
+	call 	GetROMAddrFromCRC
 
-	ld a,d
-	or e
-	jr z, .unknownROM
+	ld 	a,d
+	or 	e
+	jr 	z, .unknownROM
 
-	call PrintROMName
-	pop de
+	call 	PrintROMName
+	ld	a, 1
+	push	af
+	pop 	de
+
 .finishROM:
-	ld hl, txt_x
-	inc (hl)
-	pop hl
-	call PrintCRC
-	call NewLine
+	ld 	hl, txt_x
+	inc 	(hl)
+	pop 	hl
+	call 	PrintCRC
+	call 	NewLine
+	pop	af
 	ret
 
 .unknownROM:
-	call SetErrorColors
-	ld hl,TxtUnknownROM
-	call PrintString
+	call 	SetErrorColors
+	ld 	hl,TxtUnknownROM
+	call 	PrintString
 
-	pop de
-	ld a,d
-	ld de, ROMStringBuffer
-	call GetROMString
-	ld hl, ROMStringBuffer
-	call ConvertToUpperCase7BitEnding
-	ld hl, ROMStringBuffer
-	call PrintString7BitEnding
+	pop 	de
+	ld 	a,d
+	ld 	de, ROMStringBuffer
+	call 	GetROMString
+	ld 	hl, ROMStringBuffer
+	call 	ConvertToUpperCase7BitEnding
+	ld 	hl, ROMStringBuffer
+	call 	PrintString7BitEnding
+
+	ld	a,0
+	push	af
 
 	jr .finishROM
 

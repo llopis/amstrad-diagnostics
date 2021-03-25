@@ -1,4 +1,9 @@
 
+@KEY_COUNT EQU 80
+@JOYSTICK_KEY_COUNT EQU 7
+@KEYBOARD_KEY_COUNT EQU KEY_COUNT - JOYSTICK_KEY_COUNT
+
+
 KeyboardLabelsEnglish:
 	db 'a' ; 00 : ↑
 	db 'd' ; 01 : →

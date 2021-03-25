@@ -65,6 +65,30 @@ PrintAHex:
 	ld b,1
 	jr .low
 
+; IN A = number to print
+; Modifies BC
+PrintADec:
+	ld 	d, 100
+	call	.digit
+	ld	d, 10
+	call	.digit
+	ld	d, 1
+.digit:
+	ld	c, 0
+.loop:
+	sub	d
+	jr	c, .exit
+	inc	c
+	jr	.loop
+.exit:
+	add	a, d
+	push	af
+	ld	a, c
+	add	a, #30
+	call	PrintChar
+	pop	af
+	ret
+
 
 ; IN A = number to print
 ; Modifies BC
@@ -73,31 +97,6 @@ PrintHLHex:
 	call PrintAHex
 	ld a,l
 	call PrintAHex
-	ret
-
-
-; IN A = number to rpint
-; Modifies BC, D
-PrintADec:
-	ld d,100
-	call .digit
-	ld d,10
-	call .digit
-	ld d,1
-.digit:
-	ld c,0
-.loop:
-	sub d
-	jr c,.exit
-	inc c
-	jr .loop
-.exit:
-	add a,d
-	push af
-	ld a,c
-	add a,#30
-	call PrintChar
-	pop af
 	ret
 
 

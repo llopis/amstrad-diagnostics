@@ -7,6 +7,9 @@
 .afterScreenDraw:
 	call	SetKeyboardTables
 	call 	PrintKeyboard
+	ld 	hl, LastKeyboardMatrixBuffer
+	call 	ClearKeyboardBuffer
+	ld 	hl, PresseddMatrixBuffer
 	call 	ClearKeyboardBuffer
 	ld	a, 0
 	ld	(FramesESCPressed), a
@@ -22,7 +25,7 @@
 	;; Something was pressed long enough
 	ld 	a, (KeyboardMatrixBuffer+8)
 	bit 	4, a					; TAB
-	ret 	z				; If it wasn't tab, it was ESC or fire, so exit
+	jr	z, ExitTest
 
 	;; Toggle the keyboard layout
 	ld	a, (KeyboardLayout)
@@ -57,6 +60,89 @@
 
 .clearA:
 	ld	a, 0
+	ret
+
+
+ExitTest:
+	call	CountPressedKeys
+	cp	KEYBOARD_KEY_COUNT
+	jr	nz, .keyTestFailed
+
+	ld	a, TESTRESULT_PASSED
+	ld	(TestResultTableKeyboard), a
+
+.continueExit:
+	call	CountPressedJoystickButtons
+	cp	JOYSTICK_KEY_COUNT
+	jr	nz, .joyTestFailed
+
+	ld	a, TESTRESULT_PASSED
+	ld	(TestResultTableJoystick), a
+
+	ret
+
+.keyTestFailed:
+	ld	a, TESTRESULT_FAILED
+	ld	(TestResultTableKeyboard), a
+	jr	.continueExit
+
+.joyTestFailed:
+	ld	a, TESTRESULT_FAILED
+	ld	(TestResultTableJoystick), a
+	ret
+
+
+;; OUT: A - number of different pressed keys
+@CountPressedKeys:
+	push	bc
+	ld	d, 0
+	ld 	hl, PresseddMatrixBuffer
+	ld 	c, KeyboardBufferSize
+.byteLoop:
+	ld 	a, (hl)
+	or	a
+	jr	nz, .notLastByte
+	and	%10000000		;; Mask out all bits from joystick
+.notLastByte:
+	ld	b, 8
+.bitLoop:
+	bit	0, a
+	jr	z, .nextBit
+	inc	d
+.nextBit:
+	srl	a
+	djnz	.bitLoop
+
+	inc	hl
+	dec	c
+	ld	a, c
+	or	a
+	jr	nz, .byteLoop
+
+	ld	a, d
+	pop	bc
+	ret
+
+
+;; OUT: A - number of different pressed joystick buttons
+@CountPressedJoystickButtons:
+	push	bc
+
+	ld	d, 0
+	ld 	hl, PresseddMatrixBuffer+9
+	ld 	a, (hl)
+
+	ld	b, 7
+.bitLoop:
+	bit	0, a
+	jr	z, .nextBit
+	inc	d
+.nextBit:
+	srl	a
+	djnz	.bitLoop
+
+	ld	a, d
+	pop	bc
 	ret
 
 
@@ -553,8 +639,8 @@ PrintOnKeysFromBuffer:
 
 
 
-ClearKeyboardBuffer:
-	ld hl, LastKeyboardMatrixBuffer
+;; IN: HL - buffer
+@ClearKeyboardBuffer:
 	ld b, KeyboardBufferSize
 .loop:
 	ld (hl),0

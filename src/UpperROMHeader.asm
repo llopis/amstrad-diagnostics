@@ -14,21 +14,21 @@ RSXNames:
 
 
 Bootup:
-	push af
-	push bc
-	push de
-	push hl
-	ld hl, TxtInitializationText
+	push 	af
+	push 	bc
+	push 	de
+	push 	hl
+	ld 	hl, TxtInitializationText
 .showMessage:
-	ld a,(hl)
-	call $bb5a                      ; txt_output
-	inc hl
-	or a
-	jr nz, .showMessage
-	pop hl
-	pop de
-	pop bc
-	pop af
+	ld 	a,(hl)
+	call 	#BB5A                      ; txt_output
+	inc 	hl
+	or 	a
+	jr 	nz, .showMessage
+	pop 	hl
+	pop 	de
+	pop 	bc
+	pop 	af
 	ret
 
 StartDiagCommand:

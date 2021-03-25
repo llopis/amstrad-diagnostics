@@ -1,12 +1,18 @@
  MODULE UPPERRAMTEST
 
+;; OUT	ValidBankCount - contains number of available upper banks
+@CalculateTotalUpperRAM:
+	call 	AddAllRAMMarkers
+	call 	DetectAvailableUpperRAM
+	ret
+
 @CheckUpperRAM:
 	call 	UpperRAMPrintTitle
 @CheckUpperRAMWithoutTitle:
-	call 	AddAllRAMMarkers
-	call 	DetectAvailableUpperRAM
 	call 	PrintAvailableUpperRAM
 
+	ld	a, 0
+	ld	(FailingBits), a
 	call 	AddAllRAMMarkers
 
 	call 	SetUpScreen4MB
@@ -43,7 +49,7 @@ PrintAvailableUpperRAM:
 	ld 	(TxtCoords),hl
 	ld 	hl,TxtTotalMemory
 	call 	PrintString
-	ld 	a,(ValidBankCount)
+	ld 	a, (ValidBankCount)
 	ld 	l,a
 	ld 	h,0
 	add 	hl,hl
@@ -141,9 +147,13 @@ PrintResult:
 	call 	NewLine
 
 .printFinalResult:
-	ld 	a,(FailingBits)
+	ld 	a, (FailingBits)
 	or 	a
 	jr 	nz,.failingTests
+
+	;; Remember success
+	ld	a, TESTRESULT_PASSED
+	ld	(TestResultTableUpperRAM), a
 
 	call	SetSuccessColors
 	ld 	hl,TxtRAMTestPassed
@@ -158,6 +168,11 @@ PrintResult:
 	ld 	d,a
 	call 	PrintFailingBits
 	call 	SetDefaultColors
+
+	;; Remember failure
+	ld	a, TESTRESULT_FAILED
+	ld	(TestResultTableUpperRAM), a
+	
 	ret
 
 .C3NotSupported:
@@ -175,6 +190,10 @@ PrintResult:
 
 
 PrintAborted:
+	;; Remember failure
+	ld	a, TESTRESULT_ABORTED
+	ld	(TestResultTableUpperRAM), a
+
 	;; Clear line telling to press key
 	ld	h, 0
 	ld	l, RESULT_Y
@@ -201,7 +220,6 @@ TxtUpperRAMTitleLen EQU $-TxtUpperRAMTitle-1
 
 TxtBank: db 'BANK',0
 TxtTotalMemory: db 'TOTAL UPPER RAM: ',0
-TxtKB: db 'KB',0
 TxtRAMTestPassed: db 'UPPER RAM TESTS PASSED',0
 TxtRAMTestFailed: db 'UPPER RAM TESTS FAILED: ',0
 TxtC3Config: db 'C3 CONFIG: ',0
@@ -577,10 +595,10 @@ PrintFailingBits:
 
 
 SetErrorFound:
-	ld hl,FailingBits
-	ld (hl),a
-	ld a,#c
-	call SetBorderColor
+	ld 	hl, FailingBits
+	ld 	(hl), a
+	ld 	a, #c
+	call 	SetBorderColor
 	ret
 
 
