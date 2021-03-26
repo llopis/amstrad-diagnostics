@@ -201,7 +201,7 @@ ResultTextTable:
 	dw TxtNotAvailable
 
 
-RESULTS_X 		EQU 12
+RESULTS_X 		EQU 14
 RESULTS_COLON_X 	EQU RESULTS_X + 10
 RESULTS_STRING_X 	EQU RESULTS_COLON_X + 2
 
@@ -384,12 +384,12 @@ PrintPressedKeys:
 	ld	a, '('
 	call	PrintChar
 	pop	af
-	call	PrintADec
+	call	PrintADecLess100
 	ld	a, '/'
 	call	PrintChar
 	pop	de
 	ld	a, d
-	call	PrintADec
+	call	PrintADecLess100
 	ld	a, ')'
 	call	PrintChar
 	pop	bc

@@ -663,10 +663,6 @@ KeyboardSetUpScreen:
 	ld 	d, (ScreenCharsWidth - TxtTitleLen - TxtKeyboardTitleLen)/2
 	call 	PrintTitleBanner
 
-	ld 	hl, #0002
-	ld 	(TxtCoords),hl
-	call 	SetDefaultColors
-
 	call	ClearESCBar
 	ret
 

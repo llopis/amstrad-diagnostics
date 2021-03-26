@@ -69,7 +69,8 @@ PrintAHex:
 ; Modifies BC
 PrintADec:
 	ld 	d, 100
-	call	.digit
+	call	PrintADecLess100.digit
+PrintADecLess100:
 	ld	d, 10
 	call	.digit
 	ld	d, 1
