@@ -95,15 +95,14 @@ ExitTest:
 ;; OUT: A - number of different pressed keys
 @CountPressedKeys:
 	push	bc
+	push	de
 	ld	d, 0
 	ld 	hl, PresseddMatrixBuffer
 	ld 	c, KeyboardBufferSize
+	ld	e, #FF			;; Mask for bits
 .byteLoop:
 	ld 	a, (hl)
-	or	a
-	jr	nz, .notLastByte
-	and	%10000000		;; Mask out all bits from joystick
-.notLastByte:
+	and	e			;; Mask out all bits from joystick
 	ld	b, 8
 .bitLoop:
 	bit	0, a
@@ -116,10 +115,15 @@ ExitTest:
 	inc	hl
 	dec	c
 	ld	a, c
+	cp	1
+	jr	nz, .notLastByte
+	ld	e, %10000000		;; Set mask for last byte to ignore all joystick presses
+.notLastByte:
 	or	a
 	jr	nz, .byteLoop
 
 	ld	a, d
+	pop	de
 	pop	bc
 	ret
 
@@ -132,7 +136,7 @@ ExitTest:
 	ld 	hl, PresseddMatrixBuffer+9
 	ld 	a, (hl)
 
-	ld	b, 7
+	ld	b, 5
 .bitLoop:
 	bit	0, a
 	jr	z, .nextBit
