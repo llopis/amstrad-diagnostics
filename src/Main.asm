@@ -2,9 +2,9 @@
 
  ;OUTPUT "build/AmstradDiag.rom"
   OUTPUT OutFile
-; IFDEF PAD_TO_16K
+ IFDEF PAD_TO_16K
 	SIZE #4000					;; Round it up to 16 KB
-; ENDIF
+ ENDIF
 
 ;; *******************************
 ;; LOWER ROM BUILD
