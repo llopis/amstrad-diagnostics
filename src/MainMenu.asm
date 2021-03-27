@@ -5,6 +5,12 @@ MainMenu:
 	jp 	z, SoakTestSelected
 
 	call	DetectSystemInfo
+	ld	a, (ValidBankCount)
+	or	a
+	jr	nz, .upperRAMPresent
+	ld	a, TESTRESULT_NOTAVAILABLE
+	ld	(TestResultTableUpperRAM), a
+.upperRAMPresent:
 	ld 	hl, PresseddMatrixBuffer
 	call 	ClearKeyboardBuffer
 
@@ -134,6 +140,10 @@ MainMenuLoop:
 	jr 	.loop
 
 
+LowerRAMTestSelected:
+	call ClearScreen
+	jp TestStart
+
 UpperRAMTestSelected:
 	call CheckUpperRAM
 	jp TestComplete
@@ -162,14 +172,13 @@ TestComplete:
 	jp MainMenuRepeat
 
 
-
+TxtSystemInfo:	db 'SYSTEM INFO',0
 TxtModel: 	db 'MODEL     : ',0
 TxtRAM: 	db 'RAM       : ',0
 TxtCRTC: 	db 'CRTC      : ',0
 TxtKB: 		db 'KB',0
-TxtSelectTest: 	  db "SELECT A TEST TO RUN",0
-TxtSelectTestLen EQU $-TxtSelectTest-1
 
+TxtTestResults: db 'TEST RESULTS',0
 TxtResultLowerRAM: db 'LOWER RAM',0
 TxtResultUpperRAM: db 'UPPER RAM',0
 TxtResultLowerROM: db 'LOWER ROM',0
@@ -201,9 +210,17 @@ ResultTextTable:
 	dw TxtNotAvailable
 
 
+RESULTS_Y 		EQU 4
 RESULTS_X 		EQU 14
 RESULTS_COLON_X 	EQU RESULTS_X + 10
 RESULTS_STRING_X 	EQU RESULTS_COLON_X + 2
+MENULHEADERS_X		EQU RESULTS_X-2
+SYSTEMINFO_POS EQU 	(MENULHEADERS_X << 8) | RESULTS_Y-1
+
+
+TxtSelectTest: 	  db "SELECT A TEST TO RUN",0
+TxtSelectTestLen EQU $-TxtSelectTest-1
+
 
 SetUpScreen:
 	ld 	d, 0
@@ -229,8 +246,15 @@ SetUpScreen:
 
  	;; Model
  	call 	SetDefaultColors
+ 	ld	hl, SYSTEMINFO_POS
+ 	push	hl
+ 	ld	(TxtCoords), hl
+ 	ld	hl, TxtSystemInfo
+ 	call	PrintString
+
+ 	pop	hl
  	ld	h, RESULTS_X
- 	ld	l, 4
+ 	inc	l
  	push	hl
  	ld	(TxtCoords), hl
 	ld	hl, TxtModel
@@ -285,7 +309,13 @@ SetUpScreen:
 	;; Results
 	inc	l
 	inc	l
+	ld	h, MENULHEADERS_X
  	ld	(TxtCoords), hl
+ 	ld	hl, TxtTestResults
+ 	call	PrintString
+	ld	hl, txt_y
+	inc	(hl)
+
  	ld	b, ResultLabelTableCount
  	ld	ix, ResultLabelTable
 	ld 	iy, TestResultTable
@@ -542,7 +572,7 @@ TxtSoakTest: 	 db "[5] SOAK TEST ",0
 MenuTable:
 	; x, y, Offset into keyboard buffer, bit mask, address to jump to, item text
 	db MENU_COL1_X, MENU_ROW1_Y, 8, %0001			; 1
-	dw TestStart, TxtLowerRAMTest
+	dw LowerRAMTestSelected, TxtLowerRAMTest
 	db MENU_COL1_X, MENU_ROW2_Y, 8, %0010			; 2
 	dw UpperRAMTestSelected, TxtRAMTest
 	db MENU_COL2_X, MENU_ROW1_Y, 7, %0010			; 3
