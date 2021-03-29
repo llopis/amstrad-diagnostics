@@ -251,28 +251,8 @@ RESULT_Y EQU #16
 ;; F4 F5 F6 F7
 ;; FC FD FE FF
 
-;; Bank-block sequence in binary:
-;; 7 - always 1
-;; 6 - always 1
-;; 5 - bank
-;; 4 - bank
-;; 3 - bank
-;; 2 - always 1
-;; 1 - block
-;; 0 - block
 
 
-;; IN: D = bank, E = block
-;; OUT: L = port
-GetPortForBankAndBlock:
-	ld	a, d
-	rla
-	rla
-	rla
-	or	%11000100
-	or	e
-	ld	l, a
-	ret
 
 
 ;; Go through every bank and set the first word to the port and the bank
@@ -292,15 +272,15 @@ AddAllRAMMarkers:
 	call 	GetPortForBankAndBlock
 
 	;; Set first byte to full block byte
-	out 	(c),l
-	ld 	(ix),l
-	ld 	(ix+1),b
+	out 	(c), l
+	ld 	(ix), l
+	ld 	(ix+1), b
 
 	;; Next block
-	;inc 	e
-	;ld 	a, e
-	;cp 	4
-	;jr 	nz, .blockLoop
+	inc 	e
+	ld 	a, e
+	cp 	4
+	jr 	nz, .blockLoop
 
 	;; Next bank
 	ld 	a, d

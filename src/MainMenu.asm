@@ -396,7 +396,6 @@ SetUpScreen:
 
 	ld 	a, (ScreenCharsWidth - TxtSelectTestLen)/2
 	ld 	(txt_x), a
-	ld 	hl, TxtTitle
  	ld 	hl, TxtSelectTest
 	call 	PrintString
 
