@@ -167,14 +167,14 @@ Crc16:
 
 
 @RestoreROMState:
-	ld bc, RESTORE_ROM_CONFIG
-	out (c),c
+	ld 	bc, RESTORE_ROM_CONFIG
+	out 	(c),c
  IFDEF UpperROMBuild
- 	push af
- 	ld bc,#df00
- 	ld a, (UpperROMConfig)
-	out (c),a
-	pop af
+ 	push 	af
+ 	ld 	bc, #DF00
+ 	ld 	a, (UpperROMConfig)
+	out 	(c), a
+	pop 	af
  ENDIF
  	ret
 

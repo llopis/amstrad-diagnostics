@@ -141,7 +141,11 @@ MainMenuLoop:
 
 
 LowerRAMTestSelected:
-	call ClearScreen
+ IFDEF UpperROMBuild
+ 	call 	ClearScreen
+ 	ld	a, (UpperROMConfig)
+	ld 	iyh, a			;; Save the ROM we came from in I
+ ENDIF
 	jp TestStart
 
 UpperRAMTestSelected:
