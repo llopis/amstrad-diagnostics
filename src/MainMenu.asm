@@ -30,17 +30,17 @@ MainMenuLoop:
 	; Get address of part of keyboard buffer to read
 	ld	hl, EdgeOnKeyboardMatrixBuffer
 	ld 	d, 0
-	ld 	e, (ix+2)
+	ld 	e, (ix+MenuItem.KeybOffset)
 	add 	hl, de
 	ld 	a, (hl)
 	; Get mask to check against for the key we care about
-	ld 	d,(ix+3)
+	ld 	d,(ix+MenuItem.BitMask)
 	and 	d
 	or 	a
 	jp 	nz,.doItem
 
 	; Increase ix to next menu item
-	ld 	de, MenuItemSize
+	ld 	de, MENU_ITEM_SIZE
 	add 	ix, de
 
 	djnz .itemLoop
@@ -50,16 +50,11 @@ MainMenuLoop:
 	ld a,(EdgeOnKeyboardMatrixBuffer)
 	bit 0,a					; Cursor down
 	jr nz, .selectionUp
-	bit 1,a					; Cursor right
-	jr nz, .selectionRight
 	bit 2,a					; Cursor up
 	jr nz, .selectionDown
 	bit 6,a					; Return
 	jr nz, .selectionChoose
 
-	ld a,(EdgeOnKeyboardMatrixBuffer+1)
-	bit 0,a					; Cursor left
-	jr nz, .selectionLeft
 	ld a,(EdgeOnKeyboardMatrixBuffer+2)		
 	bit 2,a					; Enter
 	jr nz, .selectionChoose
@@ -72,19 +67,15 @@ MainMenuLoop:
 	jr nz, .selectionUp
 	bit 1,a					; Joystick down
 	jr nz, .selectionDown
-	bit 2,a					; Joystick left
-	jr nz, .selectionLeft
-	bit 3,a					; Joystick right
-	jr nz, .selectionRight
 	bit 4,a					; Joystick fire
 	jr nz, .selectionChoose
 
 	jr MainMenuLoop
 
 .doItem:
-	ld l,(ix+4)
-	ld h,(ix+5)
-	jp (hl)	
+	ld 	l, (ix+MenuItem.Function)
+	ld 	h, (ix+MenuItem.Function+1)
+	jp 	(hl)	
 
 .selectionDown:
 	ld 	a,(SelectedMenuItem)
@@ -94,11 +85,6 @@ MainMenuLoop:
 	jr 	c, .selectionChanged
 	ld 	a, 0
 	jr 	.selectionChanged
-.selectionRight:
-	ld 	a,(SelectedMenuItem)
-	inc	a
-	inc	a
-	jr	.increasedSelection
 .selectionUp:
 	ld 	a,(SelectedMenuItem)
 	dec 	a
@@ -106,11 +92,6 @@ MainMenuLoop:
 	cp	MenuItemCount
 	jr 	nc, .moveSelectionToTop
 	jr 	.selectionChanged
-.selectionLeft:
-	ld 	a,(SelectedMenuItem)
-	dec	a
-	dec	a
-	jr	.decreasedSelection
 
 .moveSelectionToTop:
 	ld 	a, MenuItemCount
@@ -130,7 +111,7 @@ MainMenuLoop:
 
 .selectionChoose:
 	ld 	ix, MenuTable
-	ld 	de, MenuItemSize
+	ld 	de, MENU_ITEM_SIZE
 	ld 	a,(SelectedMenuItem)	
 .loop:
 	or 	a
@@ -176,13 +157,13 @@ TestComplete:
 	jp MainMenuRepeat
 
 
-TxtSystemInfo:	db 'SYSTEM INFO',0
+TxtSystemInfo:	db 'SYSTEM INFO  ',0
 TxtModel: 	db 'MODEL     : ',0
 TxtRAM: 	db 'RAM       : ',0
 TxtCRTC: 	db 'CRTC      : ',0
 TxtKB: 		db 'KB',0
 
-TxtTestResults: db 'TEST RESULTS',0
+TxtTestResults: db 'TEST RESULTS ',0
 TxtResultLowerRAM: db 'LOWER RAM',0
 TxtResultUpperRAM: db 'UPPER RAM',0
 TxtResultLowerROM: db 'LOWER ROM',0
@@ -214,15 +195,16 @@ ResultTextTable:
 	dw TxtNotAvailable
 
 
-RESULTS_Y 		EQU 4
-RESULTS_X 		EQU 14
+MENUHEADERS_X		EQU 0
+MENUHEADERS_Y		EQU 3
+RESULTS_Y 		EQU MENUHEADERS_Y+1
+RESULTS_X 		EQU MENUHEADERS_X+2
 RESULTS_COLON_X 	EQU RESULTS_X + 10
 RESULTS_STRING_X 	EQU RESULTS_COLON_X + 2
-MENULHEADERS_X		EQU RESULTS_X-2
-SYSTEMINFO_POS EQU 	(MENULHEADERS_X << 8) | RESULTS_Y-1
+SYSTEMINFO_POS EQU 	(MENUHEADERS_X << 8) | MENUHEADERS_Y
 
 
-TxtSelectTest: 	  db "SELECT A TEST TO RUN",0
+TxtSelectTest: 	  db 'SELECT A TEST TO RUN ',0
 TxtSelectTestLen EQU $-TxtSelectTest-1
 
 
@@ -249,13 +231,14 @@ SetUpScreen:
  ENDIF
 
  	;; Model
- 	call 	SetDefaultColors
+ 	call 	SetInverseColors
  	ld	hl, SYSTEMINFO_POS
  	push	hl
  	ld	(TxtCoords), hl
  	ld	hl, TxtSystemInfo
  	call	PrintString
 
+ 	call 	SetDefaultColors
  	pop	hl
  	ld	h, RESULTS_X
  	inc	l
@@ -313,13 +296,15 @@ SetUpScreen:
 	;; Results
 	inc	l
 	inc	l
-	ld	h, MENULHEADERS_X
+	ld	h, MENUHEADERS_X
  	ld	(TxtCoords), hl
+ 	call 	SetInverseColors
  	ld	hl, TxtTestResults
  	call	PrintString
 	ld	hl, txt_y
 	inc	(hl)
 
+ 	call 	SetDefaultColors
  	ld	b, ResultLabelTableCount
  	ld	ix, ResultLabelTable
 	ld 	iy, TestResultTable
@@ -389,17 +374,9 @@ SetUpScreen:
 
  	;; Select a test to run
  	call	SetInverseColors
- 	ld 	h, 0
+ 	ld 	h, SELECT_X
  	ld	l, SELECT_Y
  	ld 	(TxtCoords), hl
-	ld 	b, ScreenCharsWidth
-.bannerLoop:
-	ld 	a,' '
-	call 	PrintChar
-	djnz 	.bannerLoop
-
-	ld 	a, (ScreenCharsWidth - TxtSelectTestLen)/2
-	ld 	(txt_x), a
  	ld 	hl, TxtSelectTest
 	call 	PrintString
 
@@ -430,6 +407,8 @@ PrintPressedKeys:
 
 
 DrawMenuItems:
+	ld	a, SELECT_Y
+	ld	(txt_y), a
 	ld 	ix, MenuTable
 	ld 	b, 0
 .itemLoop:
@@ -440,16 +419,17 @@ DrawMenuItems:
 	call 	SetInverseColors
 
 .normalItem:
-	ld	h,(ix)
-	ld	l,(ix+1)
-	ld	(TxtCoords), hl
-	ld 	l,(ix+6)
-	ld 	h,(ix+7)
+	ld	hl, txt_y
+	inc	(hl)
+	ld	a, MENU_ITEM_X
+	ld	(txt_x), a
+	ld 	l, (ix+MenuItem.Text)
+	ld 	h, (ix+MenuItem.Text+1)
 	call 	PrintString
 
 .nextItem:
 	; Increase ix to next menu item
-	ld 	de, MenuItemSize
+	ld 	de, MENU_ITEM_SIZE
 	add 	ix, de
 
 	inc 	b
@@ -477,19 +457,21 @@ SetColorForResultType:
 DrawMenuItemFromIndex:
 	cp	MenuItemCount
 	ret	nc
+	ld	b, SELECT_Y+1		;; Line to draw item
 	ld 	hl, MenuTable
-	ld 	de, MenuItemSize
+	ld 	de, MENU_ITEM_SIZE
 .findLoop:
 	or 	a
 	jr 	z, .foundItem
 	add 	hl, de
 	dec 	a
+	inc	b
 	jr 	.findLoop
 
 .foundItem:
 	ld	ix, hl
-	ld	h,(ix)
-	ld	l,(ix+1)
+	ld	h, MENU_ITEM_X
+	ld	l, b
 	ld	(TxtCoords), hl
 
 	; Now set the color
@@ -498,8 +480,8 @@ DrawMenuItemFromIndex:
 	jr 	nz, .selectedItem
 	call 	SetDefaultColors
 .drawItem:
-	ld 	l,(ix+6)
-	ld 	h,(ix+7)
+	ld 	l,(ix+MenuItem.Text)
+	ld 	h,(ix+MenuItem.Text+1)
 	call 	PrintString
 
 	ret
@@ -555,37 +537,38 @@ DetectSystemInfo:
 
 /////// Constants
 
-SELECT_Y EQU 22
-MENU_COL1_X EQU 0
-MENU_COL2_X EQU 17
-MENU_COL3_X EQU 37
-MENU_ROW1_Y EQU SELECT_Y+1
-MENU_ROW2_Y EQU MENU_ROW1_Y+1
+SELECT_Y EQU 3
+SELECT_X EQU 32
+MENU_ITEM_X EQU SELECT_X+2
 
 
-TxtLowerRAMTest: db "[1] LOWER RAM ",0
-TxtRAMTest: 	 db "[2] UPPER RAM ",0
+TxtLowerRAMTest: db "[L] LOWER RAM ",0
+TxtRAMTest: 	 db "[U] UPPER RAM ",0
  IFDEF ROM_CHECK
-TxtROMTest: 	 db "[3] ROM ",0
+TxtROMTest: 	 db "[R] ROM ",0
  ELSE
-TxtROMTest: 	 db "[3] ROM (DISABLED)",0
+TxtROMTest: 	 db "[R] ROM (DISABLED)",0
  ENDIF
-TxtKeyboardTest: db "[4] KEYBOARD ",0
-TxtSoakTest: 	 db "[5] SOAK TEST ",0
+TxtKeyboardTest: db "[K] KEYBOARD ",0
+TxtSoakTest: 	 db "[S] SOAK TEST ",0
+
+
+ STRUCT MenuItem
+Text WORD
+Function WORD
+KeybOffset BYTE
+BitMask BYTE
+ ENDS
+
 MenuTable:
-	; x, y, Offset into keyboard buffer, bit mask, address to jump to, item text
-	db MENU_COL1_X, MENU_ROW1_Y, 8, %0001			; 1
-	dw LowerRAMTestSelected, TxtLowerRAMTest
-	db MENU_COL1_X, MENU_ROW2_Y, 8, %0010			; 2
-	dw UpperRAMTestSelected, TxtRAMTest
-	db MENU_COL2_X, MENU_ROW1_Y, 7, %0010			; 3
-	dw ROMTestSelected, TxtROMTest
-	db MENU_COL2_X, MENU_ROW2_Y, 7, %0001			; 4
-	dw KeyboardTestSelected, TxtKeyboardTest
-	db MENU_COL3_X, MENU_ROW1_Y, 6, %0010			; 5
-	dw SoakTestSelected, TxtSoakTest
-MenuItemSize equ 4+2+2
-MenuItemCount equ ($-MenuTable)/MenuItemSize
+	MenuItem TxtLowerRAMTest, LowerRAMTestSelected, 4, %00010000  	;; L
+MENU_ITEM_SIZE EQU $ - MenuTable
+	MenuItem TxtRAMTest, UpperRAMTestSelected, 5, %00000100	;; U
+	MenuItem TxtROMTest, ROMTestSelected, 6, %00000100		;; R
+	MenuItem TxtKeyboardTest, KeyboardTestSelected, 4, %00100000	;; K
+	MenuItem TxtSoakTest, SoakTestSelected, 7, %00010000		;; S
+
+MenuItemCount equ ($-MenuTable)/MENU_ITEM_SIZE
 
 
 TxtTitle: db 'AMSTRAD DIAGNOSTICS V', VERSION_STR, BUILD_STR,0
