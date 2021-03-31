@@ -131,7 +131,24 @@ RAMInitialize:
 	ret
 
 
-	INCLUDE "MainMenu.asm"
+ INCLUDE "MainMenu.asm"
+ INCLUDE "Model.asm"
+ INCLUDE "SoakTest.asm"
+ INCLUDE "CheckUpperRAM.asm"
+ INCLUDE "UtilsPrint.asm"
+ INCLUDE "Screen.asm"
+ INCLUDE "Keyboard.asm"
+ INCLUDE "DetectCRTC.asm"
+ INCLUDE "KeyboardTest.asm"
+ INCLUDE "SystemInfo.asm"
+ INCLUDE "FDC.asm"
+ IFNDEF UpperROMBuild
+ 	INCLUDE "PrintChar.asm"
+	INCLUDE "Draw.asm"
+ ENDIF
+ IFDEF ROM_CHECK
+	INCLUDE "CheckROMs.asm"
+ ENDIF
 
 
 ;; This is the code that needs to be in RAM to function

@@ -180,6 +180,9 @@ TxtModel: 	db 'MODEL     : ',0
 TxtRAM: 	db 'RAM       : ',0
 TxtCRTC: 	db 'CRTC      : ',0
 TxtKB: 		db 'KB',0
+TxtFDC: 	db 'FDC       : ',0
+TxtDetected: 	db 'DETECTED',0
+TxtNone:	db 'NONE',0
 
 TxtTestResults: db 'TEST RESULTS ',0
 TxtResultLowerRAM: db 'LOWER RAM',0
@@ -301,7 +304,6 @@ SetUpScreen:
 	ld 	hl, TxtKB
 	call 	PrintString
 
-
 	;; CRTC yype
 	pop	hl
 	inc	l
@@ -311,10 +313,25 @@ SetUpScreen:
 	call 	PrintString
 	call 	GetCRTCType
 	call 	PrintAHex
-	pop	hl
 
+
+	;; FDC
+	pop	hl
+	inc	l
+	push 	hl
+ 	ld	(TxtCoords), hl
+	ld 	hl, TxtFDC
+	call 	PrintString
+	ld	a, (FDCPresent)
+	or	a
+	ld	hl, TxtNone
+	jr	z, .FDCskip
+	ld	hl, TxtDetected
+.FDCskip:
+	call	PrintString
 
 	;; Results
+	pop	hl
 	inc	l
 	inc	l
 	ld	h, MENUHEADERS_X
@@ -544,29 +561,6 @@ PrintTitleBanner:
 	ret
 
 
-DetectSystemInfo:
-	;; Try to detect the model and language
-	call	CalculateTotalUpperRAM
-	call	DetectModel
-
-	;; From the model, determine the keyboard layout
-	ld	a, (ModelType)
-	cp	MODEL_CPC6128
-	jr	c, .set464Layout
-	ld	a, KEYBOARD_LAYOUT_6128
-	jr	.setLayout
-.set464Layout:
-	ld	a, KEYBOARD_LAYOUT_464
-.setLayout:
-	ld	(KeyboardLayout), a
-
-	ld	a, (MenuItemCount)
-	ld	(SelectedMenuItem), a
-
-	ret
-
-///////////////////
-
 RemoveROMTest:
 	ld	a, TESTRESULT_NOTAVAILABLE
 	ld	(TestResultTableLowerROM), a
@@ -614,18 +608,3 @@ TxtBlank: db 0
 TxtAnyKeyMainMenu: db "PRESS ANY KEY FOR MAIN MENU",0
 TxtROM: db 'ROM ',0
 
- INCLUDE "Model.asm"
- INCLUDE "SoakTest.asm"
- INCLUDE "CheckUpperRAM.asm"
- INCLUDE "UtilsPrint.asm"
- INCLUDE "Screen.asm"
- INCLUDE "Keyboard.asm"
- INCLUDE "DetectCRTC.asm"
- INCLUDE "KeyboardTest.asm"
- IFNDEF UpperROMBuild
- 	INCLUDE "PrintChar.asm"
-	INCLUDE "Draw.asm"
- ENDIF
- IFDEF ROM_CHECK
-	INCLUDE "CheckROMs.asm"
- ENDIF

@@ -4,9 +4,10 @@
 UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
  ENDIF
 
-;; Main menu
+;; System info
 ModelType: db 0
 KeyboardLanguage: db 0
+FDCPresent: db 0
 
 
 ;; Upper RAM test
