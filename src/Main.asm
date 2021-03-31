@@ -68,42 +68,41 @@ TestStart:
 	UNDEFINE SOUND_TONE_L
 	UNDEFINE SOUND_TONE_H
 
-	xor a
-	ld iyl,0
-	ld ix,SoakTestIndicator		; This is out in RAM
-	ld a,(ix)			; See if we can find the two bytes that tells us we're doing a soak test
-	cp SoakTestByte1
-	jr nz,.startTests
-	ld a,(ix+1)
-	cp SoakTestByte2
-	jr nz,.startTests
-	ld a,(SoakTestCount)
-	ld a,(ix+2)
-	cp SoakTestByte3
-	jr nz,.startTests
-	ld a,(SoakTestCount)
-	ld a,(ix+3)
-	cp SoakTestByte4
-	jr nz,.startTests
-	ld a,(SoakTestCount)
-	ld iyl, a			; Remember that we're in a soak test
+	ld 	iyl, 0			; Soak flag
+	ld 	ix, SoakTestIndicator	; This is out in RAM
+	ld 	a, (ix)			; See if we can find the two bytes that tells us we're doing a soak test
+	cp 	SoakTestByte1
+	jr 	nz,.startTests
+	ld 	a,(ix+1)
+	cp 	SoakTestByte2
+	jr 	nz,.startTests
+	ld 	a,(SoakTestCount)
+	ld 	a,(ix+2)
+	cp 	SoakTestByte3
+	jr 	nz,.startTests
+	ld 	a,(SoakTestCount)
+	ld 	a,(ix+3)
+	cp 	SoakTestByte4
+	jr 	nz,.startTests
+	ld 	a,(SoakTestCount)
+	ld 	iyl, a			; Remember that we're in a soak test
  IFDEF UpperROMBuild
-	ld a, (UpperROMConfig)
-	ld iyh, a			; Save the upper ROM config
+	ld 	a, (UpperROMConfig)
+	ld 	iyh, a			; Save the upper ROM config
  ENDIF
 .startTests:
-	INCLUDE "LowerRAMTest.asm"
-RAMTestPassed:
+ INCLUDE "LowerRAMTest.asm"
 
+RAMTestPassed:
 	call RAMInitialize
 
  IFDEF UpperROMBuild
-	ld a,iyh			; Restore the upper ROM config to RAM
-	ld (UpperROMConfig),a
+	ld 	a, iyh			; Restore the upper ROM config to RAM
+	ld 	(UpperROMConfig), a
  ENDIF
-	ld a,iyl
-	or a
-	jp nz,.soakTest
+	ld 	a, iyl
+	or 	a
+	jp 	nz, .soakTest
 
 	DEFINE SOUND_DURATION #4000
 	DEFINE SILENCE_DURATION #1000

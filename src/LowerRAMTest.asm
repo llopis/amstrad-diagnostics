@@ -4,6 +4,7 @@
 
   IFDEF SkipLowerRAMTest
   	DISPLAY "Skipping lower RAM tests."
+	di
  	jp RAMTestPassed
   ENDIF
 

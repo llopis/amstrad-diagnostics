@@ -4,12 +4,16 @@ MainMenu:
 	call 	IsSoakTestRunning
 	jp 	z, SoakTestSelected
 
+ IFNDEF ROM_CHECK
+ 	call	RemoveROMTest
+ ENDIF
+
 	call	DetectSystemInfo
 	ld	a, (ValidBankCount)
 	or	a
 	jr	nz, .upperRAMPresent
-	ld	a, TESTRESULT_NOTAVAILABLE
-	ld	(TestResultTableUpperRAM), a
+	call	RemoveUpperRAMTest
+
 .upperRAMPresent:
 	ld 	hl, PresseddMatrixBuffer
 	call 	ClearKeyboardBuffer
@@ -25,86 +29,100 @@ MainMenuLoop:
 
 	;; Check if key keys for the items are pressed
 	ld 	ix, MenuTable
-	ld 	b, MenuItemCount
+	ld	a, (MenuItemCount)
+	ld 	b, a
+	ld	c, %00000001
 .itemLoop:
-	; Get address of part of keyboard buffer to read
+	;; Get address of part of keyboard buffer to read
 	ld	hl, EdgeOnKeyboardMatrixBuffer
 	ld 	d, 0
 	ld 	e, (ix+MenuItem.KeybOffset)
 	add 	hl, de
 	ld 	a, (hl)
-	; Get mask to check against for the key we care about
-	ld 	d,(ix+MenuItem.BitMask)
+	;; Get mask to check against for the key we care about
+	ld 	d, (ix+MenuItem.BitMask)
 	and 	d
 	or 	a
 	jp 	nz,.doItem
 
-	; Increase ix to next menu item
+.nextItem:
+	;; Increase ix to next menu item
 	ld 	de, MENU_ITEM_SIZE
 	add 	ix, de
+	sla	c			;; Move bitmask left
 
 	djnz .itemLoop
 
 
 	;; Check if keys to move the selected item are pressed
-	ld a,(EdgeOnKeyboardMatrixBuffer)
-	bit 0,a					; Cursor down
-	jr nz, .selectionUp
-	bit 2,a					; Cursor up
-	jr nz, .selectionDown
-	bit 6,a					; Return
-	jr nz, .selectionChoose
+	ld 	a, (EdgeOnKeyboardMatrixBuffer)
+	bit 	0, a					; Cursor down
+	jr 	nz, .selectionUp
+	bit 	2, a					; Cursor up
+	jr 	nz, .selectionDown
+	bit 	6, a					; Return
+	jr 	nz, .selectionChoose
 
-	ld a,(EdgeOnKeyboardMatrixBuffer+2)		
-	bit 2,a					; Enter
-	jr nz, .selectionChoose
+	ld 	a, (EdgeOnKeyboardMatrixBuffer+2)		
+	bit 	2, a					; Enter
+	jr 	nz, .selectionChoose
 
-	ld a,(EdgeOnKeyboardMatrixBuffer+5)		
-	bit 7,a					; Space
-	jr nz, .selectionChoose
-	ld a,(EdgeOnKeyboardMatrixBuffer+9)		
-	bit 0,a					; Joystick up
-	jr nz, .selectionUp
-	bit 1,a					; Joystick down
-	jr nz, .selectionDown
-	bit 4,a					; Joystick fire
-	jr nz, .selectionChoose
+	ld 	a, (EdgeOnKeyboardMatrixBuffer+5)		
+	bit 	7, a					; Space
+	jr 	nz, .selectionChoose
+	ld 	a, (EdgeOnKeyboardMatrixBuffer+9)		
+	bit 	0, a					; Joystick up
+	jr 	nz, .selectionUp
+	bit 	1, a					; Joystick down
+	jr 	nz, .selectionDown
+	bit 	4, a					; Joystick fire
+	jr 	nz, .selectionChoose
 
-	jr MainMenuLoop
+	jr 	MainMenuLoop
 
 .doItem:
 	ld 	l, (ix+MenuItem.Function)
 	ld 	h, (ix+MenuItem.Function+1)
 	jp 	(hl)	
 
-.selectionDown:
-	ld 	a,(SelectedMenuItem)
-	inc 	a
-.increasedSelection:
-	cp 	MenuItemCount
-	jr 	c, .selectionChanged
-	ld 	a, 0
-	jr 	.selectionChanged
 .selectionUp:
-	ld 	a,(SelectedMenuItem)
-	dec 	a
-.decreasedSelection:
-	cp	MenuItemCount
-	jr 	nc, .moveSelectionToTop
-	jr 	.selectionChanged
-
-.moveSelectionToTop:
-	ld 	a, MenuItemCount
-	dec 	a
-	jr 	.selectionChanged
-
-.selectionChanged:
-	push 	af
 	ld 	a, (SelectedMenuItem)
 	ld 	c, 0
 	call 	DrawMenuItemFromIndex
-	pop 	af
-	ld 	(SelectedMenuItem), a
+.selectionUpWithoutErase:
+	ld	a, (MenuItemCount)
+	ld	c, a
+	ld 	a, (SelectedMenuItem)
+	dec 	a
+	cp	c
+	jr 	c, .selectionChangedUp
+	;; Wrap around
+	ld 	a, (MenuItemCount)
+	dec	a
+.selectionChangedUp:
+	ld	(SelectedMenuItem), a
+	jr	.selectionChanged
+
+
+.selectionDown:
+	ld 	a, (SelectedMenuItem)
+	ld 	c, 0
+	call 	DrawMenuItemFromIndex
+.selectionDownWithoutErase:
+	ld	a, (MenuItemCount)
+	ld	c, a
+	ld 	a, (SelectedMenuItem)
+	inc 	a
+	cp 	c
+	jr 	c, .selectionChangedDown
+	;; Wrap around
+	ld 	a, 0
+.selectionChangedDown:
+	ld	(SelectedMenuItem), a
+	;; Drop down to .selectionChanged
+
+.selectionChanged:
+	ld 	a, (SelectedMenuItem)
 	ld 	c, 1
 	call 	DrawMenuItemFromIndex
 	jp 	MainMenuLoop
@@ -179,6 +197,9 @@ ResultLabelTable:
 	dw TxtResultKeyboard
 	dw TxtResultJoystick
 ResultLabelTableCount EQU ($-ResultLabelTable)/2
+
+KEYBOARD_TEST_INDEX EQU 4
+JOYSTICK_TEST_INDEX EQU 5
 
 
 TxtUntested: db "UNTESTED",0
@@ -342,7 +363,7 @@ SetUpScreen:
 	call	PrintString
 
 	ld	a, c
-	cp	4
+	cp	KEYBOARD_TEST_INDEX
 	jr	nz, .nextResult
 	ld	a, (iy)
 	cp	TESTRESULT_FAILED
@@ -353,7 +374,7 @@ SetUpScreen:
 
 .nextResult:
 	ld	a, c
-	cp	5
+	cp	JOYSTICK_TEST_INDEX
 	jr	nz, .nextResult2
 	ld	a, (iy)
 	cp	TESTRESULT_FAILED
@@ -409,7 +430,9 @@ PrintPressedKeys:
 DrawMenuItems:
 	ld	a, SELECT_Y
 	ld	(txt_y), a
+	ld	c, %00000001		;; Bit flag for this menu item
 	ld 	ix, MenuTable
+	ld 	de, MENU_ITEM_SIZE
 	ld 	b, 0
 .itemLoop:
 	call 	SetDefaultColors
@@ -429,12 +452,12 @@ DrawMenuItems:
 
 .nextItem:
 	; Increase ix to next menu item
-	ld 	de, MENU_ITEM_SIZE
 	add 	ix, de
 
+	sla	c			;; Move bit of test mask one left
 	inc 	b
-	ld 	a,b
-	cp 	MenuItemCount
+	ld 	a, (MenuItemCount)
+	cp 	b
 	jr 	nz, .itemLoop
 
 	ret
@@ -455,8 +478,15 @@ SetColorForResultType:
 ; IN: A menu item to draw
 ;     C selected or not
 DrawMenuItemFromIndex:
-	cp	MenuItemCount
-	ret	nc
+
+	ld	b, a
+	ld	a, (MenuItemCount)
+	cp	b
+	ret	c
+	ret	z
+	ld	a, b
+	push	af
+
 	ld	b, SELECT_Y+1		;; Line to draw item
 	ld 	hl, MenuTable
 	ld 	de, MENU_ITEM_SIZE
@@ -480,10 +510,11 @@ DrawMenuItemFromIndex:
 	jr 	nz, .selectedItem
 	call 	SetDefaultColors
 .drawItem:
-	ld 	l,(ix+MenuItem.Text)
-	ld 	h,(ix+MenuItem.Text+1)
+	ld 	l, (ix+MenuItem.Text)
+	ld 	h, (ix+MenuItem.Text+1)
 	call 	PrintString
 
+	pop	af
 	ret
 
 .selectedItem:
@@ -529,9 +560,37 @@ DetectSystemInfo:
 .setLayout:
 	ld	(KeyboardLayout), a
 
-	ld	a, MenuItemCount
+	ld	a, (MenuItemCount)
 	ld	(SelectedMenuItem), a
 
+	ret
+
+///////////////////
+
+RemoveROMTest:
+	ld	a, TESTRESULT_NOTAVAILABLE
+	ld	(TestResultTableLowerROM), a
+	ld	(TestResultTableUpperROM), a
+
+	ld	hl, MenuItemROMTest + MENU_ITEM_SIZE
+	ld	de, MenuItemROMTest
+	ld	bc, MenuTableEnd - (MenuItemROMTest + MENU_ITEM_SIZE)
+	jr	RemoveTestEnd
+
+RemoveUpperRAMTest:
+	ld	a, TESTRESULT_NOTAVAILABLE
+	ld	(TestResultTableUpperRAM), a
+
+	ld	hl, MenuItemUpperRAMTest + MENU_ITEM_SIZE
+	ld	de, MenuItemUpperRAMTest
+	ld	bc, MenuTableEnd - (MenuItemUpperRAMTest + MENU_ITEM_SIZE)
+	;;jr	RemoveTestEnd			;; Drop through 
+
+RemoveTestEnd:	
+	ldir
+
+	ld	hl, MenuItemCount
+	dec	(hl)
 	ret
 
 
@@ -541,34 +600,11 @@ SELECT_Y EQU 3
 SELECT_X EQU 32
 MENU_ITEM_X EQU SELECT_X+2
 
-
 TxtLowerRAMTest: db "[L] LOWER RAM ",0
-TxtRAMTest: 	 db "[U] UPPER RAM ",0
- IFDEF ROM_CHECK
+TxtUpperRAMTest: db "[U] UPPER RAM ",0
 TxtROMTest: 	 db "[R] ROM ",0
- ELSE
-TxtROMTest: 	 db "[R] ROM (DISABLED)",0
- ENDIF
 TxtKeyboardTest: db "[K] KEYBOARD ",0
 TxtSoakTest: 	 db "[S] SOAK TEST ",0
-
-
- STRUCT MenuItem
-Text WORD
-Function WORD
-KeybOffset BYTE
-BitMask BYTE
- ENDS
-
-MenuTable:
-	MenuItem TxtLowerRAMTest, LowerRAMTestSelected, 4, %00010000  	;; L
-MENU_ITEM_SIZE EQU $ - MenuTable
-	MenuItem TxtRAMTest, UpperRAMTestSelected, 5, %00000100	;; U
-	MenuItem TxtROMTest, ROMTestSelected, 6, %00000100		;; R
-	MenuItem TxtKeyboardTest, KeyboardTestSelected, 4, %00100000	;; K
-	MenuItem TxtSoakTest, SoakTestSelected, 7, %00010000		;; S
-
-MenuItemCount equ ($-MenuTable)/MENU_ITEM_SIZE
 
 
 TxtTitle: db 'AMSTRAD DIAGNOSTICS V', VERSION_STR, BUILD_STR,0
