@@ -5,7 +5,7 @@
 
 
 @ModelNames:
-TxtUnknown: db "UNKNOWN", 0
+TxtUnknown: db "UNKNOWN CPC", 0
 TxtModelCPC464: db "CPC 464", 0 
 TxtModelCPC664: db "CPC 664", 0 
 TxtModelCPC6128: db "CPC 6128", 0 
@@ -25,7 +25,7 @@ TxtModelPlusRange: db "PLUS/GX4000", 0
 	db TxtModelPlusRange - TxtUnknown
 	db TxtModelPlusRange - TxtUnknown
 
-@MODEL_UNKNOWN 		EQU 0
+@MODEL_UNKNOWNCPC	EQU 0
 @MODEL_CPC464 		EQU 1
 @MODEL_CPC664 		EQU 2
 @MODEL_CPC6128 		EQU 3
@@ -76,7 +76,7 @@ TxtModelPlusRange: db "PLUS/GX4000", 0
 
 .not6128::
 	;; 464 or 664
-	cp	#7B
+	cp	'2'
 	jr	nz, .not664
 
 	;; 664
@@ -86,6 +86,14 @@ TxtModelPlusRange: db "PLUS/GX4000", 0
 
 	;; 464
 .not664:
+	cp	'1'
+	jr	z, .Is464
+
+      	ld	a, MODEL_UNKNOWNCPC
+	ld	(ModelType), a
+	jr	.englishKeyboard
+
+.Is464:
       	ld	a, MODEL_CPC464
 	ld	(ModelType), a
 
