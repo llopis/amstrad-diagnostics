@@ -196,6 +196,8 @@ ASIC_SPRITE_MEM EQU #4000
 	;; Page out ASIC registers
 	ld	bc, #7F00 + %10100000
       	out 	(c), c
+ 	call RestoreROMState
+
       	ret
 
  ENDMODULE
