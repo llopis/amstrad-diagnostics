@@ -75,6 +75,10 @@ TxtModelPlusRange: db "PLUS/GX4000", 0
 
 
 .not6128::
+	ld	ix, #0683
+	call	ReadFromLowerROM
+	ld	a, h
+
 	;; 464 or 664
 	cp	'2'
 	jr	nz, .not664
@@ -86,6 +90,9 @@ TxtModelPlusRange: db "PLUS/GX4000", 0
 
 	;; 464
 .not664:
+	ld	ix, #0682
+	call	ReadFromLowerROM
+	ld	a, h
 	cp	'1'
 	jr	z, .Is464
 
@@ -96,9 +103,6 @@ TxtModelPlusRange: db "PLUS/GX4000", 0
 .Is464:
       	ld	a, MODEL_CPC464
 	ld	(ModelType), a
-
-	ld	ix, #0682
-	call	ReadFromLowerROM
 
 .checkLanguageFromVersionString:
 	ld	a, l
