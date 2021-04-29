@@ -14,6 +14,7 @@ FDCPresent: db 0
 ValidBankCount: db 0
 FailingBits: db 0
 C3ConfigFailed: db 0
+LastReadBank: db #FF, #FF
 
 ;; ROM test
 ROMStringBuffer: ds 16

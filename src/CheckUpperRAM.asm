@@ -271,10 +271,10 @@ AddAllRAMMarkers:
 .blockLoop:
 	call 	GetPortForBankAndBlock
 
-	;; Set first byte to full block byte
+	;; Set first two bytes to 0
 	out 	(c), l
-	ld 	(ix), l
-	ld 	(ix+1), b
+	ld 	(ix), 0
+	ld 	(ix+1), 0
 
 	;; Next block
 	inc 	e
@@ -297,8 +297,8 @@ AddAllRAMMarkers:
 	;; Clear the ones in main memory
 	ld 	bc, #7FC0
 	out 	(c), c
-	ld 	(ix), 0
-	ld 	(ix+1), 0
+	ld 	(ix), #FF
+	ld 	(ix+1), #FF
 
 	ret
 
@@ -309,6 +309,9 @@ AddAllRAMMarkers:
 DetectAvailableUpperRAM:
 	ld 	a, 0
 	ld 	(ValidBankCount), a
+	ld	a, #FF
+	ld	(LastReadBank), a
+	ld	(LastReadBank+1), a
 	ld 	ix, RAMBANKSTART
 	ld 	bc, #7FFF
 	; d = bank
@@ -322,16 +325,16 @@ DetectAvailableUpperRAM:
 	call 	GetPortForBankAndBlock
 
 	out 	(c), l				;; Swap banks
-	ld 	a, (ix)
-	cp 	l
-	jr 	nz, .nextBank
-	ld 	a, (ix+1)
-	cp 	b
-	jr 	nz, .nextBank
+
+	;; If we read #FF or the same data as last bank, then this is not a valid bank
+	call	IsBankValid
+	jr	z, .nextBank
 
 	;; Valid bank
 	ld 	hl, ValidBankCount
 	inc 	(hl)
+
+	call	UpdateBankData
 
 .nextBank:
 	;; Next bank
@@ -352,6 +355,9 @@ DetectAvailableUpperRAM:
 ;; OUT: A = 0 normal ending, 1 aborted
 
 RunUpperRAMTests4MB:
+	ld	a, #FF
+	ld	(LastReadBank), a
+	ld	(LastReadBank+1), a
 	ld	h, BANKLABELXSTART4MB+8
 	ld	l, BANKLABELYSTART4MB
 	ld	(TxtCoords), hl
@@ -366,26 +372,10 @@ RunUpperRAMTests4MB:
 	call 	GetPortForBankAndBlock
 	out 	(c), l
 
-	ld 	ix, RAMBANKSTART
-	ld 	a, (ix)
-	cp 	l
-	jr 	nz, .invalidBank
-	ld 	a, (ix+1)
-	cp 	b
-	jr 	nz, .invalidBank
+	call	IsBankValid
+	jr	z, .invalidBank
 
-	push	bc
-	push 	de				; Save the bank and block
-
-	call 	SetDefaultColors
-	ld	hl, TxtValidBank
-	call	PrintString
-	ld	a, (txt_x)
-	sub	8
-	ld	(txt_x), a
-
-	pop 	de				; Restore bank and block
-	pop	bc
+	call	PrintBank
 
 .blockLoop:
 	call 	GetPortForBankAndBlock
@@ -426,6 +416,14 @@ RunUpperRAMTests4MB:
 	;; Next block
 	inc 	e
 	ld 	a, e
+	cp	1
+	jr	nz, .notFirstBlock
+	push	de
+	call	UpdateBankData
+	pop	de
+	ld	a, e
+
+.notFirstBlock:
 	cp 	4
 	jr 	nz, .blockLoop
 
@@ -484,6 +482,52 @@ RunUpperRAMTests4MB:
 	call SetDefaultColors
 	jr .nextBlock
 
+
+PrintBank:
+	push	bc
+	push 	de				; Save the bank and block
+
+	call 	SetDefaultColors
+	ld	hl, TxtValidBank
+	call	PrintString
+	ld	a, (txt_x)
+	sub	8
+	ld	(txt_x), a
+
+	pop 	de				; Restore bank and block
+	pop	bc
+	ret
+
+
+IsBankValid:
+	;; If we read #FF or the same data as last bank, then this is not a valid bank
+	ld 	ix, RAMBANKSTART
+	ld 	a, (ix)
+	cp 	#FF
+	ret	z
+	ld	e, a
+	ld	a, (LastReadBank)
+	cp	e
+	ret	z
+
+	ld 	a, (ix+1)
+	cp 	#FF
+	ret	z
+	ld	e, a
+	ld	a, (LastReadBank+1)
+	cp	e
+	ret	z
+	ret
+
+UpdateBankData:
+	ld 	ix, RAMBANKSTART
+	ld	(ix), #FF
+	ld	(ix+1), #FF
+	ld	a, (ix)
+	ld	(LastReadBank), a
+	ld	a, (ix+1)
+	ld	(LastReadBank+1), a
+	ret
 
 CheckESC:
 	push	hl
