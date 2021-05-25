@@ -179,7 +179,6 @@ TxtSystemInfo:	db 'SYSTEM INFO  ',0
 TxtModel: 	db 'MODEL     : ',0
 TxtVendor: 	db 'VENDOR    : ',0
 TxtRefresh:	db 'REFRESH   : ',0
-;TxtPPIPB:	db 'PPI PORTB : ',0
 TxtRAM: 	db 'RAM       : ',0
 TxtCRTC: 	db 'CRTC      : ',0
 TxtKB: 		db 'KB',0
@@ -320,17 +319,6 @@ SetUpScreen:
 	add	hl, de
 	call    PrintString
 
-	;; PPI Port B
-	;pop	hl
-	;inc	l
-	;push 	hl
- 	;ld	(TxtCoords), hl
-	;ld 	hl, TxtPPIPB
-	;call 	PrintString
-	;ld b,#f5			; PPI port B input
- 	;in a,(c)            	
-	;call    PrintABin
-
 	;; RAM
 	pop	hl
 	inc	l
@@ -354,7 +342,7 @@ SetUpScreen:
 	ld 	hl, TxtKB
 	call 	PrintString
 
-	;; CRTC yype
+	;; CRTC type
 	pop	hl
 	inc	l
 	push 	hl
