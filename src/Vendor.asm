@@ -28,15 +28,6 @@ TxtIsp: db "ISP",0
 	db TxtTriumph - TxtAmstrad
 	db TxtIsp - TxtAmstrad
 
-;@VENDOR_AMSTRAD      EQU 0
-;@VENDOR_ORION        EQU 1
-;@VENDOR_SCHNEIDER    EQU 2
-;@VENDOR_AWA          EQU 3
-;@VENDOR_SOLAVOX      EQU 4
-;@VENDOR_SAISHO       EQU 5
-;@VENDOR_TRIUMPH      EQU 6
-;@VENDOR_ISP          EQU 7
-
 @RefreshNames:
 Txt50HZ: db "50Hz",0
 Txt60HZ: db "60Hz",0
