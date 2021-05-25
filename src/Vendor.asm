@@ -38,7 +38,6 @@ Txt60HZ: db "60Hz",0
 	db Txt60HZ - Txt50HZ
 
 ;; OUT:	(Vendor) - vendor from LK3-1 configuration
-;; OUT: (Frequency) - ;; www.cpcwiki.eu/index.php/LK_Links
 @DetectVendor:
     ld b,#f5			; PPI port B.
     in a,(c)            ; Addressing, B in top half, C in bottom half (ignored)
