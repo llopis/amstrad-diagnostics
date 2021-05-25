@@ -177,6 +177,9 @@ TestComplete:
 
 TxtSystemInfo:	db 'SYSTEM INFO  ',0
 TxtModel: 	db 'MODEL     : ',0
+TxtVendor: 	db 'VENDOR    : ',0
+TxtRefresh:	db 'REFRESH   : ',0
+;TxtPPIPB:	db 'PPI PORTB : ',0
 TxtRAM: 	db 'RAM       : ',0
 TxtCRTC: 	db 'CRTC      : ',0
 TxtKB: 		db 'KB',0
@@ -280,6 +283,53 @@ SetUpScreen:
 	ld	hl, ModelNames
 	add	hl, de
 	call	PrintString
+
+    ;; VENDOR
+	pop	hl
+	inc	l
+	push 	hl
+ 	ld	(TxtCoords), hl
+	ld 	hl, TxtVendor
+	call 	PrintString
+	ld	a, (VendorName)
+	ld	e, a
+	ld	d, 0
+	ld	hl, VendorTableOffset
+	add	hl, de                 ; offset
+	ld	a, (hl)
+	ld	e, a
+	ld	hl, VendorNames
+	add	hl, de                 ; 1st name + offset
+	call    PrintString
+
+    ;; REFRESH
+	pop	hl
+	inc	l
+	push 	hl
+ 	ld	(TxtCoords), hl
+	ld 	hl, TxtRefresh
+	call 	PrintString
+	ld	a, (RefreshFrequency)
+	ld	e, a
+	ld	d, 0
+	ld	hl, RefreshTableOffset
+	add	hl, de
+	ld	a, (hl)
+	ld	e, a
+	ld	hl, RefreshNames
+	add	hl, de
+	call    PrintString
+
+	;; PPI Port B
+	;pop	hl
+	;inc	l
+	;push 	hl
+ 	;ld	(TxtCoords), hl
+	;ld 	hl, TxtPPIPB
+	;call 	PrintString
+	;ld b,#f5			; PPI port B input
+ 	;in a,(c)            	
+	;call    PrintABin
 
 	;; RAM
 	pop	hl

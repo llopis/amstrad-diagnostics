@@ -1,10 +1,12 @@
  MODULE VENDOR
 
-;; Useful info from here:
 ;; www.cpcwiki.eu/index.php/LK-selectable_Brand_Names
-;; LK1,LK2,LK3 are optional links on the CPC mainboard, connected to PPI Port B, Bit1-3. The links select the distributor name (which is displayed by the BIOS in the boot message). 
 ;; www.cpcwiki.eu/index.php/LK_Links
-;; LK4 default 50Hz
+;; LK1,LK2,LK3 are optional links on the CPC mainboard, connected to PPI Port B, Bit1-3. 
+;; The links select the distributor name (which is displayed by the BIOS in the boot message). 
+
+;; www.cpcwiki.eu/index.php/8255#PPI_Port_B
+;; LK4 default 50Hz screen refresh
 
 @VendorNames:
 TxtAmstrad: db "AMSTRAD",0

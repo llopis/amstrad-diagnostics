@@ -4,6 +4,8 @@
 	;; Try to detect the model and language
 	call	CalculateTotalUpperRAM
 	call	DetectModel
+	call    DetectVendor
+	call    RefreshFrequency
 
 	;; From the model, determine the keyboard layout
 	ld	a, (ModelType)
