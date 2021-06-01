@@ -2,7 +2,7 @@
 
 ;; OUT	ValidBankCount - contains number of available upper banks
 @CalculateTotalUpperRAM:
-	call 	AddAllRAMMarkers
+	call 	ClearAllRAMBlockMarkers
 	call 	DetectAvailableUpperRAM
 	ret
 
@@ -11,16 +11,16 @@
 @CheckUpperRAMWithoutTitle:
 	call 	PrintAvailableUpperRAM
 
+	call 	SetUpScreen4MB
+
 	ld	a, 0
 	ld	(FailingBits), a
-	call 	AddAllRAMMarkers
-
-	call 	SetUpScreen4MB
+	call 	ClearAllRAMBlockMarkers
 	call 	RunUpperRAMTests4MB
 	or	a
 	jr	nz, .printAborted
 
-	call 	AddAllRAMMarkers
+	call 	ClearAllRAMBlockMarkers
 	call 	CheckC3Config
 
 	call 	PrintResult
@@ -252,11 +252,8 @@ RESULT_Y EQU #16
 ;; FC FD FE FF
 
 
-
-
-
-;; Go through every bank and set the first word to the port and the bank
-AddAllRAMMarkers:
+;; Go through every bank and set the first word to 0
+ClearAllRAMBlockMarkers:
 	;; In this case we want to iterate through the banks backwards because if a bank doesn't exit, we'll get the default one
 	;; so we want to leave that one for last
 	ld 	ix, RAMBANKSTART
@@ -323,11 +320,12 @@ DetectAvailableUpperRAM:
 	ld 	e, 0
 
 	call 	GetPortForBankAndBlock
-
 	out 	(c), l				;; Swap banks
 
 	;; If we read #FF or the same data as last bank, then this is not a valid bank
+	push	de
 	call	IsBankValid
+	pop	de
 	jr	z, .nextBank
 
 	;; Valid bank
@@ -348,6 +346,9 @@ DetectAvailableUpperRAM:
 	ld 	a, b
 	cp 	#77
 	jr 	nz, .loop512K
+
+	ld 	bc, #7FC0
+	out 	(c), c
 
 	ret
 
@@ -372,7 +373,9 @@ RunUpperRAMTests4MB:
 	call 	GetPortForBankAndBlock
 	out 	(c), l
 
+	push	de
 	call	IsBankValid
+	pop	de
 	jr	z, .invalidBank
 
 	call	PrintBank
@@ -413,15 +416,9 @@ RunUpperRAMTests4MB:
 	jr nz,	.failedBlock
 
 .nextBlock:
-	;; Next block
+	call	UpdateBankData
 	inc 	e
 	ld 	a, e
-	cp	1
-	jr	nz, .notFirstBlock
-	push	de
-	call	UpdateBankData
-	pop	de
-	ld	a, e
 
 .notFirstBlock:
 	cp 	4
@@ -499,7 +496,7 @@ PrintBank:
 	ret
 
 
-IsBankValid:
+IsBankValid:	
 	;; If we read #FF or the same data as last bank, then this is not a valid bank
 	ld 	ix, RAMBANKSTART
 	ld 	a, (ix)
