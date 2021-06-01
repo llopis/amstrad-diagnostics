@@ -30,29 +30,33 @@ TxtIsp:       db "ISP",0
 	db TxtIsp       - TxtAmstrad
 
 @RefreshNames:
-Txt50HZ: db "50Hz",0
 Txt60HZ: db "60Hz",0
+Txt50HZ: db "50Hz",0
 
 @RefreshTableOffset:
 	db 0
-	db Txt60HZ - Txt50HZ
+	db Txt50HZ - Txt60HZ
 
-;; OUT:	(Vendor) - vendor from LK3-1 configuration
+;; OUT: (Vendor) - vendor from LK3-1 configuration
 @DetectVendor:
-    ld b,#f5			; PPI port B.
-    in a,(c)            ; Addressing, B in top half, C in bottom half (ignored)
-    cpl                 ; invert bits
-    and %00001110	    ; Links LK3-LK1 define machine
-    rrca                ; get rid of bit0
-    ld (VendorName),a
-    ret
+	ld	b,#f5            	; PPI port B.
+	in 	a,(c)            	; Addressing, B in top half, C in bottom half (ignored)
+	cpl                 		; invert bits
+	and 	%00001110       	; Links LK3-LK1 define machine
+	rrca                		; get rid of bit0
+	ld 	(VendorName), a
+	ret
 
 ;;  OUT: (Frequency) - frequency from LK4 configuration
 @DetectFrequency:
-    ld b,#f5			; PPI port B input
-    in a,(c)            ; 
-    and %00010000       ; LK4 50/60 Hz  &10/&00 
-    ld (RefreshFrequency),a
-    ret
-    
+	ld	b, #F5           	; PPI port B input
+	in	a, (c)            	; 
+	and	%00010000       	; LK4 50/60 Hz  &10/&00
+	sra	a
+	sra	a
+	sra	a
+	sra	a
+	ld      (RefreshFrequency), a	; 1: 50 Hz, 0: 60 Hz
+	ret
+	
  ENDMODULE

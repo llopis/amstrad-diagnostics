@@ -5,7 +5,7 @@
 	call	CalculateTotalUpperRAM
 	call	DetectModel
 	call    DetectVendor
-	call    RefreshFrequency
+	call    DetectFrequency
 
 	;; From the model, determine the keyboard layout
 	ld	a, (ModelType)
