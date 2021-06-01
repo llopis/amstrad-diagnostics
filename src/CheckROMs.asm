@@ -73,11 +73,10 @@ CheckLowerROM:
 	push hl
 	call GetROMAddrFromCRC
 
-	ld a,d
-	or e
+	or a
 	jr z, .unknownROM
 
-	call PrintROMName
+	call 	PrintROMName
 
 	;; Remember success
 	ld	a, TESTRESULT_PASSED
@@ -201,18 +200,15 @@ CheckUpperROM:
 	ld 	a, d
 	call 	CRCUpperRom
 	pop 	de
-	push 	hl
+	push 	hl				; Save CRC
 
-	push 	de
+	push 	de				; Save ROM index
 	call 	GetROMAddrFromCRC
-
-	ld 	a,d
-	or 	e
+	or 	a
 	jr 	z, .unknownROM
 
 	call 	PrintROMName
 	ld	a, 1
-	push	af
 	pop 	de
 
 .finishROM:
@@ -221,7 +217,6 @@ CheckUpperROM:
 	pop 	hl
 	call 	PrintCRC
 	call 	NewLine
-	pop	af
 	ret
 
 .unknownROM:
@@ -239,7 +234,7 @@ CheckUpperROM:
 	call 	PrintString7BitEnding
 
 	ld	a,0
-	push	af
+	;;push	af
 
 	jr .finishROM
 
@@ -259,43 +254,44 @@ PrintCRC:
 
 
 ; IN HL = CRC
-; OUT DE = ROM index or 0000 if unknown
+; OUT DE = ROM index and A = 1 or A = 0 if unknown
 GetROMAddrFromCRC:
-	ld b, 0
-	ld ix, ROMInfoTable
+	ld 	b, 0
+	ld 	ix, ROMInfoTable
 .loop:
-	ld e,(ix)
-	ld d,(ix+1)
-	ld a,l
-	cp e
-	jr nz, .next
-	ld a,h
-	cp d
-	jr nz, .next
+	ld 	e, (ix)
+	ld 	d, (ix+1)
+	ld 	a, l
+	cp 	e
+	jr 	nz, .next
+	ld 	a, h
+	cp 	d
+	jr 	nz, .next
 
-	ld de, ix
+	ld 	de, ix
+	ld 	a, 1
 	ret
 	
 .next:
-	inc ix
-	inc ix
-	inc ix
-	inc ix
-	inc b
-	ld a,b
-	cp ROMCount
-	jr nz, .loop
+	inc 	ix
+	inc 	ix
+	inc 	ix
+	inc 	ix
+	inc 	b
+	ld 	a, b
+	cp 	ROMCount
+	jr 	nz, .loop
 
-	ld de,0
+	ld 	a, 0
 	ret
 
 
 ; IN DE = ROM address in table
 PrintROMName:
-	ld ix,de
-	ld l,(ix+2)
-	ld h,(ix+3)
-	call PrintString
+	ld 	ix, de
+	ld 	l, (ix+2)
+	ld 	h, (ix+3)
+	call 	PrintString
 	ret
 
 
