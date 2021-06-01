@@ -133,6 +133,7 @@ RAMInitialize:
 
  INCLUDE "MainMenu.asm"
  INCLUDE "Model.asm"
+ INCLUDE "Vendor.asm"
  INCLUDE "SoakTest.asm"
  INCLUDE "CheckUpperRAM.asm"
  INCLUDE "UtilsPrint.asm"

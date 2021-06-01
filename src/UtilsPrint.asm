@@ -138,3 +138,30 @@ PrintHLDec:
 	add a,#30
 	call PrintChar
 	ret
+
+
+
+print0:
+        ld a, "0"
+        call PrintChar
+        jr shiftleft
+
+print1:
+        ld a, "1"
+        call PrintChar
+        jr shiftleft
+
+;IN A = number to print
+;Modifies BC
+PrintABin:
+       ld c, a       ;save a
+       ld b, 8
+loopPrintABin:     
+       bit 7, c
+       jr z, print0
+       jr nz, print1
+shiftleft:       
+       sla c
+       dec b
+       jr nz, loopPrintABin
+	   ret

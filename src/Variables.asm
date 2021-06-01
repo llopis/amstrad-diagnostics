@@ -8,7 +8,8 @@ UpperROMConfig: db 0				; Here we store the upper ROM we were launched from
 ModelType: db 0
 KeyboardLanguage: db 0
 FDCPresent: db 0
-
+VendorName: db 0
+RefreshFrequency: db 0
 
 ;; Upper RAM test
 ValidBankCount: db 0
