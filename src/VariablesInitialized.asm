@@ -37,7 +37,6 @@ TESTRESULT_NOTAVAILABLE EQU 4
 
 TestResultTable:
 ;; 0 - status 
-;; 1,2: pointer to string
 TestResultTableLowerRAM:
 	db TESTRESULT_PASSED
 TestResultTableUpperRAM:

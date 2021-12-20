@@ -4,29 +4,33 @@
 @CheckROMs:
 	call ROMSetUpScreen
 @CheckROMsWithoutTitle:
-	call CheckLowerROM
-	call NewLine
-	call CheckUpperROMs
-	call NewLine
+	ld	a, TESTRESULT_UNTESTED
+	ld	(TestResultTableLowerROM), a
+	ld	(TestResultTableUpperROM), a
 
-	call SetDefaultColors
-	ld hl,TxtAnyKeyMainMenu
-	call PrintString
+	call 	CheckLowerROM
+	call 	NewLine
+	call 	CheckUpperROMs
+	call 	NewLine
+
+	call 	SetDefaultColors
+	ld 	hl,TxtAnyKeyMainMenu
+	call 	PrintString
 	ret
 
 ROMSetUpScreen:
-	ld d, 0
-	call ClearScreen
-	ld a, 4
-	call SetBorderColor 
+	ld 	d, 0
+	call 	ClearScreen
+	ld 	a, 4
+	call 	SetBorderColor 
 
-	ld hl,TxtROMTitle
-	ld d,(ScreenCharsWidth - TxtTitleLen - TxtROMTitleLen)/2
-	call PrintTitleBanner
+	ld 	hl,TxtROMTitle
+	ld 	d,(ScreenCharsWidth - TxtTitleLen - TxtROMTitleLen)/2
+	call 	PrintTitleBanner
 
-	ld hl,#0002
-	ld (TxtCoords),hl
-	call SetDefaultColors
+	ld 	hl,#0002
+	ld 	(TxtCoords),hl
+	call 	SetDefaultColors
 	ret
 
 
@@ -107,39 +111,35 @@ CheckLowerROM:
 
 
 CheckUpperROMs:
+	ld	a, TESTRESULT_PASSED
+	ld	(TestResultTableUpperROM), a
+
 	call	SetDefaultColors
 	ld 	hl, TxtDetectingUpperROMs
 	call 	PrintString
 	call 	NewLine
-	ld 	d,0
+	ld 	d, 0		;; D = ROM number
 .romLoop:
 	call 	SetDefaultColors
 	push 	de
  IFDEF UpperROMBuild
-	ld 	a,(UpperROMConfig)
+	ld 	a, (UpperROMConfig)
 	cp 	d
 	jr 	z, .thisROM
  ENDIF
 	call 	CheckUpperROM
-	pop	de
-	push	de
-	push	af		;; A = result
-	ld	a, d		;; A = ROM number
-	or	a
-	pop	de
+	or	a		;; A = result
 	jr	nz, .nextROM
 
-	;; Check success or failure of ROM 0
+	;; Failed, but only fail the test if ROM 0 fails, the others we can ignore
+	pop	de		;; D = ROM number
+	push	de
 	ld	a, d
-	or	a		;; A = result
-	jr	nz, .successROM0
+	or	a
+	jr	nz, .nextROM
 
+	;; It was ROM 0 and it failed, so mark it as failed
 	ld	a, TESTRESULT_FAILED
-	ld	(TestResultTableUpperROM), a
-	jr	.nextROM
-
-.successROM0:
-	ld	a, TESTRESULT_PASSED
 	ld	(TestResultTableUpperROM), a
 
 .nextROM:
@@ -193,6 +193,7 @@ CheckUpperROM:
 	ld 	hl, TxtDashes
 	call 	PrintString	
 	call 	NewLine
+	ld	a, 1
 	ret
 	
 .doIt:
@@ -215,8 +216,10 @@ CheckUpperROM:
 	ld 	hl, txt_x
 	inc 	(hl)
 	pop 	hl
+	push	af				;; Preserve A, which is the return value
 	call 	PrintCRC
 	call 	NewLine
+	pop	af
 	ret
 
 .unknownROM:
