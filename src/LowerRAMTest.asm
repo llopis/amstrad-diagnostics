@@ -118,6 +118,136 @@ RTB_L4OK:
 		ld d, LowerRAMFailure
 	ENDIF
 
+
+	;;===================================================== 
+	;; MARHC-C, covers the majority of SRAM faults.
+	;;===================================================== 
+
+	;;===================================================== 
+	;; PASS0 : Fill with 0s
+	;; Not needed as above code ends with RAM zeroed
+	;;===================================================== 
+;	ld e, #00
+;	ld hl, LOWER_RAM_TEST_START
+;	ld bc, LOWER_RAM_TEST_SIZE
+
+;RTB_M0:
+;	ld (hl), e
+;	inc hl
+;	dec bc
+;	ld a,b
+;	or c
+;	jr nz, RTB_M0
+
+	;;===================================================== 
+	;; PASS1 : Read 0s, write 1s, upwards
+	;;===================================================== 
+	ld e, #FF
+	ld hl, LOWER_RAM_TEST_START
+	ld bc, LOWER_RAM_TEST_SIZE
+RTB_M1:
+	ld a, (hl)
+	xor #00                 ; compare to expected
+	jr z, RTB_M1OK
+	;; error, update error bitmask
+	or d
+	ld d, a
+        
+RTB_M1OK:
+	ld (hl), e
+	inc hl
+	dec bc
+	ld a,b
+	or c
+	jr nz, RTB_M1
+
+	;;===================================================== 
+	;; PASS2 : Read 1s, write 0s, upwards
+	;;===================================================== 
+	ld e, #00
+	ld hl, LOWER_RAM_TEST_START
+	ld bc, LOWER_RAM_TEST_SIZE
+RTB_M2:
+	ld a, (hl)
+	xor #FF                 ; compare to expected
+	jr z, RTB_M2OK
+	;; error, update error bitmask
+	or d
+	ld d, a
+        
+RTB_M2OK:
+	ld (hl), e
+	inc hl
+	dec bc
+	ld a,b
+	or c
+	jr nz, RTB_M2
+
+	;;===================================================== 
+	;; PASS3 : Read 0s, write 1s, downwards
+	;;===================================================== 
+	ld e, #FF
+	ld hl, LOWER_RAM_TEST_START + LOWER_RAM_TEST_SIZE - 1
+	ld bc, LOWER_RAM_TEST_SIZE
+RTB_M3:
+	ld a, (hl)
+	xor #00                 ; compare to expected
+	jr z, RTB_M3OK
+	;; error, update error bitmask
+	or d
+	ld d, a
+        
+RTB_M3OK:
+	ld (hl), e
+	dec hl
+	dec bc
+	ld a,b
+	or c
+	jr nz, RTB_M3
+
+	;;===================================================== 
+	;; PASS4 : Read 1s, write 0s, downwards
+	;;===================================================== 
+	ld e, #00
+	ld hl, LOWER_RAM_TEST_START + LOWER_RAM_TEST_SIZE - 1
+	ld bc, LOWER_RAM_TEST_SIZE
+RTB_M4:
+	ld a, (hl)
+	xor #FF                 ; compare to expected
+	jr z, RTB_M4OK
+	;; error, update error bitmask
+	or d
+	ld d, a
+        
+RTB_M4OK:
+	ld (hl), e
+	dec hl
+	dec bc
+	ld a,b
+	or c
+	jr nz, RTB_M4
+
+	;;===================================================== 
+	;; PASS5 : Read 0s, downwards
+	;;===================================================== 
+	ld hl, LOWER_RAM_TEST_START + LOWER_RAM_TEST_SIZE - 1
+	ld bc, LOWER_RAM_TEST_SIZE
+RTB_M5:
+	ld a, (hl)
+	xor #00                 ; compare to expected
+	jr z, RTB_M5OK
+	;; error, update error bitmask
+	or d
+	ld d, a
+        
+RTB_M5OK:
+	dec hl
+	dec bc
+	ld a,b
+	or c
+	jr nz, RTB_M5
+
+
 	;;===================================================== 
 	;; Display failing bits if any
 	;;===================================================== 
