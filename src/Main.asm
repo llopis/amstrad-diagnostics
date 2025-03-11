@@ -30,6 +30,7 @@ ProgramStart:
 ;; *******************************
 ;; CARTRIDGE BUILD
  IFDEF CartridgeBuild
+	SIZE #4014					;; Round it up to 16 KB + cartridge header's size
 	DISPLAY "Lower ROM build"
 
  ORG #0000
