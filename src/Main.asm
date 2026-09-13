@@ -1,7 +1,10 @@
  INCLUDE "Config.asm"
 
- ;OUTPUT "build/AmstradDiag.rom"
-  OUTPUT OutFile
+ ;; Cartridge output uses SAVECPR (device mode), not raw OUTPUT
+ IFNDEF CartridgeBuild
+  ;OUTPUT "build/AmstradDiag.rom"
+   OUTPUT OutFile
+ ENDIF
  IFDEF PAD_TO_16K
 	SIZE #4000					;; Round it up to 16 KB
  ENDIF
@@ -30,11 +33,18 @@ ProgramStart:
 ;; *******************************
 ;; CARTRIDGE BUILD
  IFDEF CartridgeBuild
-	DISPLAY "Lower ROM build"
+	IF __SJASMPLUS__ < #011500
+		DISPLAY "Cartridge build requires sjasmplus >= 1.21.0 (SAVECPR)"
+		ERROR "sjasmplus >= 1.21.0 required for SAVECPR"
+	ENDIF
+	DISPLAY "Cartridge build"
+
+	DEVICE AMSTRADCPCPLUS
+	SLOT 0
+	PAGE 0
 
  ORG #0000
 ProgramStart:
- INCLUDE "CartridgeHeader.asm"
  INCLUDE "HardwareInit.asm"
  ENDIF
 
@@ -172,11 +182,21 @@ RAMBegin:
 RAMDataEnd:
  	;; This is just saving room in RAM, but it's not taking up any of the ROM size
  	OUTEND
+ IFDEF CartridgeBuild
+	;; Uninitialized variables must not occupy the saved CPR page;
+	;; assemble them into page 1 (SAVECPR below only saves page 0)
+	PAGE 1
+ ENDIF
  	INCLUDE "Variables.asm"
 RAMEnd:
  ENT
 ProgramEnd:
 
+ IFDEF CartridgeBuild
+	;; Let sjasmplus generate a valid CPR (RIFF + cb00 chunk headers,
+	;; full 16 KiB page). Fixes issue #12 (hand-rolled header was 20 bytes short).
+	SAVECPR OutFile, 1
+ ENDIF
 
  IFDEF PRINT_PROGRAM_SIZE
 	DISPLAY "Total size: ", ProgramEnd - ProgramStart - (RAMEnd - RAMDataEnd)
